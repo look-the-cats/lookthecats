@@ -54,7 +54,7 @@
         }
 
         .animate-pop {
-            animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         @keyframes pop {
@@ -72,16 +72,28 @@
 
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .product-slider {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+        }
+        .product-slider img {
+            scroll-snap-align: start;
+            flex-shrink: 0;
+            width: 100%;
+            object-fit: cover;
+        }
     </style>
 </head>
 <body class="text-gray-800 min-h-screen flex flex-col overflow-x-hidden">
 
     <!-- --- HEADER --- -->
-    <header class="sticky top-0 z-50 px-4 py-3 glass-nav border-b border-orange-50 text-">
-        <div class="max-w-6xl mx-auto flex justify-between items-center">
+    <header class="sticky top-0 z-50 px-4 py-3 glass-nav border-b border-orange-50">
+        <div class="max-w-6xl mx-auto flex justify-between items-center text-">
             <div class="flex items-center gap-2 cursor-pointer" onclick="navigateTo('home')">
                 <div class="cute-gradient p-2 rounded-2xl shadow-lg shadow-orange-200">
-                    <!-- Custom SVG Cat Paw -->
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
                         <path d="M12 11c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm-4.5-1c1.38 0 2.5-1.12 2.5-2.5S8.88 5 7.5 5 5 6.12 5 7.5 6.12 10 7.5 10zm9 0c1.38 0 2.5-1.12 2.5-2.5S17.88 5 16.5 5 14 6.12 14 7.5 15.12 10 16.5 10zm-4.5-2c1.38 0 2.5-1.12 2.5-2.5S13.38 3 12 3 9.5 4.12 9.5 5.5 10.62 8 12 8z"/>
                     </svg>
@@ -89,7 +101,7 @@
                 <span class="font-extrabold text-xl tracking-tight bg-clip-text text-transparent cute-gradient">Look The Cats</span>
             </div>
             
-            <button onclick="toggleCart()" class="relative p-2.5 bg-orange-50 text-orange-600 rounded-2xl transition-all active:scale-90 shadow-sm border border-orange-100">
+            <button onclick="toggleCart()" class="relative p-2.5 bg-orange-50 text-orange-600 rounded-2xl transition-all active:scale-90 shadow-sm border border-orange-100 text-">
                 <i data-lucide="shopping-basket" class="w-6 h-6"></i>
                 <span id="cart-badge" class="hidden absolute -top-1 -right-1 bg-pink-500 text-white text-[10px] font-bold rounded-full h-5 w-5 flex items-center justify-center border-2 border-white">0</span>
             </button>
@@ -118,7 +130,7 @@
                     </svg>
                 </div>
                 <div>
-                    <p class="font-black text-sm text-gray-800">Pasang Ikon HP?</p>
+                    <p class="font-black text-sm text-gray-800">Pasang di HP?</p>
                     <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest leading-none mt-1">Akses Lebih Cepat!</p>
                 </div>
             </div>
@@ -143,13 +155,13 @@
                     <span class="text-orange-600" id="cart-total-price">Rp 0</span>
                 </div>
                 <button onclick="checkout()" class="w-full cute-gradient text-white py-4 rounded-[2rem] font-black shadow-xl shadow-orange-200 active:scale-95 transition-all text-lg">
-                    Check Out (WhatsApp)
+                    Lanjut Bayar (WA)
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- --- NOTIFIKASI --- -->
+    <!-- --- NOTIFIKASI TOAST --- -->
     <div id="message-box" class="hidden fixed top-24 left-1/2 -translate-x-1/2 bg-white/90 backdrop-blur-md border border-orange-100 px-6 py-3 rounded-full shadow-2xl z-[100] flex items-center gap-3 animate-pop">
         <div class="bg-orange-100 p-1.5 rounded-full text-orange-600"><i data-lucide="sparkles" class="w-4 h-4 text-"></i></div>
         <span id="message-box-text" class="font-bold text-sm"></span>
@@ -161,10 +173,15 @@
         const ADMIN_PASS = "Yakin537@";
         
         let PRODUCTS = [
-            { id: 1, name: 'Whiskas Adult Salmon 1.2kg', price: 75000, cat: 'Makanan', color: 'bg-orange-100', icon: 'fish' },
-            { id: 2, name: 'Pasir Kucing Wangi Lemon 10L', price: 65000, cat: 'Kebersihan', color: 'bg-yellow-100', icon: 'sparkles' },
-            { id: 3, name: 'Vitamin Bulu & Nafsu Makan', price: 45000, cat: 'Kesehatan', color: 'bg-green-100', icon: 'zap' },
-            { id: 4, name: 'Mainan Tongkat Bulu Laser', price: 35000, cat: 'Mainan', color: 'bg-pink-100', icon: 'mouse' },
+            { id: 1, name: 'Whiskas Adult Salmon 1.2kg', price: 85000, cat: 'Makanan', color: 'bg-orange-100', images: [] },
+            { id: 2, name: 'Pasir Kucing Wangi Lemon 10L', price: 65000, cat: 'Kebersihan', color: 'bg-yellow-100', images: [] },
+            { id: 3, name: 'Vitamin Bulu & Nafsu Makan', price: 45000, cat: 'Kesehatan', color: 'bg-green-100', images: [] },
+            { id: 4, name: 'Mainan Tongkat Bulu Laser', price: 35000, cat: 'Mainan', color: 'bg-pink-100', images: [] },
+        ];
+
+        let CLINIC_SERVICES = [
+            { id: 1, name: 'Vaksinasi Rabies & F3', price: 250000, cat: 'Vaksin', color: 'bg-blue-100', images: [], desc: 'Proteksi lengkap untuk anabul tersayang.' },
+            { id: 2, name: 'Sterilisasi Kucing Jantan', price: 450000, cat: 'Steril', color: 'bg-purple-100', images: [], desc: 'Prosedur aman dengan dokter berpengalaman.' },
         ];
 
         const ACTIVITIES = [
@@ -182,6 +199,8 @@
         let globalMascot = null;
         let isAdminUnlocked = false; 
         let productEditId = null;
+        let clinicEditId = null;
+        let tempUploadImages = [];
         let deferredPrompt;
 
         let mockUsers = [
@@ -197,73 +216,106 @@
 
         // --- INSTALL LOGIC ---
         window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            // Tampilkan banner saat pertama kali terdeteksi
+            e.preventDefault(); deferredPrompt = e;
             document.getElementById('install-banner').classList.remove('hidden');
         });
-
-        // Pengingat Rutin (Setiap 3 Menit jika tidak diinstall)
         setInterval(() => {
-            const banner = document.getElementById('install-banner');
-            if (deferredPrompt && banner.classList.contains('hidden')) {
-                banner.classList.remove('hidden');
-                console.log("Reminder: Install Look The Cats app for better experience!");
+            if (deferredPrompt && document.getElementById('install-banner').classList.contains('hidden')) {
+                document.getElementById('install-banner').classList.remove('hidden');
             }
-        }, 180000); // 180000ms = 3 Menit
+        }, 180000); 
 
-        function hideInstallBanner() {
-            document.getElementById('install-banner').classList.add('hidden');
-        }
-
+        function hideInstallBanner() { document.getElementById('install-banner').classList.add('hidden'); }
         async function triggerAppInstall() {
-            if (!deferredPrompt) {
-                showMsg('Klik Menu Browser > Add to Home Screen');
-                return;
-            }
+            if (!deferredPrompt) { showMsg('Klik Menu Browser > Add to Home Screen'); return; }
             deferredPrompt.prompt();
             const { outcome } = await deferredPrompt.userChoice;
-            if (outcome === 'accepted') {
-                showMsg('Meow! Aplikasi terpasang 🐾');
-                hideInstallBanner();
-            }
+            if (outcome === 'accepted') { showMsg('Meow! Aplikasi terinstal 🐾'); hideInstallBanner(); }
             deferredPrompt = null;
         }
 
         // --- CORE FUNCTIONS ---
         const toIDR = (n) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(n);
-        
         function showMsg(txt) {
             const b = document.getElementById('message-box');
             document.getElementById('message-box-text').innerText = txt;
             b.classList.remove('hidden');
             setTimeout(() => b.classList.add('hidden'), 3000);
         }
-
         function navigateTo(p) {
-            currentPage = p;
-            productEditId = null; 
-            renderNavs();
-            renderContent();
+            currentPage = p; productEditId = null; clinicEditId = null; tempUploadImages = [];
+            renderNavs(); renderContent();
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
-
         function checkAdminPassword() {
             const pass = document.getElementById('admin-pass-input').value;
-            if (pass === ADMIN_PASS) {
-                isAdminUnlocked = true;
-                showMsg('Akses Admin Terbuka! 🔓');
-                renderContent();
-            } else {
-                showMsg('Password Salah! ❌');
+            if (pass === ADMIN_PASS) { isAdminUnlocked = true; showMsg('Akses Admin Terbuka! 🔓'); renderContent(); }
+            else { showMsg('Password Salah! ❌'); }
+        }
+        function lockAdmin() { isAdminUnlocked = false; showMsg('Admin Dikunci 🔒'); navigateTo('home'); }
+
+        // --- UPLOAD MULTI FOTO ---
+        function handlePhotos(e) {
+            const files = Array.from(e.target.files);
+            if (files.length > 5) { showMsg("Maksimal 5 foto ya bro!"); return; }
+            tempUploadImages = [];
+            files.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    tempUploadImages.push(ev.target.result);
+                    renderUploadPreview();
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function renderUploadPreview() {
+            const container = document.getElementById('upload-preview');
+            if (container) {
+                container.innerHTML = tempUploadImages.map(img => `<div class="w-16 h-16 rounded-xl overflow-hidden border border-orange-200 shadow-sm"><img src="${img}" class="w-full h-full object-cover"></div>`).join('');
             }
         }
 
-        function lockAdmin() {
-            isAdminUnlocked = false;
-            showMsg('Akses Admin Dikunci 🔒');
-            navigateTo('home');
+        // --- CRUD TOKO ---
+        function saveProduct(e) {
+            e.preventDefault();
+            const name = document.getElementById('p-name').value;
+            const price = parseInt(document.getElementById('p-price').value);
+            const cat = document.getElementById('p-cat').value;
+            if (productEditId) {
+                const idx = PRODUCTS.findIndex(p => p.id === productEditId);
+                const finalImages = tempUploadImages.length > 0 ? tempUploadImages : PRODUCTS[idx].images;
+                PRODUCTS[idx] = { ...PRODUCTS[idx], name, price, cat, images: finalImages };
+                showMsg('Update Toko Berhasil! ✏️');
+            } else {
+                PRODUCTS.unshift({ id: Date.now(), name, price, cat, images: tempUploadImages, color: 'bg-orange-100' });
+                showMsg('Produk Ditambah! 📦');
+            }
+            navigateTo('shop');
         }
+
+        // --- CRUD KLINIK ---
+        function saveClinicService(e) {
+            e.preventDefault();
+            const name = document.getElementById('c-name').value;
+            const price = parseInt(document.getElementById('c-price').value);
+            const cat = document.getElementById('c-cat').value;
+            const desc = document.getElementById('c-desc').value;
+
+            if (clinicEditId) {
+                const idx = CLINIC_SERVICES.findIndex(c => c.id === clinicEditId);
+                const finalImages = tempUploadImages.length > 0 ? tempUploadImages : CLINIC_SERVICES[idx].images;
+                CLINIC_SERVICES[idx] = { ...CLINIC_SERVICES[idx], name, price, cat, desc, images: finalImages };
+                showMsg('Update Klinik Berhasil! 🏥');
+            } else {
+                CLINIC_SERVICES.unshift({ id: Date.now(), name, price, cat, desc, images: tempUploadImages, color: 'bg-blue-100' });
+                showMsg('Layanan Klinik Ditambah! ✨');
+            }
+            navigateTo('clinic');
+        }
+
+        function editClinic(id) { clinicEditId = id; renderContent(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+        function deleteClinic(id) { if (confirm('Hapus layanan klinik ini?')) { CLINIC_SERVICES = CLINIC_SERVICES.filter(c => c.id !== id); showMsg('Dihapus! 🗑️'); renderContent(); } }
 
         function handleImage(e) {
             const f = e.target.files[0];
@@ -271,83 +323,38 @@
                 const r = new FileReader();
                 r.onload = (ev) => {
                     const imgData = ev.target.result;
-                    if (isAdminUnlocked) {
-                        globalMascot = imgData;
-                        showMsg('Maskot Global Diperbarui! ✨');
-                    } else if (currentUser) {
-                        currentUser.img = imgData;
-                        showMsg('Foto Kucingmu Berhasil Dipasang! 😻');
-                    }
+                    if (isAdminUnlocked) { globalMascot = imgData; showMsg('Maskot Diperbarui! ✨'); }
+                    else if (currentUser) { currentUser.img = imgData; showMsg('Foto Pasang! 😻'); }
                     renderContent();
                 };
                 r.readAsDataURL(f);
             }
         }
 
+        // --- RENDER MENU ---
         function renderNavs() {
             const items = [
                 { id: 'home', label: 'Home', icon: 'home' },
                 { id: 'shop', label: 'Toko', icon: 'shopping-bag' },
+                { id: 'clinic', label: 'Klinik', icon: 'stethoscope' },
                 { id: 'consultation', label: 'Konsul', icon: 'messages-square' },
                 { id: 'account', label: 'Profil', icon: 'user' },
                 { id: 'admin', label: 'Admin', icon: 'shield-check' }
             ];
-
             const mob = document.getElementById('mobile-bottom-nav');
             mob.innerHTML = items.map(m => `
-                <button onclick="navigateTo('${m.id}')" class="flex flex-col items-center w-10 py-2 rounded-2xl transition-all ${currentPage === m.id ? 'text-orange-500 scale-110' : 'text-gray-400'}">
-                    <div class="${currentPage === m.id ? 'cute-gradient p-2 rounded-xl shadow-lg' : ''}">
-                        <i data-lucide="${m.icon}" class="w-4 h-4 ${currentPage === m.id ? 'text-white' : ''}"></i>
-                    </div>
-                    <span class="text-[7px] font-black uppercase mt-1 ${currentPage === m.id ? 'block' : 'hidden'}">${m.label}</span>
+                <button onclick="navigateTo('${m.id}')" class="flex flex-col items-center w-8 py-2 rounded-2xl transition-all ${currentPage === m.id ? 'text-orange-500 scale-110' : 'text-gray-400'}">
+                    <div class="${currentPage === m.id ? 'cute-gradient p-2 rounded-xl shadow-lg' : ''}"><i data-lucide="${m.icon}" class="w-4 h-4 ${currentPage === m.id ? 'text-white' : ''}"></i></div>
                 </button>
             `).join('');
-
             const desk = document.getElementById('desktop-menu');
             desk.innerHTML = items.map(m => `
                 <button onclick="navigateTo('${m.id}')" class="group flex items-center gap-3 bg-white p-3 rounded-2xl shadow-md hover:shadow-orange-100 transition-all ${currentPage === m.id ? 'ring-2 ring-orange-400' : ''}">
-                    <div class="p-2 rounded-xl ${currentPage === m.id ? 'cute-gradient text-white' : 'bg-orange-50 text-orange-500'}">
-                        <i data-lucide="${m.icon}" class="w-5 h-5"></i>
-                    </div>
+                    <div class="p-2 rounded-xl ${currentPage === m.id ? 'cute-gradient text-white' : 'bg-orange-50 text-orange-500'}"><i data-lucide="${m.icon}" class="w-5 h-5"></i></div>
                     <span class="font-bold text-sm pr-4">${m.label}</span>
                 </button>
             `).join('');
-
             lucide.createIcons();
-        }
-
-        // --- SHOP CRUD ---
-        function saveProduct(e) {
-            e.preventDefault();
-            const name = document.getElementById('p-name').value;
-            const price = parseInt(document.getElementById('p-price').value);
-            const cat = document.getElementById('p-cat').value;
-            const icon = document.getElementById('p-icon').value;
-
-            if (productEditId) {
-                const idx = PRODUCTS.findIndex(p => p.id === productEditId);
-                PRODUCTS[idx] = { ...PRODUCTS[idx], name, price, cat, icon };
-                showMsg('Produk Diupdate! ✏️');
-            } else {
-                PRODUCTS.unshift({ id: Date.now(), name, price, cat, icon, color: 'bg-orange-100' });
-                showMsg('Produk Ditambah! 📦');
-            }
-            productEditId = null;
-            renderContent();
-        }
-
-        function editProd(id) {
-            productEditId = id;
-            renderContent();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function deleteProd(id) {
-            if (confirm('Hapus produk ini?')) {
-                PRODUCTS = PRODUCTS.filter(p => p.id !== id);
-                showMsg('Dihapus! 🗑️');
-                renderContent();
-            }
         }
 
         function renderContent() {
@@ -358,8 +365,8 @@
                 main.innerHTML = `
                     <div class="space-y-10 animate-pop">
                         <section class="cute-gradient rounded-[3rem] p-8 md:p-16 text-center text-white relative overflow-hidden shadow-2xl shadow-orange-200">
-                            <div class="absolute top-0 left-0 w-32 h-32 bg-white/10 rounded-full -ml-10 -mt-10 blur-2xl"></div>
-                            <div class="relative z-10 flex flex-col items-center gap-6">
+                            <div class="absolute top-0 left-0 w-32 h-32 bg-white/10 rounded-full -ml-10 -mt-10 blur-2xl text-"></div>
+                            <div class="relative z-10 flex flex-col items-center gap-6 text-">
                                 <div class="cat-avatar-frame floating cursor-pointer group" onclick="${(currentUser || isAdminUnlocked) ? "document.getElementById('up').click()" : "navigateTo('account')" }">
                                     <input type="file" id="up" class="hidden" accept="image/*" onchange="handleImage(event)">
                                     <div class="w-40 h-40 md:w-56 md:h-56 rounded-full overflow-hidden bg-orange-100 flex items-center justify-center border-4 border-white shadow-inner">
@@ -370,31 +377,79 @@
                                 <h1 class="text-3xl md:text-5xl font-black leading-tight text-">
                                     ${currentUser ? 'Halo, ' + currentUser.name + '! 🐾' : (isAdminUnlocked ? 'Panel Pengelola 🛠️' : 'Look The Cats <br> Indonesia')}
                                 </h1>
-                                <p class="text-orange-50 font-medium max-w-md opacity-90 leading-relaxed">Solusi lengkap pendaftaran anggota, pakan premium, hingga bimbingan para mentor anabul.</p>
+                                <p class="text-orange-50 font-medium max-w-md opacity-90 leading-relaxed">Pendaftaran anggota, belanja premium, hingga layanan klinik spesialis kucing.</p>
                                 <div class="flex gap-3 w-full max-w-xs">
                                     <button onclick="navigateTo('shop')" class="flex-1 bg-white text-orange-600 py-4 rounded-[1.5rem] font-black shadow-xl active:scale-95 transition">Toko</button>
-                                    <button onclick="navigateTo('consultation')" class="flex-1 bg-black/20 backdrop-blur-md text-white py-4 rounded-[1.5rem] font-black border border-white/30 active:scale-95 transition">Konsul</button>
+                                    <button onclick="navigateTo('clinic')" class="flex-1 bg-black/20 backdrop-blur-md text-white py-4 rounded-[1.5rem] font-black border border-white/30 active:scale-95 transition">Klinik</button>
                                 </div>
                             </div>
                         </section>
-
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-">
-                            <div class="bg-white p-5 rounded-[2rem] border border-orange-50 text-center shadow-sm">
-                                <div class="bg-orange-100 w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2 text-orange-500"><i data-lucide="zap" class="w-5 h-5"></i></div>
-                                <p class="text-[10px] font-black uppercase text-gray-400 mb-1 leading-none">Respon</p><p class="font-bold text-xs">Kilat</p>
+                            <div class="bg-white p-5 rounded-[2rem] border border-orange-50 text-center shadow-sm"><div class="bg-orange-100 w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2 text-orange-500"><i data-lucide="zap" class="w-5 h-5"></i></div><p class="font-bold text-xs">Kilat</p></div>
+                            <div class="bg-white p-5 rounded-[2rem] border border-orange-50 text-center shadow-sm"><div class="bg-pink-100 w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2 text-pink-500"><i data-lucide="heart" class="w-5 h-5"></i></div><p class="font-bold text-xs">Sayang</p></div>
+                            <div class="bg-white p-5 rounded-[2rem] border border-orange-50 text-center shadow-sm"><div class="bg-blue-100 w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2 text-blue-500"><i data-lucide="shield-check" class="w-5 h-5"></i></div><p class="font-bold text-xs">Aktif</p></div>
+                            <div class="bg-white p-5 rounded-[2rem] border border-orange-50 text-center shadow-sm"><div class="bg-purple-100 w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2 text-purple-500"><i data-lucide="stethoscope" class="w-5 h-5"></i></div><p class="font-bold text-xs">Klinik</p></div>
+                        </div>
+                    </div>
+                `;
+            }
+            else if (currentPage === 'clinic') {
+                const editTarget = clinicEditId ? CLINIC_SERVICES.find(c => c.id === clinicEditId) : null;
+                main.innerHTML = `
+                    <div class="space-y-6 animate-pop">
+                        <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-orange-50 text-">
+                            <div class="flex justify-between items-center">
+                                <div><h2 class="text-2xl font-black text-gray-800">Klinik Kucing</h2><p class="text-xs text-gray-400">Layanan medis anabul profesional.</p></div>
+                                <i data-lucide="stethoscope" class="text-blue-200 w-8 h-8"></i>
                             </div>
-                            <div class="bg-white p-5 rounded-[2rem] border border-orange-50 text-center shadow-sm">
-                                <div class="bg-pink-100 w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2 text-pink-500"><i data-lucide="heart" class="w-5 h-5"></i></div>
-                                <p class="text-[10px] font-black uppercase text-gray-400 mb-1 leading-none">Kasih</p><p class="font-bold text-xs">Sayang</p>
-                            </div>
-                            <div class="bg-white p-5 rounded-[2rem] border border-orange-50 text-center shadow-sm">
-                                <div class="bg-blue-100 w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2 text-blue-500"><i data-lucide="shield-check" class="w-5 h-5"></i></div>
-                                <p class="text-[10px] font-black uppercase text-gray-400 mb-1 leading-none">Member</p><p class="font-bold text-xs">Aktif</p>
-                            </div>
-                            <div class="bg-white p-5 rounded-[2rem] border border-orange-50 text-center shadow-sm">
-                                <div class="bg-purple-100 w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2 text-purple-500"><i data-lucide="messages-square" class="w-5 h-5"></i></div>
-                                <p class="text-[10px] font-black uppercase text-gray-400 mb-1 leading-none">Ruang</p><p class="font-bold text-xs">Konsul</p>
-                            </div>
+                            ${isAdminUnlocked ? `
+                            <div class="mt-6 p-6 bg-blue-50/50 border border-blue-100 rounded-[2rem] animate-fade-in text-">
+                                <h3 class="font-black text-blue-600 text-sm mb-4 uppercase tracking-widest">${clinicEditId ? 'Edit Layanan' : 'Tambah Layanan Klinik'}</h3>
+                                <form onsubmit="saveClinicService(event)" class="space-y-4">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <input type="text" id="c-name" placeholder="Nama Layanan" required value="${editTarget ? editTarget.name : ''}" class="p-3 rounded-2xl bg-white border-none outline-none focus:ring-2 focus:ring-blue-300 text-sm font-bold shadow-sm">
+                                        <input type="number" id="c-price" placeholder="Harga Estimasi (Rp)" required value="${editTarget ? editTarget.price : ''}" class="p-3 rounded-2xl bg-white border-none outline-none focus:ring-2 focus:ring-blue-300 text-sm font-bold shadow-sm">
+                                    </div>
+                                    <textarea id="c-desc" placeholder="Deskripsi Layanan" class="w-full p-3 rounded-2xl bg-white border-none outline-none focus:ring-2 focus:ring-blue-300 text-sm font-bold shadow-sm h-20">${editTarget ? editTarget.desc : ''}</textarea>
+                                    <div class="flex flex-col gap-2">
+                                        <label class="text-[10px] font-black text-gray-400 uppercase px-2">Foto Layanan (3-5 Foto)</label>
+                                        <input type="file" multiple accept="image/*" onchange="handlePhotos(event)" class="p-3 rounded-2xl bg-white text-xs font-bold shadow-sm">
+                                        <div id="upload-preview" class="flex gap-2 px-2 mt-1"></div>
+                                    </div>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <select id="c-cat" class="p-3 rounded-2xl bg-white border-none outline-none focus:ring-2 focus:ring-blue-300 text-sm font-bold shadow-sm">
+                                            <option value="Vaksin">Vaksin</option><option value="Steril">Steril</option><option value="Cek Rutin">Cek Rutin</option>
+                                        </select>
+                                        <div class="flex gap-2">
+                                            <button type="submit" class="flex-1 bg-blue-500 text-white py-3 rounded-2xl font-black shadow-lg">${clinicEditId ? 'Update' : 'Simpan'}</button>
+                                            ${clinicEditId ? `<button type="button" onclick="navigateTo('clinic')" class="px-6 py-3 bg-gray-200 rounded-2xl font-black text-xs">Batal</button>` : ''}
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>` : ''}
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                            ${CLINIC_SERVICES.map(c => `
+                                <div class="bg-white p-4 rounded-[2.2rem] border border-orange-50 shadow-sm relative overflow-hidden flex flex-col h-full text-">
+                                    <div class="h-48 rounded-[1.8rem] mb-4 overflow-hidden relative group/img bg-blue-50">
+                                        <div class="product-slider no-scrollbar h-full w-full">
+                                            ${c.images && c.images.length > 0 ? c.images.map(img => `<img src="${img}" class="w-full h-full object-cover">`).join('') : `<div class="w-full h-full flex items-center justify-center text-blue-200"><i data-lucide="stethoscope" class="w-12 h-12"></i></div>`}
+                                        </div>
+                                        <div class="absolute top-3 left-3 bg-white/90 px-3 py-1 rounded-full text-[9px] font-black text-blue-500 tracking-widest uppercase shadow-sm z-10">${c.cat}</div>
+                                    </div>
+                                    <h3 class="font-bold text-gray-800 text-sm px-1">${c.name}</h3>
+                                    <p class="text-[10px] text-gray-400 font-medium px-1 mt-1 line-clamp-2">${c.desc}</p>
+                                    <div class="mt-auto pt-3 flex justify-between items-center border-t border-gray-50 mt-3 px-1 text-">
+                                        <p class="font-black text-blue-500 text-lg">${toIDR(c.price)}</p>
+                                        <div class="flex gap-1">
+                                            ${isAdminUnlocked ? `
+                                                <button onclick="editClinic(${c.id})" class="p-2 bg-blue-50 text-blue-500 rounded-xl border border-blue-100"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
+                                                <button onclick="deleteClinic(${c.id})" class="p-2 bg-red-50 text-red-400 rounded-xl border border-red-100"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                                            ` : `<button onclick="window.open('https://wa.me/${WHATSAPP_ADMIN}?text=Halo%20Admin,%20saya%20ingin%20booking%20layanan%20${c.name}', '_blank')" class="bg-blue-500 text-white px-4 py-2 rounded-2xl shadow-lg active:scale-90 transition font-black text-xs">Booking</button>`}
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
                         </div>
                     </div>
                 `;
@@ -411,34 +466,44 @@
                             ${isAdminUnlocked ? `
                             <div class="mt-6 p-6 bg-orange-50/50 border border-orange-100 rounded-[2rem] animate-fade-in text-">
                                 <h3 class="font-black text-orange-600 text-sm mb-4 uppercase tracking-widest">${productEditId ? 'Edit Produk' : 'Tambah Produk Baru'}</h3>
-                                <form onsubmit="saveProduct(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <input type="text" id="p-name" placeholder="Nama Produk" required value="${editTarget ? editTarget.name : ''}" class="p-3 rounded-2xl bg-white border-none outline-none focus:ring-2 focus:ring-orange-300 text-sm font-bold shadow-sm">
-                                    <input type="number" id="p-price" placeholder="Harga (Rp)" required value="${editTarget ? editTarget.price : ''}" class="p-3 rounded-2xl bg-white border-none outline-none focus:ring-2 focus:ring-orange-300 text-sm font-bold shadow-sm">
-                                    <select id="p-cat" class="p-3 rounded-2xl bg-white border-none outline-none focus:ring-2 focus:ring-orange-300 text-sm font-bold shadow-sm">
-                                        <option value="Makanan">Makanan</option><option value="Kebersihan">Kebersihan</option><option value="Mainan">Mainan</option><option value="Kesehatan">Kesehatan</option>
-                                    </select>
-                                    <input type="text" id="p-icon" placeholder="Ikon (fish/mouse/zap)" value="${editTarget ? editTarget.icon : 'package'}" class="p-3 rounded-2xl bg-white border-none outline-none focus:ring-2 focus:ring-orange-300 text-sm font-bold shadow-sm">
-                                    <div class="md:col-span-2 flex gap-2">
-                                        <button type="submit" class="flex-1 cute-gradient text-white py-3 rounded-2xl font-black shadow-lg">${productEditId ? 'Update' : 'Simpan'}</button>
-                                        ${productEditId ? `<button type="button" onclick="navigateTo('shop')" class="px-6 py-3 bg-gray-200 text-gray-500 rounded-2xl font-black">Batal</button>` : ''}
+                                <form onsubmit="saveProduct(event)" class="space-y-4">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <input type="text" id="p-name" placeholder="Nama Produk" required value="${editTarget ? editTarget.name : ''}" class="p-3 rounded-2xl bg-white border-none outline-none focus:ring-2 focus:ring-orange-300 text-sm font-bold shadow-sm">
+                                        <input type="number" id="p-price" placeholder="Harga (Rp)" required value="${editTarget ? editTarget.price : ''}" class="p-3 rounded-2xl bg-white border-none outline-none focus:ring-2 focus:ring-orange-300 text-sm font-bold shadow-sm">
+                                    </div>
+                                    <div class="flex flex-col gap-2">
+                                        <label class="text-[10px] font-black text-gray-400 uppercase px-2">Foto Produk (3-5 Foto)</label>
+                                        <input type="file" multiple accept="image/*" onchange="handlePhotos(event)" class="p-3 rounded-2xl bg-white text-xs font-bold shadow-sm">
+                                        <div id="upload-preview" class="flex gap-2 px-2 mt-1"></div>
+                                    </div>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <select id="p-cat" class="p-3 rounded-2xl bg-white border-none outline-none focus:ring-2 focus:ring-orange-300 text-sm font-bold shadow-sm">
+                                            <option value="Makanan">Makanan</option><option value="Kesehatan">Kesehatan</option><option value="Mainan">Mainan</option>
+                                        </select>
+                                        <div class="flex gap-2">
+                                            <button type="submit" class="flex-1 cute-gradient text-white py-3 rounded-2xl font-black shadow-lg">${productEditId ? 'Update' : 'Simpan'}</button>
+                                            ${productEditId ? `<button type="button" onclick="navigateTo('shop')" class="px-6 py-3 bg-gray-200 rounded-2xl font-black text-xs">Batal</button>` : ''}
+                                        </div>
                                     </div>
                                 </form>
                             </div>` : ''}
                         </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                             ${PRODUCTS.map(p => `
-                                <div class="bg-white p-4 rounded-[2.2rem] border border-orange-50 shadow-sm group">
-                                    <div class="${p.color} h-40 rounded-[1.8rem] mb-4 flex items-center justify-center relative overflow-hidden shadow-inner">
-                                        <i data-lucide="${p.icon || 'package'}" class="w-12 h-12 text-white/50 floating"></i>
-                                        <div class="absolute top-3 left-3 bg-white/90 px-3 py-1 rounded-full text-[9px] font-black uppercase text-orange-500 tracking-widest">${p.cat}</div>
+                                <div class="bg-white p-4 rounded-[2.2rem] border border-orange-50 shadow-sm group relative overflow-hidden flex flex-col h-full text-">
+                                    <div class="h-56 rounded-[1.8rem] mb-4 overflow-hidden relative group/img bg-orange-50">
+                                        <div class="product-slider no-scrollbar h-full w-full">
+                                            ${p.images && p.images.length > 0 ? p.images.map(img => `<img src="${img}" class="w-full h-full object-cover">`).join('') : `<div class="w-full h-full flex items-center justify-center text-orange-200"><i data-lucide="package" class="w-12 h-12"></i></div>`}
+                                        </div>
+                                        <div class="absolute top-3 left-3 bg-white/90 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest uppercase z-10 text-orange-500">${p.cat}</div>
                                     </div>
-                                    <h3 class="font-bold text-gray-800 text-sm line-clamp-1">${p.name}</h3>
-                                    <div class="flex justify-between items-center mt-3 pt-3 border-t border-gray-50">
+                                    <h3 class="font-bold text-gray-800 text-sm line-clamp-1 px-1">${p.name}</h3>
+                                    <div class="mt-auto pt-3 flex justify-between items-center border-t border-gray-50 mt-3 px-1 text-">
                                         <p class="font-black text-orange-500 text-lg">${toIDR(p.price)}</p>
                                         <div class="flex gap-1">
                                             ${isAdminUnlocked ? `
-                                                <button onclick="editProd(${p.id})" class="p-2 bg-blue-50 text-blue-500 rounded-xl transition border border-blue-100"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
-                                                <button onclick="deleteProd(${p.id})" class="p-2 bg-red-50 text-red-400 rounded-xl transition border border-red-100"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                                                <button onclick="productEditId=${p.id}; renderContent(); window.scrollTo(0,0);" class="p-2 bg-blue-50 text-blue-500 rounded-xl border border-blue-100"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
+                                                <button onclick="if(confirm('Hapus?')){PRODUCTS=PRODUCTS.filter(x=>x.id!==${p.id});renderContent();}" class="p-2 bg-red-50 text-red-400 rounded-xl border border-red-100"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                                             ` : `<button onclick="addCart(${p.id})" class="cute-gradient text-white p-3 rounded-2xl shadow-lg active:scale-75 transition"><i data-lucide="plus" class="w-4 h-4"></i></button>`}
                                         </div>
                                     </div>
@@ -450,201 +515,52 @@
             }
             else if (currentPage === 'consultation') {
                 if (!currentUser) {
-                    main.innerHTML = `
-                        <div class="max-w-md mx-auto text-center p-12 bg-white rounded-[3rem] border shadow-xl animate-pop mt-10">
-                            <div class="cute-gradient w-24 h-24 rounded-[2rem] flex items-center justify-center mx-auto mb-6 text-white shadow-lg shadow-orange-100"><i data-lucide="messages-square" class="w-10 h-10"></i></div>
-                            <h2 class="text-2xl font-black text-gray-800">Ruang Diskusi</h2>
-                            <p class="text-gray-400 mt-2 text-sm">Login dulu yuk untuk konsultasi seputar kucingmu dengan Admin & Mentor profesional kami.</p>
-                            <button onclick="navigateTo('account')" class="mt-8 cute-gradient text-white px-10 py-4 rounded-full font-black shadow-xl active:scale-95 transition">Login Anggota</button>
-                        </div>
-                    `;
+                    main.innerHTML = `<div class="max-w-md mx-auto text-center p-12 bg-white rounded-[3rem] border shadow-xl animate-pop mt-10 text-"><div class="cute-gradient w-24 h-24 rounded-[2rem] flex items-center justify-center mx-auto mb-6 text-white shadow-lg shadow-orange-100"><i data-lucide="messages-square" class="w-10 h-10"></i></div><h2 class="text-2xl font-black text-gray-800 leading-none mb-3">Butuh Bantuan?</h2><p class="text-gray-400 text-sm">Login yuk untuk tanya jawab seputar kucingmu dengan mentor profesional.</p><button onclick="navigateTo('account')" class="mt-8 cute-gradient text-white px-10 py-4 rounded-full font-black shadow-xl active:scale-95 transition text-">Login Sekarang</button></div>`;
                 } else {
-                    main.innerHTML = `
-                        <div class="space-y-6 animate-pop text-">
-                            <div class="flex justify-between items-center bg-white p-6 rounded-[2.5rem] shadow-sm border border-orange-50">
-                                <div><h2 class="text-2xl font-black text-gray-800">Ruang Konsul</h2><p class="text-xs text-gray-400">Diskusi kesehatan & pakan.</p></div>
-                                <button onclick="startConsult()" class="cute-gradient text-white p-4 rounded-2xl shadow-lg active:scale-90 transition"><i data-lucide="plus" class="w-6 h-6"></i></button>
-                            </div>
-                            <div class="space-y-3">
-                                ${consultations.map(c => `
-                                    <div class="bg-white p-6 rounded-[2.2rem] border border-orange-50 shadow-sm flex items-center justify-between group hover:border-orange-300 transition-all">
-                                        <div class="flex items-center gap-4">
-                                            <div class="bg-orange-100 p-3 rounded-2xl text-orange-500 shadow-inner"><i data-lucide="message-circle" class="w-6 h-6"></i></div>
-                                            <div>
-                                                <h3 class="font-bold text-gray-800 text-sm leading-none">${c.topic}</h3>
-                                                <p class="text-[9px] text-gray-400 font-bold uppercase tracking-widest mt-1">${c.sender} • ${c.status}</p>
-                                            </div>
-                                        </div>
-                                        <button onclick="viewChat(${c.id})" class="p-2 bg-orange-50 text-orange-500 rounded-xl group-hover:bg-orange-500 group-hover:text-white transition-all"><i data-lucide="chevron-right"></i></button>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                    `;
+                    main.innerHTML = `<div class="space-y-6 animate-pop text-"><div class="flex justify-between items-center bg-white p-6 rounded-[2.5rem] shadow-sm border border-orange-50"><div><h2 class="text-2xl font-black text-gray-800">Ruang Konsul</h2><p class="text-xs text-gray-400">Diskusi kesehatan & pakan.</p></div><button onclick="startConsult()" class="cute-gradient text-white p-4 rounded-2xl shadow-lg active:scale-90 transition"><i data-lucide="plus" class="w-6 h-6"></i></button></div><div class="space-y-3">${consultations.map(c => `<div class="bg-white p-6 rounded-[2.2rem] border border-orange-50 shadow-sm flex items-center justify-between group"><div class="flex items-center gap-4 text-"><div class="bg-orange-100 p-3 rounded-2xl text-orange-500 shadow-inner"><i data-lucide="message-circle" class="w-6 h-6"></i></div><div><h3 class="font-bold text-gray-800 text-sm leading-none">${c.topic}</h3><p class="text-[9px] text-gray-400 font-bold uppercase tracking-widest mt-1">${c.sender} • ${c.status}</p></div></div><button onclick="viewChat(${c.id})" class="p-2 bg-orange-50 text-orange-500 rounded-xl group-hover:bg-orange-500 group-hover:text-white transition-all"><i data-lucide="chevron-right"></i></button></div>`).join('')}</div></div>`;
                 }
-            }
-            else if (currentPage === 'activities') {
-                main.innerHTML = `
-                    <div class="space-y-6 animate-pop">
-                        <h2 class="text-2xl font-black text-gray-800 ml-2">Agenda Kucing 📅</h2>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            ${ACTIVITIES.map(a => `
-                                <div class="bg-white p-5 rounded-[2rem] border border-orange-50 flex items-center gap-5 shadow-sm hover:shadow-md transition text-[Image of Agenda]">
-                                    <div class="${a.bg} ${a.color} w-16 h-16 rounded-[1.5rem] flex flex-col items-center justify-center border-2 border-white shadow-inner font-black uppercase tracking-widest">
-                                        <span class="text-[8px]">${a.date.split(' ')[1]}</span><span class="text-xl">${a.date.split(' ')[0]}</span>
-                                    </div>
-                                    <div class="flex-1">
-                                        <h3 class="font-black text-sm text-gray-800 leading-tight">${a.title}</h3>
-                                        <p class="text-[10px] text-gray-400 font-bold uppercase"><i data-lucide="map-pin" class="w-2.5 h-2.5 inline"></i> ${a.loc}</p>
-                                        <button onclick="window.open('https://wa.me/${WHATSAPP_ADMIN}?text=Halo%20Admin,%20saya%20tertarik%20dengan%20${a.title}', '_blank')" class="mt-2 text-orange-500 font-black text-[10px] uppercase tracking-widest">Daftar &rarr;</button>
-                                    </div>
-                                </div>
-                            `).join('')}
-                        </div>
-                        <div class="bg-blue-500 rounded-[2.5rem] p-8 text-white relative overflow-hidden shadow-2xl shadow-blue-100">
-                            <div class="absolute right-0 bottom-0 w-32 h-32 bg-white/10 rounded-full -mb-10 -mr-10 blur-xl"></div>
-                            <div class="relative z-10 flex flex-col md:flex-row items-center gap-6">
-                                <div class="bg-white/20 p-4 rounded-3xl"><i data-lucide="info" class="w-8 h-8"></i></div>
-                                <div class="text-center md:text-left flex-1">
-                                    <h4 class="text-xl font-black">Punya Info Kegiatan?</h4>
-                                    <p class="text-blue-50 text-sm font-medium mt-1 leading-relaxed">Hubungi WhatsApp Admin untuk menambahkan agenda wilayahmu.</p>
-                                    <button onclick="window.open('https://wa.me/${WHATSAPP_ADMIN}', '_blank')" class="mt-5 bg-white text-blue-600 px-8 py-3 rounded-full font-black shadow-lg">Chat Admin</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
             }
             else if (currentPage === 'account') {
                 if (currentUser) {
-                    main.innerHTML = `
-                        <div class="max-w-md mx-auto animate-pop pt-10 text-">
-                            <div class="bg-white p-10 rounded-[3rem] shadow-2xl border border-orange-50 text-center relative overflow-hidden">
-                                <div class="absolute top-0 left-0 w-full h-32 cute-gradient rounded-b-[4rem]"></div>
-                                <div class="relative z-10">
-                                    <div class="cat-avatar-frame w-32 h-32 mx-auto mb-6 ring-8 ring-white shadow-xl overflow-hidden shadow-orange-100">
-                                        <div class="w-full h-full rounded-full overflow-hidden bg-orange-100 flex items-center justify-center">
-                                            ${currentUser.img ? `<img src="${currentUser.img}" class="w-full h-full object-cover">` : `<span class="text-4xl font-black text-orange-400">${currentUser.name.charAt(0)}</span>`}
-                                        </div>
-                                    </div>
-                                    <h2 class="text-2xl font-black text-gray-900 leading-tight">${currentUser.name}</h2>
-                                    <p class="text-gray-400 text-[10px] font-black uppercase tracking-widest mt-1">LookTheCats Member</p>
-                                    <div class="mt-8">
-                                        <button onclick="triggerAppInstall()" class="w-full bg-orange-50 text-orange-500 py-3 rounded-2xl font-black border border-orange-100 active:scale-95 transition mb-3 flex items-center justify-center gap-2">
-                                            <i data-lucide="smartphone" class="w-4 h-4 text-"></i> Pasang Ikon di HP
-                                        </button>
-                                        <button onclick="handleLogout()" class="w-full bg-red-50 text-red-500 py-3 rounded-2xl font-black border border-red-100 active:scale-95 transition flex items-center justify-center gap-2">
-                                            <i data-lucide="log-out" class="w-4 h-4"></i> Logout
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    `;
+                    main.innerHTML = `<div class="max-w-md mx-auto animate-pop pt-10 text-"><div class="bg-white p-10 rounded-[3rem] shadow-2xl border border-orange-50 text-center relative overflow-hidden"><div class="absolute top-0 left-0 w-full h-32 cute-gradient rounded-b-[4rem]"></div><div class="relative z-10"><div class="cat-avatar-frame w-32 h-32 mx-auto mb-6 ring-8 ring-white shadow-xl overflow-hidden shadow-orange-100"><div class="w-full h-full rounded-full overflow-hidden bg-orange-100 flex items-center justify-center">${currentUser.img ? `<img src="${currentUser.img}" class="w-full h-full object-cover">` : `<span class="text-4xl font-black text-orange-400">${currentUser.name.charAt(0)}</span>`}</div></div><h2 class="text-2xl font-black text-gray-900 leading-tight">${currentUser.name}</h2><p class="text-gray-400 text-[10px] font-black uppercase tracking-widest mt-1">LookTheCats Member</p><div class="mt-8"><button onclick="triggerAppInstall()" class="w-full bg-orange-50 text-orange-500 py-3 rounded-2xl font-black border border-orange-100 active:scale-95 transition mb-3 flex items-center justify-center gap-2"><i data-lucide="smartphone" class="w-4 h-4"></i> Pasang di Layar HP</button><button onclick="handleLogout()" class="w-full bg-red-50 text-red-500 py-3 rounded-2xl font-black border border-red-100 active:scale-95 transition flex items-center justify-center gap-2"><i data-lucide="log-out" class="w-4 h-4"></i> Logout</button></div></div></div></div>`;
                 } else {
-                    main.innerHTML = `
-                        <div class="max-w-md mx-auto bg-white p-10 rounded-[3.5rem] shadow-2xl border border-orange-50 animate-pop mt-4 text-[Image of Login]">
-                            <div class="text-center mb-10">
-                                <div class="cute-gradient w-14 h-14 rounded-[1.5rem] flex items-center justify-center mx-auto mb-4 shadow-xl shadow-orange-100"><i data-lucide="${isLoginView ? 'log-in' : 'user-plus'}" class="text-white"></i></div>
-                                <h2 class="text-3xl font-black text-gray-900 leading-tight">${isLoginView ? 'Masuk LTC' : 'Daftar Member'}</h2>
-                            </div>
-                            <form onsubmit="${isLoginView ? 'handleLogin(event)' : 'handleRegister(event)'}" class="space-y-4">
-                                ${!isLoginView ? `<input type="text" id="reg-name" required placeholder="Nama Lengkap" class="w-full p-4 rounded-[1.5rem] bg-gray-50 border-none focus:ring-2 focus:ring-orange-300 outline-none transition-all">
-                                <input type="tel" id="reg-wa" required placeholder="WhatsApp: 08..." class="w-full p-4 rounded-[1.5rem] bg-gray-50 border-none focus:ring-2 focus:ring-orange-300 outline-none transition-all">` : ''}
-                                <input type="email" id="${isLoginView ? 'login-email' : 'reg-email'}" required placeholder="Email" class="w-full p-4 rounded-[1.5rem] bg-gray-50 border-none focus:ring-2 focus:ring-orange-300 outline-none transition-all">
-                                <input type="password" required placeholder="Password" class="w-full p-4 rounded-[1.5rem] bg-gray-50 border-none focus:ring-2 focus:ring-orange-300 outline-none transition-all">
-                                <button class="w-full cute-gradient text-white py-4 rounded-[1.5rem] font-black shadow-xl shadow-orange-200 mt-2 text-lg active:scale-95 transition">
-                                    ${isLoginView ? 'Login Sekarang' : 'Daftar & Bergabung'}
-                                </button>
-                            </form>
-                            <button onclick="isLoginView = !isLoginView; renderContent();" class="w-full text-center mt-10 text-[10px] font-black text-gray-400 uppercase tracking-widest underline decoration-orange-300">
-                                ${isLoginView ? 'Buat Akun Baru' : 'Sudah Punya Akun'}
-                            </button>
-                        </div>
-                    `;
+                    main.innerHTML = `<div class="max-w-md mx-auto bg-white p-10 rounded-[3.5rem] shadow-2xl border border-orange-50 animate-pop mt-4"><div class="text-center mb-10 text-"><div class="cute-gradient w-14 h-14 rounded-[1.5rem] flex items-center justify-center mx-auto mb-4 shadow-xl"><i data-lucide="${isLoginView ? 'log-in' : 'user-plus'}" class="text-white"></i></div><h2 class="text-3xl font-black text-gray-900 leading-tight">${isLoginView ? 'Masuk LTC' : 'Daftar Member'}</h2></div><form onsubmit="${isLoginView ? 'handleLogin(event)' : 'handleRegister(event)'}" class="space-y-4 text-">${!isLoginView ? `<input type="text" id="reg-name" required placeholder="Nama Lengkap" class="w-full p-4 rounded-[1.5rem] bg-gray-50 border-none focus:ring-2 focus:ring-orange-300 outline-none transition-all"><input type="tel" id="reg-wa" required placeholder="WA: 08..." class="w-full p-4 rounded-[1.5rem] bg-gray-50 border-none focus:ring-2 focus:ring-orange-300 outline-none transition-all">` : ''}<input type="email" id="${isLoginView ? 'login-email' : 'reg-email'}" required placeholder="Email" class="w-full p-4 rounded-[1.5rem] bg-gray-50 border-none focus:ring-2 focus:ring-orange-300 outline-none transition-all"><input type="password" required placeholder="Password" class="w-full p-4 rounded-[1.5rem] bg-gray-50 border-none focus:ring-2 focus:ring-orange-300 outline-none transition-all"><button class="w-full cute-gradient text-white py-4 rounded-[1.5rem] font-black shadow-xl shadow-orange-200 mt-2 text-lg active:scale-95 transition">${isLoginView ? 'Login' : 'Daftar Sekarang'}</button></form><button onclick="isLoginView = !isLoginView; renderContent();" class="w-full text-center mt-10 text-[10px] font-black text-gray-400 uppercase tracking-widest underline decoration-orange-300">Ganti Mode</button></div>`;
                 }
             }
             else if (currentPage === 'admin') {
                 if (!isAdminUnlocked) {
-                    main.innerHTML = `
-                        <div class="max-w-md mx-auto space-y-6 animate-pop mt-10 text-">
-                            <div class="bg-white p-10 rounded-[3.5rem] shadow-2xl border border-orange-50 text-center relative overflow-hidden">
-                                <div class="cute-gradient w-20 h-20 rounded-[2rem] flex items-center justify-center mx-auto mb-6 text-white shadow-lg shadow-orange-100"><i data-lucide="lock" class="w-10 h-10"></i></div>
-                                <h2 class="text-2xl font-black text-gray-800 leading-tight">Area Pengelola</h2>
-                                <p class="text-gray-400 mt-2 text-sm leading-relaxed">Masukkan password admin untuk mengelola anggota, produk, dan maskot global.</p>
-                                <div class="mt-8 space-y-4">
-                                    <input type="password" id="admin-pass-input" placeholder="Password Admin" class="w-full p-4 rounded-[1.5rem] bg-gray-50 border-none outline-none focus:ring-2 focus:ring-orange-300 text-center font-bold tracking-[0.4em] text-lg transition-all">
-                                    <button onclick="checkAdminPassword()" class="w-full cute-gradient text-white py-4 rounded-[1.5rem] font-black shadow-xl shadow-orange-200 active:scale-95 transition">Buka Panel Admin</button>
-                                </div>
-                            </div>
-                        </div>
-                    `;
+                    main.innerHTML = `<div class="max-w-md mx-auto space-y-6 animate-pop mt-10 text-"><div class="bg-white p-10 rounded-[3.5rem] shadow-2xl border border-orange-50 text-center relative overflow-hidden"><div class="cute-gradient w-20 h-20 rounded-[2rem] flex items-center justify-center mx-auto mb-6 text-white shadow-lg"><i data-lucide="lock" class="w-10 h-10"></i></div><h2 class="text-2xl font-black text-gray-800 leading-none mb-3">Area Pengelola</h2><p class="text-gray-400 text-sm leading-relaxed">Gunakan password admin untuk akses panel pusat.</p><div class="mt-8 space-y-4 text-"><input type="password" id="admin-pass-input" placeholder="Password Admin" class="w-full p-4 rounded-[1.5rem] bg-gray-50 border-none outline-none focus:ring-2 focus:ring-orange-300 text-center font-bold tracking-[0.4em] text-lg transition-all"><button onclick="checkAdminPassword()" class="w-full cute-gradient text-white py-4 rounded-[1.5rem] font-black shadow-xl active:scale-95 transition shadow-orange-200">Buka Panel</button></div></div></div>`;
                 } else {
-                    main.innerHTML = `
-                        <div class="space-y-8 animate-pop text-[Image of Data]">
-                            <div class="bg-gray-900 text-white p-10 rounded-[3.5rem] shadow-2xl relative overflow-hidden">
-                                <div class="absolute right-0 bottom-0 w-64 h-64 bg-white/5 rounded-full -mb-20 -mr-20 blur-3xl"></div>
-                                <div class="relative z-10 flex flex-col md:flex-row justify-between items-center gap-6">
-                                    <div>
-                                        <span class="bg-orange-500 text-white px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-3 inline-block shadow-lg">LTC Super Admin</span>
-                                        <h2 class="text-3xl font-black leading-tight">Manajemen Pusat <br> Look The Cats</h2>
-                                    </div>
-                                    <button onclick="lockAdmin()" class="bg-red-500/20 text-red-400 p-4 rounded-2xl border border-red-500/30 font-black text-xs flex items-center gap-2 active:scale-90 transition"><i data-lucide="power" class="w-4 h-4"></i> Keluar Admin</button>
-                                </div>
-                            </div>
-                            <div class="bg-white rounded-[2.5rem] border border-orange-50 shadow-sm overflow-hidden">
-                                <div class="overflow-x-auto no-scrollbar">
-                                    <table class="w-full text-left text-sm">
-                                        <thead class="bg-orange-50/50 border-b text-[10px] font-black uppercase text-gray-500 tracking-widest"><tr><th class="p-6">Member</th><th class="p-6 text-center">Tindakan</th></tr></thead>
-                                        <tbody class="divide-y divide-orange-50 text-">
-                                            ${mockUsers.map((u, i) => `
-                                                <tr>
-                                                    <td class="p-6 flex items-center gap-4">
-                                                        <div class="w-12 h-12 rounded-2xl bg-orange-100 flex items-center justify-center font-black shadow-inner overflow-hidden border border-white">
-                                                            ${u.img ? `<img src="${u.img}" class="w-full h-full object-cover">` : u.name.charAt(0)}
-                                                        </div>
-                                                        <div><p class="font-black text-gray-900 leading-none mb-1">${u.name}</p><p class="text-[9px] text-gray-400 font-bold uppercase">${u.wa}</p></div>
-                                                    </td>
-                                                    <td class="p-6 text-center">
-                                                        <button onclick="mockUsers[${i}].status='Nonaktif'; renderContent(); showMsg('Akses Dinonaktifkan')" class="p-2 bg-red-50 text-red-500 rounded-xl border border-red-100 active:scale-90 transition-all"><i data-lucide="user-x" class="w-4 h-4 mx-auto"></i></button>
-                                                    </td>
-                                                </tr>
-                                            `).join('')}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    `;
+                    main.innerHTML = `<div class="space-y-8 animate-pop text-"><div class="bg-gray-900 text-white p-10 rounded-[3.5rem] shadow-2xl relative overflow-hidden text-"><div class="absolute right-0 bottom-0 w-64 h-64 bg-white/5 rounded-full -mb-20 -mr-20 blur-3xl"></div><div class="relative z-10 flex flex-col md:flex-row justify-between items-center gap-6"><div><span class="bg-orange-500 text-white px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-3 inline-block shadow-lg">LTC Super Admin</span><h2 class="text-3xl font-black leading-tight">Manajemen Pusat <br> Look The Cats</h2></div><button onclick="lockAdmin()" class="bg-red-500/20 text-red-400 p-4 rounded-2xl border border-red-500/30 font-black text-xs active:scale-90 transition shadow-sm"><i data-lucide="power" class="w-4 h-4"></i> Keluar</button></div></div><div class="bg-white rounded-[2.5rem] border border-orange-50 shadow-sm overflow-hidden"><div class="overflow-x-auto no-scrollbar text-"><table class="w-full text-left text-sm text-"><thead class="bg-orange-50/50 border-b text-[10px] font-black uppercase text-gray-500 tracking-widest"><tr><th class="p-6">Member</th><th class="p-6 text-center">Tindakan</th></tr></thead><tbody class="divide-y divide-orange-50">${mockUsers.map((u, i) => `<tr><td class="p-6 flex items-center gap-4"><div class="w-12 h-12 rounded-2xl bg-orange-100 flex items-center justify-center font-black shadow-inner overflow-hidden border border-white">${u.img ? `<img src="${u.img}" class="w-full h-full object-cover">` : u.name.charAt(0)}</div><div><p class="font-black text-gray-900 leading-none mb-1">${u.name}</p><p class="text-[9px] text-gray-400 font-bold uppercase">${u.wa}</p></div></td><td class="p-6 text-center"><button onclick="mockUsers[${i}].status='Nonaktif'; renderContent(); showMsg('Nonaktif')" class="p-2 bg-red-50 text-red-500 rounded-xl active:scale-90 transition-all shadow-sm"><i data-lucide="user-x" class="w-4 h-4 mx-auto"></i></button></td></tr>`).join('')}</tbody></table></div></div></div>`;
                 }
             }
             lucide.createIcons();
         }
 
-        // --- KERANJANG ---
+        // --- CART ---
         function toggleCart() { document.getElementById('cart-modal').classList.toggle('hidden'); document.body.classList.toggle('modal-open'); renderCart(); }
-        function addCart(id) { const p = PRODUCTS.find(x => x.id === id); const i = cart.find(x => x.id === id); if (i) i.q++; else cart.push({...p, q: 1}); updateBadge(); showMsg('Berhasil Ditambah! 🛒'); }
+        function addCart(id) { const p = PRODUCTS.find(x => x.id === id); const i = cart.find(x => x.id === id); if (i) i.q++; else cart.push({...p, q: 1}); updateBadge(); showMsg('Masuk Keranjang! 🛒'); }
         function updateBadge() { const b = document.getElementById('cart-badge'); const c = cart.reduce((t, i) => t + i.q, 0); b.innerText = c; b.classList.toggle('hidden', c === 0); }
         function renderCart() {
             const c = document.getElementById('cart-items-container'); const f = document.getElementById('cart-footer');
             if (cart.length === 0) { c.innerHTML = `<div class="h-full flex flex-col items-center justify-center text-gray-300 gap-4 mt-20 opacity-30"><i data-lucide="shopping-bag" class="w-20 h-20 text-"></i><p class="font-black uppercase tracking-widest text-xs">Kosong Bro...</p></div>`; f.classList.add('hidden'); }
-            else { let total = 0; c.innerHTML = cart.map(i => { total += i.price * i.q; return `<div class="bg-white p-4 rounded-[2rem] border border-orange-50 shadow-sm flex gap-4 animate-pop"><div class="${i.color} w-16 h-16 rounded-[1.2rem] flex items-center justify-center text-white shadow-inner"><i data-lucide="${i.icon}"></i></div><div class="flex-1"><p class="font-black text-sm text-gray-800 leading-tight">${i.name}</p><div class="flex justify-between items-center mt-1"><p class="text-orange-500 font-black text-xs">${toIDR(i.price)} x${i.q}</p><button onclick="cart = cart.filter(x => x.id !== ${i.id}); renderCart(); updateBadge();" class="text-red-300 active:scale-75 transition p-1.5 bg-red-50 rounded-xl shadow-sm"><i data-lucide="trash-2" class="w-4 h-4 text-"></i></button></div></div></div>`; }).join(''); document.getElementById('cart-total-price').innerText = toIDR(total); f.classList.remove('hidden'); }
+            else { let total = 0; c.innerHTML = cart.map(i => { total += i.price * i.q; return `<div class="bg-white p-4 rounded-[2rem] border border-orange-50 shadow-sm flex gap-4 animate-pop"><div class="${i.color} w-16 h-16 rounded-[1.2rem] flex items-center justify-center text-white shadow-inner"><i data-lucide="package"></i></div><div class="flex-1"><p class="font-black text-sm text-gray-800 leading-tight">${i.name}</p><div class="flex justify-between items-center mt-1 text-"><p class="text-orange-500 font-black text-xs">${toIDR(i.price)} x${i.q}</p><button onclick="cart = cart.filter(x => x.id !== ${i.id}); renderCart(); updateBadge();" class="text-red-300 active:scale-75 transition p-1.5 bg-red-50 rounded-xl shadow-sm"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div></div></div>`; }).join(''); document.getElementById('cart-total-price').innerText = toIDR(total); f.classList.remove('hidden'); }
             lucide.createIcons();
         }
-        function checkout() { const list = cart.map(i => `- ${i.name} (${i.q}x)`).join('%0A'); const total = toIDR(cart.reduce((t, i) => t + (i.price * i.q), 0)); const msg = `Halo Admin Look The Cats,%0ASaya ingin memesan:%0A${list}%0ATotal: ${total}`; window.open(`https://wa.me/${WHATSAPP_ADMIN}?text=${msg}`, '_blank'); toggleCart(); cart = []; updateBadge(); }
+        function checkout() { const list = cart.map(i => `- ${i.name} (${i.q}x)`).join('%0A'); const total = toIDR(cart.reduce((t, i) => t + (i.price * i.q), 0)); const msg = `Halo Admin LTC,%0ASaya ingin memesan:%0A${list}%0ATotal: ${total}`; window.open(`https://wa.me/${WHATSAPP_ADMIN}?text=${msg}`, '_blank'); toggleCart(); cart = []; updateBadge(); }
 
         // --- CHAT ---
-        function startConsult() { const topic = prompt("Tulis topik konsul (Cth: Kucing Muntah):"); if (topic) { consultations.unshift({ id: Date.now(), sender: currentUser.name, topic, status: 'Aktif', messages: [{from: currentUser.name, text: 'Halo Admin, saya ingin konsultasi tentang ' + topic}] }); renderContent(); } }
+        function startConsult() { const topic = prompt("Tulis topik konsul:"); if (topic) { consultations.unshift({ id: Date.now(), sender: currentUser.name, topic, status: 'Aktif', messages: [{from: currentUser.name, text: 'Halo Admin, saya ingin konsultasi tentang ' + topic}] }); renderContent(); } }
         function viewChat(id) {
             const c = consultations.find(x => x.id === id);
-            const chatHtml = c.messages.map(m => `<div class="flex flex-col ${m.from === currentUser.name ? 'items-end' : 'items-start'}"><div class="p-4 rounded-3xl max-w-[85%] text-sm font-bold ${m.from === currentUser.name ? 'cute-gradient text-white rounded-tr-none' : 'bg-white text-gray-800 rounded-tl-none border shadow-sm'}">${m.text}</div><span class="text-[8px] font-black uppercase text-gray-400 mt-1 px-1">${m.from}</span></div>`).join('');
-            document.getElementById('main-content').innerHTML = `<div class="flex flex-col h-[75vh] animate-pop"><div class="flex items-center gap-4 bg-white p-6 rounded-t-[3rem] border-b shadow-sm"><button onclick="navigateTo('consultation')" class="p-2 bg-gray-50 rounded-xl shadow-sm active:scale-75 transition"><i data-lucide="chevron-left"></i></button><div><h3 class="font-black text-gray-800 text-sm leading-none">${c.topic}</h3><p class="text-[9px] font-black uppercase text-orange-500 mt-1 tracking-widest">Mentor LTC Active</p></div></div><div class="flex-1 overflow-y-auto p-6 space-y-4 no-scrollbar bg-orange-50/20 text-[Image of Chat]">${chatHtml}</div><div class="p-4 bg-white rounded-b-[3rem] border-t flex gap-2"><input type="text" id="msgInput" placeholder="Kirim balasan..." class="flex-1 bg-gray-100 border-none rounded-2xl px-4 py-3 outline-none text-sm font-bold shadow-inner"><button onclick="sendMsg(${c.id})" class="cute-gradient p-3 rounded-2xl text-white shadow-lg active:scale-75 transition shadow-orange-200"><i data-lucide="send"></i></button></div></div>`;
+            const chatHtml = c.messages.map(m => `<div class="flex flex-col ${m.from === currentUser.name ? 'items-end' : 'items-start'}"><div class="p-4 rounded-3xl max-w-[85%] text-sm font-bold ${m.from === currentUser.name ? 'cute-gradient text-white rounded-tr-none shadow-lg' : 'bg-white text-gray-800 rounded-tl-none border shadow-sm'}">${m.text}</div><span class="text-[8px] font-black uppercase text-gray-400 mt-1 px-1">${m.from}</span></div>`).join('');
+            document.getElementById('main-content').innerHTML = `<div class="flex flex-col h-[75vh] animate-pop text-"><div class="flex items-center gap-4 bg-white p-6 rounded-t-[3rem] border-b shadow-sm"><button onclick="navigateTo('consultation')" class="p-2 bg-gray-50 rounded-xl shadow-sm active:scale-75 transition"><i data-lucide="chevron-left"></i></button><div><h3 class="font-black text-gray-800 text-sm leading-none">${c.topic}</h3><p class="text-[9px] font-black uppercase text-orange-500 mt-1 tracking-widest">Mentor LTC Active</p></div></div><div class="flex-1 overflow-y-auto p-6 space-y-4 no-scrollbar bg-orange-50/20">${chatHtml}</div><div class="p-4 bg-white rounded-b-[3rem] border-t flex gap-2"><input type="text" id="msgInput" placeholder="Kirim balasan..." class="flex-1 bg-gray-100 border-none rounded-2xl px-4 py-3 outline-none text-sm font-bold shadow-inner"><button onclick="sendMsg(${c.id})" class="cute-gradient p-3 rounded-2xl text-white shadow-lg active:scale-75 transition shadow-orange-200"><i data-lucide="send" class="text-"></i></button></div></div>`;
             lucide.createIcons();
         }
         function sendMsg(id) { const i = document.getElementById('msgInput'); if (!i.value.trim()) return; consultations.find(x => x.id === id).messages.push({ from: currentUser.name, text: i.value }); viewChat(id); }
 
         // --- AUTH ---
-        function handleLogin(e) { e.preventDefault(); const em = document.getElementById('login-email').value.toLowerCase(); currentUser = mockUsers.find(u => u.email === em) || { id: Date.now(), name: 'Cat Lover', email: em, wa: '-', role: 'member', status: 'Aktif', img: null }; showMsg('Selamat Datang! 🐾'); navigateTo('home'); }
+        function handleLogin(e) { e.preventDefault(); const em = document.getElementById('login-email').value.toLowerCase(); currentUser = mockUsers.find(u => u.email === em) || { id: Date.now(), name: 'Cat Lover', email: em, wa: '-', role: 'member', status: 'Aktif', img: null }; showMsg('Welcome! 🐾'); navigateTo('home'); }
         function handleRegister(e) { e.preventDefault(); const u = { id: Date.now(), name: document.getElementById('reg-name').value, email: document.getElementById('reg-email').value, wa: document.getElementById('reg-wa').value, role: 'member', status: 'Aktif', img: null }; mockUsers.push(u); currentUser = u; showMsg('Daftar Berhasil! 😻'); navigateTo('home'); }
         function handleLogout() { currentUser = null; isAdminUnlocked = false; showMsg('Sampai Jumpa! 👋'); navigateTo('home'); }
 
