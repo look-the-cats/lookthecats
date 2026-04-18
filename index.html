@@ -5,6 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Look The Cats - Sahabat Anabul</title>
     
+    <!-- Meta Tags untuk PWA / Install di HP -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="LookTheCats">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#fb923c">
+    
+    <!-- Ikon Jejak Telapak Kucing Lucu (Data URI SVG) -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23fb923c'%3E%3Cpath d='M12 11c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm-4.5-1c1.38 0 2.5-1.12 2.5-2.5S8.88 5 7.5 5 5 6.12 5 7.5 6.12 10 7.5 10zm9 0c1.38 0 2.5-1.12 2.5-2.5S17.88 5 16.5 5 14 6.12 14 7.5 15.12 10 16.5 10zm-4.5-2c1.38 0 2.5-1.12 2.5-2.5S13.38 3 12 3 9.5 4.12 9.5 5.5 10.62 8 12 8z'/%3E%3C/svg%3E">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23fb923c'%3E%3Cpath d='M12 11c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm-4.5-1c1.38 0 2.5-1.12 2.5-2.5S8.88 5 7.5 5 5 6.12 5 7.5 6.12 10 7.5 10zm9 0c1.38 0 2.5-1.12 2.5-2.5S17.88 5 16.5 5 14 6.12 14 7.5 15.12 10 16.5 10zm-4.5-2c1.38 0 2.5-1.12 2.5-2.5S13.38 3 12 3 9.5 4.12 9.5 5.5 10.62 8 12 8z'/%3E%3C/svg%3E">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     
@@ -43,7 +54,7 @@
         }
 
         .animate-pop {
-            animation: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         @keyframes pop {
@@ -61,29 +72,19 @@
 
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        
-        .chat-bubble-member {
-            background-color: #fb923c;
-            color: white;
-            border-radius: 1.5rem 1.5rem 0 1.5rem;
-        }
-        
-        .chat-bubble-admin {
-            background-color: white;
-            color: #374151;
-            border-radius: 1.5rem 1.5rem 1.5rem 0;
-            border: 1px solid #fed7aa;
-        }
     </style>
 </head>
 <body class="text-gray-800 min-h-screen flex flex-col overflow-x-hidden">
 
     <!-- --- HEADER --- -->
-    <header class="sticky top-0 z-50 px-4 py-3 glass-nav border-b border-orange-50">
+    <header class="sticky top-0 z-50 px-4 py-3 glass-nav border-b border-orange-50 text-">
         <div class="max-w-6xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-2 cursor-pointer" onclick="navigateTo('home')">
                 <div class="cute-gradient p-2 rounded-2xl shadow-lg shadow-orange-200">
-                    <i data-lucide="cat" class="text-white w-5 h-5"></i>
+                    <!-- Custom SVG Cat Paw -->
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 11c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm-4.5-1c1.38 0 2.5-1.12 2.5-2.5S8.88 5 7.5 5 5 6.12 5 7.5 6.12 10 7.5 10zm9 0c1.38 0 2.5-1.12 2.5-2.5S17.88 5 16.5 5 14 6.12 14 7.5 15.12 10 16.5 10zm-4.5-2c1.38 0 2.5-1.12 2.5-2.5S13.38 3 12 3 9.5 4.12 9.5 5.5 10.62 8 12 8z"/>
+                    </svg>
                 </div>
                 <span class="font-extrabold text-xl tracking-tight bg-clip-text text-transparent cute-gradient">Look The Cats</span>
             </div>
@@ -95,53 +96,74 @@
         </div>
     </header>
 
-    <!-- --- FLOATING MOBILE NAV --- -->
+    <!-- --- MOBILE NAVIGATION --- -->
     <nav class="md:hidden fixed bottom-6 left-6 right-6 z-50 glass-nav rounded-[2.5rem] shadow-[0_20px_50px_-10px_rgba(251,146,60,0.3)] px-2 py-2 flex justify-around items-center" id="mobile-bottom-nav">
     </nav>
 
-    <!-- --- DESKTOP NAV --- -->
+    <!-- --- DESKTOP NAVIGATION --- -->
     <nav class="hidden md:flex fixed top-24 right-10 flex-col gap-4 z-40" id="desktop-menu">
     </nav>
 
-    <!-- --- MAIN --- -->
+    <!-- --- MAIN CONTENT --- -->
     <main id="main-content" class="flex-grow px-4 pt-4 pb-32 max-w-6xl mx-auto w-full">
     </main>
+
+    <!-- --- PERIODIC INSTALL BANNER --- -->
+    <div id="install-banner" class="hidden fixed bottom-28 left-6 right-6 z-[40] animate-pop">
+        <div class="bg-white p-5 rounded-[2.5rem] shadow-2xl border border-orange-100 flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="cute-gradient p-2.5 rounded-2xl shadow-lg">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 11c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm-4.5-1c1.38 0 2.5-1.12 2.5-2.5S8.88 5 7.5 5 5 6.12 5 7.5 6.12 10 7.5 10zm9 0c1.38 0 2.5-1.12 2.5-2.5S17.88 5 16.5 5 14 6.12 14 7.5 15.12 10 16.5 10zm-4.5-2c1.38 0 2.5-1.12 2.5-2.5S13.38 3 12 3 9.5 4.12 9.5 5.5 10.62 8 12 8z"/>
+                    </svg>
+                </div>
+                <div>
+                    <p class="font-black text-sm text-gray-800">Pasang Ikon HP?</p>
+                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest leading-none mt-1">Akses Lebih Cepat!</p>
+                </div>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="hideInstallBanner()" class="p-3 bg-gray-50 text-gray-400 rounded-2xl"><i data-lucide="x" class="w-4 h-4"></i></button>
+                <button onclick="triggerAppInstall()" class="cute-gradient px-6 py-3 rounded-2xl text-white font-black text-xs shadow-lg shadow-orange-200">Pasang</button>
+            </div>
+        </div>
+    </div>
 
     <!-- --- MODAL KERANJANG --- -->
     <div id="cart-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex justify-end items-end md:items-stretch">
         <div class="bg-white w-full max-w-md h-[80vh] md:h-full shadow-2xl flex flex-col animate-pop rounded-t-[3rem] md:rounded-t-none md:rounded-l-[3rem] overflow-hidden">
-            <div class="p-6 cute-gradient text-white flex justify-between items-center">
+            <div class="p-6 cute-gradient text-white flex justify-between items-center text-">
                 <h2 class="text-xl font-black flex items-center gap-3"><i data-lucide="shopping-cart"></i> Keranjang Anabul</h2>
                 <button onclick="toggleCart()" class="bg-white/20 p-2 rounded-2xl transition"><i data-lucide="x"></i></button>
             </div>
             <div id="cart-items-container" class="flex-1 overflow-y-auto p-6 space-y-4 no-scrollbar"></div>
             <div id="cart-footer" class="hidden p-8 border-t bg-gray-50 rounded-t-[2rem]">
                 <div class="flex justify-between text-2xl font-black mb-6">
-                    <span class="text-gray-400 text-sm uppercase self-center">Total</span>
+                    <span class="text-gray-400 text-sm uppercase self-center">Total Belanja</span>
                     <span class="text-orange-600" id="cart-total-price">Rp 0</span>
                 </div>
                 <button onclick="checkout()" class="w-full cute-gradient text-white py-4 rounded-[2rem] font-black shadow-xl shadow-orange-200 active:scale-95 transition-all text-lg">
-                    Check Out (WA)
+                    Check Out (WhatsApp)
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- --- TOAST --- -->
+    <!-- --- NOTIFIKASI --- -->
     <div id="message-box" class="hidden fixed top-24 left-1/2 -translate-x-1/2 bg-white/90 backdrop-blur-md border border-orange-100 px-6 py-3 rounded-full shadow-2xl z-[100] flex items-center gap-3 animate-pop">
-        <div class="bg-orange-100 p-1.5 rounded-full text-orange-600"><i data-lucide="sparkles" class="w-4 h-4"></i></div>
+        <div class="bg-orange-100 p-1.5 rounded-full text-orange-600"><i data-lucide="sparkles" class="w-4 h-4 text-"></i></div>
         <span id="message-box-text" class="font-bold text-sm"></span>
     </div>
 
     <script>
-        // --- CONFIG & DATA ---
+        // --- KONFIGURASI ---
         const WHATSAPP_ADMIN = "6281296629033";
         const ADMIN_PASS = "Yakin537@";
         
         let PRODUCTS = [
-            { id: 1, name: 'Makanan Kucing Premium 1kg', price: 75000, cat: 'Makanan', color: 'bg-orange-100', icon: 'fish' },
+            { id: 1, name: 'Whiskas Adult Salmon 1.2kg', price: 75000, cat: 'Makanan', color: 'bg-orange-100', icon: 'fish' },
             { id: 2, name: 'Pasir Kucing Wangi Lemon 10L', price: 65000, cat: 'Kebersihan', color: 'bg-yellow-100', icon: 'sparkles' },
-            { id: 3, name: 'Vitamin Kucing Gemuk & Bulu', price: 45000, cat: 'Kesehatan', color: 'bg-green-100', icon: 'zap' },
+            { id: 3, name: 'Vitamin Bulu & Nafsu Makan', price: 45000, cat: 'Kesehatan', color: 'bg-green-100', icon: 'zap' },
             { id: 4, name: 'Mainan Tongkat Bulu Laser', price: 35000, cat: 'Mainan', color: 'bg-pink-100', icon: 'mouse' },
         ];
 
@@ -159,6 +181,8 @@
         let isLoginView = true;
         let globalMascot = null;
         let isAdminUnlocked = false; 
+        let productEditId = null;
+        let deferredPrompt;
 
         let mockUsers = [
             { id: 1, name: 'Andi Member', email: 'andi@gmail.com', wa: '08123456789', role: 'member', status: 'Aktif', img: null },
@@ -167,9 +191,44 @@
         let consultations = [
             { id: 101, sender: 'Andi Member', topic: 'Anabul tiba-tiba lemas', status: 'Aktif', messages: [
                 {from: 'Andi Member', text: 'Halo admin, kucing saya lemas sejak pagi. Kenapa ya?'},
-                {from: 'Admin', text: 'Coba cek apakah sudah makan kak? Terus hidungnya kering atau tidak?'}
+                {from: 'Admin', text: 'Coba cek apakah hidungnya kering kak?'}
             ]}
         ];
+
+        // --- INSTALL LOGIC ---
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            // Tampilkan banner saat pertama kali terdeteksi
+            document.getElementById('install-banner').classList.remove('hidden');
+        });
+
+        // Pengingat Rutin (Setiap 3 Menit jika tidak diinstall)
+        setInterval(() => {
+            const banner = document.getElementById('install-banner');
+            if (deferredPrompt && banner.classList.contains('hidden')) {
+                banner.classList.remove('hidden');
+                console.log("Reminder: Install Look The Cats app for better experience!");
+            }
+        }, 180000); // 180000ms = 3 Menit
+
+        function hideInstallBanner() {
+            document.getElementById('install-banner').classList.add('hidden');
+        }
+
+        async function triggerAppInstall() {
+            if (!deferredPrompt) {
+                showMsg('Klik Menu Browser > Add to Home Screen');
+                return;
+            }
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            if (outcome === 'accepted') {
+                showMsg('Meow! Aplikasi terpasang 🐾');
+                hideInstallBanner();
+            }
+            deferredPrompt = null;
+        }
 
         // --- CORE FUNCTIONS ---
         const toIDR = (n) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(n);
@@ -183,6 +242,7 @@
 
         function navigateTo(p) {
             currentPage = p;
+            productEditId = null; 
             renderNavs();
             renderContent();
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -213,7 +273,7 @@
                     const imgData = ev.target.result;
                     if (isAdminUnlocked) {
                         globalMascot = imgData;
-                        showMsg('Maskot Global Diperbarui Admin! ✨');
+                        showMsg('Maskot Global Diperbarui! ✨');
                     } else if (currentUser) {
                         currentUser.img = imgData;
                         showMsg('Foto Kucingmu Berhasil Dipasang! 😻');
@@ -229,7 +289,6 @@
                 { id: 'home', label: 'Home', icon: 'home' },
                 { id: 'shop', label: 'Toko', icon: 'shopping-bag' },
                 { id: 'consultation', label: 'Konsul', icon: 'messages-square' },
-                { id: 'activities', label: 'Agenda', icon: 'calendar-days' },
                 { id: 'account', label: 'Profil', icon: 'user' },
                 { id: 'admin', label: 'Admin', icon: 'shield-check' }
             ];
@@ -240,6 +299,7 @@
                     <div class="${currentPage === m.id ? 'cute-gradient p-2 rounded-xl shadow-lg' : ''}">
                         <i data-lucide="${m.icon}" class="w-4 h-4 ${currentPage === m.id ? 'text-white' : ''}"></i>
                     </div>
+                    <span class="text-[7px] font-black uppercase mt-1 ${currentPage === m.id ? 'block' : 'hidden'}">${m.label}</span>
                 </button>
             `).join('');
 
@@ -254,6 +314,40 @@
             `).join('');
 
             lucide.createIcons();
+        }
+
+        // --- SHOP CRUD ---
+        function saveProduct(e) {
+            e.preventDefault();
+            const name = document.getElementById('p-name').value;
+            const price = parseInt(document.getElementById('p-price').value);
+            const cat = document.getElementById('p-cat').value;
+            const icon = document.getElementById('p-icon').value;
+
+            if (productEditId) {
+                const idx = PRODUCTS.findIndex(p => p.id === productEditId);
+                PRODUCTS[idx] = { ...PRODUCTS[idx], name, price, cat, icon };
+                showMsg('Produk Diupdate! ✏️');
+            } else {
+                PRODUCTS.unshift({ id: Date.now(), name, price, cat, icon, color: 'bg-orange-100' });
+                showMsg('Produk Ditambah! 📦');
+            }
+            productEditId = null;
+            renderContent();
+        }
+
+        function editProd(id) {
+            productEditId = id;
+            renderContent();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function deleteProd(id) {
+            if (confirm('Hapus produk ini?')) {
+                PRODUCTS = PRODUCTS.filter(p => p.id !== id);
+                showMsg('Dihapus! 🗑️');
+                renderContent();
+            }
         }
 
         function renderContent() {
@@ -273,10 +367,10 @@
                                     </div>
                                     ${(currentUser || isAdminUnlocked) ? `<div class="absolute bottom-2 right-2 bg-white text-orange-500 p-2 rounded-full shadow-lg group-hover:scale-125 transition"><i data-lucide="camera" class="w-5 h-5"></i></div>` : ''}
                                 </div>
-                                <h1 class="text-3xl md:text-5xl font-black leading-tight">
-                                    ${currentUser ? 'Halo, ' + currentUser.name + '! 🐾' : (isAdminUnlocked ? 'Panel Admin LTC 🛠️' : 'Look The Cats <br> Indonesia')}
+                                <h1 class="text-3xl md:text-5xl font-black leading-tight text-">
+                                    ${currentUser ? 'Halo, ' + currentUser.name + '! 🐾' : (isAdminUnlocked ? 'Panel Pengelola 🛠️' : 'Look The Cats <br> Indonesia')}
                                 </h1>
-                                <p class="text-orange-50 font-medium max-w-md opacity-90">Solusi pendaftaran anggota, pakan premium, hingga konsultasi anabul tercinta.</p>
+                                <p class="text-orange-50 font-medium max-w-md opacity-90 leading-relaxed">Solusi lengkap pendaftaran anggota, pakan premium, hingga bimbingan para mentor anabul.</p>
                                 <div class="flex gap-3 w-full max-w-xs">
                                     <button onclick="navigateTo('shop')" class="flex-1 bg-white text-orange-600 py-4 rounded-[1.5rem] font-black shadow-xl active:scale-95 transition">Toko</button>
                                     <button onclick="navigateTo('consultation')" class="flex-1 bg-black/20 backdrop-blur-md text-white py-4 rounded-[1.5rem] font-black border border-white/30 active:scale-95 transition">Konsul</button>
@@ -284,23 +378,72 @@
                             </div>
                         </section>
 
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-">
                             <div class="bg-white p-5 rounded-[2rem] border border-orange-50 text-center shadow-sm">
                                 <div class="bg-orange-100 w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2 text-orange-500"><i data-lucide="zap" class="w-5 h-5"></i></div>
-                                <p class="text-[10px] font-black uppercase text-gray-400 mb-1">Respon</p><p class="font-bold text-xs">Kilat</p>
+                                <p class="text-[10px] font-black uppercase text-gray-400 mb-1 leading-none">Respon</p><p class="font-bold text-xs">Kilat</p>
                             </div>
                             <div class="bg-white p-5 rounded-[2rem] border border-orange-50 text-center shadow-sm">
                                 <div class="bg-pink-100 w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2 text-pink-500"><i data-lucide="heart" class="w-5 h-5"></i></div>
-                                <p class="text-[10px] font-black uppercase text-gray-400 mb-1">Kasih</p><p class="font-bold text-xs">Sayang</p>
+                                <p class="text-[10px] font-black uppercase text-gray-400 mb-1 leading-none">Kasih</p><p class="font-bold text-xs">Sayang</p>
                             </div>
                             <div class="bg-white p-5 rounded-[2rem] border border-orange-50 text-center shadow-sm">
                                 <div class="bg-blue-100 w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2 text-blue-500"><i data-lucide="shield-check" class="w-5 h-5"></i></div>
-                                <p class="text-[10px] font-black uppercase text-gray-400 mb-1">Member</p><p class="font-bold text-xs">Aktif</p>
+                                <p class="text-[10px] font-black uppercase text-gray-400 mb-1 leading-none">Member</p><p class="font-bold text-xs">Aktif</p>
                             </div>
                             <div class="bg-white p-5 rounded-[2rem] border border-orange-50 text-center shadow-sm">
-                                <div class="bg-purple-100 w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2 text-purple-500"><i data-lucide="message-square" class="w-5 h-5"></i></div>
-                                <p class="text-[10px] font-black uppercase text-gray-400 mb-1">Ruang</p><p class="font-bold text-xs">Konsul</p>
+                                <div class="bg-purple-100 w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2 text-purple-500"><i data-lucide="messages-square" class="w-5 h-5"></i></div>
+                                <p class="text-[10px] font-black uppercase text-gray-400 mb-1 leading-none">Ruang</p><p class="font-bold text-xs">Konsul</p>
                             </div>
+                        </div>
+                    </div>
+                `;
+            }
+            else if (currentPage === 'shop') {
+                const editTarget = productEditId ? PRODUCTS.find(p => p.id === productEditId) : null;
+                main.innerHTML = `
+                    <div class="space-y-6 animate-pop text-">
+                        <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-orange-50">
+                            <div class="flex justify-between items-center">
+                                <div><h2 class="text-2xl font-black text-gray-800">Toko Anabul</h2><p class="text-xs text-gray-400">Pilihan produk berkualitas.</p></div>
+                                <i data-lucide="shopping-bag" class="text-orange-200 w-8 h-8"></i>
+                            </div>
+                            ${isAdminUnlocked ? `
+                            <div class="mt-6 p-6 bg-orange-50/50 border border-orange-100 rounded-[2rem] animate-fade-in text-">
+                                <h3 class="font-black text-orange-600 text-sm mb-4 uppercase tracking-widest">${productEditId ? 'Edit Produk' : 'Tambah Produk Baru'}</h3>
+                                <form onsubmit="saveProduct(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <input type="text" id="p-name" placeholder="Nama Produk" required value="${editTarget ? editTarget.name : ''}" class="p-3 rounded-2xl bg-white border-none outline-none focus:ring-2 focus:ring-orange-300 text-sm font-bold shadow-sm">
+                                    <input type="number" id="p-price" placeholder="Harga (Rp)" required value="${editTarget ? editTarget.price : ''}" class="p-3 rounded-2xl bg-white border-none outline-none focus:ring-2 focus:ring-orange-300 text-sm font-bold shadow-sm">
+                                    <select id="p-cat" class="p-3 rounded-2xl bg-white border-none outline-none focus:ring-2 focus:ring-orange-300 text-sm font-bold shadow-sm">
+                                        <option value="Makanan">Makanan</option><option value="Kebersihan">Kebersihan</option><option value="Mainan">Mainan</option><option value="Kesehatan">Kesehatan</option>
+                                    </select>
+                                    <input type="text" id="p-icon" placeholder="Ikon (fish/mouse/zap)" value="${editTarget ? editTarget.icon : 'package'}" class="p-3 rounded-2xl bg-white border-none outline-none focus:ring-2 focus:ring-orange-300 text-sm font-bold shadow-sm">
+                                    <div class="md:col-span-2 flex gap-2">
+                                        <button type="submit" class="flex-1 cute-gradient text-white py-3 rounded-2xl font-black shadow-lg">${productEditId ? 'Update' : 'Simpan'}</button>
+                                        ${productEditId ? `<button type="button" onclick="navigateTo('shop')" class="px-6 py-3 bg-gray-200 text-gray-500 rounded-2xl font-black">Batal</button>` : ''}
+                                    </div>
+                                </form>
+                            </div>` : ''}
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                            ${PRODUCTS.map(p => `
+                                <div class="bg-white p-4 rounded-[2.2rem] border border-orange-50 shadow-sm group">
+                                    <div class="${p.color} h-40 rounded-[1.8rem] mb-4 flex items-center justify-center relative overflow-hidden shadow-inner">
+                                        <i data-lucide="${p.icon || 'package'}" class="w-12 h-12 text-white/50 floating"></i>
+                                        <div class="absolute top-3 left-3 bg-white/90 px-3 py-1 rounded-full text-[9px] font-black uppercase text-orange-500 tracking-widest">${p.cat}</div>
+                                    </div>
+                                    <h3 class="font-bold text-gray-800 text-sm line-clamp-1">${p.name}</h3>
+                                    <div class="flex justify-between items-center mt-3 pt-3 border-t border-gray-50">
+                                        <p class="font-black text-orange-500 text-lg">${toIDR(p.price)}</p>
+                                        <div class="flex gap-1">
+                                            ${isAdminUnlocked ? `
+                                                <button onclick="editProd(${p.id})" class="p-2 bg-blue-50 text-blue-500 rounded-xl transition border border-blue-100"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
+                                                <button onclick="deleteProd(${p.id})" class="p-2 bg-red-50 text-red-400 rounded-xl transition border border-red-100"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                                            ` : `<button onclick="addCart(${p.id})" class="cute-gradient text-white p-3 rounded-2xl shadow-lg active:scale-75 transition"><i data-lucide="plus" class="w-4 h-4"></i></button>`}
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
                         </div>
                     </div>
                 `;
@@ -310,26 +453,26 @@
                     main.innerHTML = `
                         <div class="max-w-md mx-auto text-center p-12 bg-white rounded-[3rem] border shadow-xl animate-pop mt-10">
                             <div class="cute-gradient w-24 h-24 rounded-[2rem] flex items-center justify-center mx-auto mb-6 text-white shadow-lg shadow-orange-100"><i data-lucide="messages-square" class="w-10 h-10"></i></div>
-                            <h2 class="text-2xl font-black">Butuh Bantuan?</h2>
-                            <p class="text-gray-400 mt-2 text-sm leading-relaxed">Daftar dulu yuk agar keluhan anabulmu bisa ditangani admin atau mentor profesional kami.</p>
-                            <button onclick="navigateTo('account')" class="mt-8 cute-gradient text-white px-10 py-4 rounded-full font-black shadow-xl active:scale-95 transition">Login Sekarang</button>
+                            <h2 class="text-2xl font-black text-gray-800">Ruang Diskusi</h2>
+                            <p class="text-gray-400 mt-2 text-sm">Login dulu yuk untuk konsultasi seputar kucingmu dengan Admin & Mentor profesional kami.</p>
+                            <button onclick="navigateTo('account')" class="mt-8 cute-gradient text-white px-10 py-4 rounded-full font-black shadow-xl active:scale-95 transition">Login Anggota</button>
                         </div>
                     `;
                 } else {
                     main.innerHTML = `
-                        <div class="space-y-6 animate-pop">
+                        <div class="space-y-6 animate-pop text-">
                             <div class="flex justify-between items-center bg-white p-6 rounded-[2.5rem] shadow-sm border border-orange-50">
-                                <div><h2 class="text-2xl font-black text-gray-800">Ruang Konsul</h2><p class="text-xs text-gray-400">Tanya mentor seputar kucingmu.</p></div>
-                                <button onclick="startConsult()" class="cute-gradient text-white p-4 rounded-2xl shadow-lg active:scale-90"><i data-lucide="plus" class="w-6 h-6"></i></button>
+                                <div><h2 class="text-2xl font-black text-gray-800">Ruang Konsul</h2><p class="text-xs text-gray-400">Diskusi kesehatan & pakan.</p></div>
+                                <button onclick="startConsult()" class="cute-gradient text-white p-4 rounded-2xl shadow-lg active:scale-90 transition"><i data-lucide="plus" class="w-6 h-6"></i></button>
                             </div>
                             <div class="space-y-3">
                                 ${consultations.map(c => `
                                     <div class="bg-white p-6 rounded-[2.2rem] border border-orange-50 shadow-sm flex items-center justify-between group hover:border-orange-300 transition-all">
-                                        <div class="flex items-center gap-4 text-">
+                                        <div class="flex items-center gap-4">
                                             <div class="bg-orange-100 p-3 rounded-2xl text-orange-500 shadow-inner"><i data-lucide="message-circle" class="w-6 h-6"></i></div>
                                             <div>
-                                                <h3 class="font-bold text-gray-800">${c.topic}</h3>
-                                                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">${c.sender} • ${c.status}</p>
+                                                <h3 class="font-bold text-gray-800 text-sm leading-none">${c.topic}</h3>
+                                                <p class="text-[9px] text-gray-400 font-bold uppercase tracking-widest mt-1">${c.sender} • ${c.status}</p>
                                             </div>
                                         </div>
                                         <button onclick="viewChat(${c.id})" class="p-2 bg-orange-50 text-orange-500 rounded-xl group-hover:bg-orange-500 group-hover:text-white transition-all"><i data-lucide="chevron-right"></i></button>
@@ -340,61 +483,32 @@
                     `;
                 }
             }
-            else if (currentPage === 'shop') {
-                main.innerHTML = `
-                    <div class="space-y-6 animate-pop">
-                        <div class="flex justify-between items-center bg-white p-6 rounded-[2.5rem] shadow-sm border border-orange-50">
-                            <div><h2 class="text-2xl font-black text-gray-800">Toko Anabul</h2><p class="text-xs text-gray-400">Pilihan produk berkualitas tinggi.</p></div>
-                            ${isAdminUnlocked ? `<button onclick="addProd()" class="bg-green-500 text-white p-4 rounded-2xl shadow-lg active:scale-90"><i data-lucide="plus" class="w-6 h-6"></i></button>` : `<i data-lucide="shopping-bag" class="text-orange-200 w-8 h-8"></i>`}
-                        </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-">
-                            ${PRODUCTS.map(p => `
-                                <div class="bg-white p-4 rounded-[2.2rem] border border-orange-50 shadow-sm group relative overflow-hidden">
-                                    <div class="${p.color} h-40 rounded-[1.8rem] mb-4 flex items-center justify-center relative overflow-hidden shadow-inner">
-                                        <i data-lucide="${p.icon || 'package'}" class="w-12 h-12 text-white/50 floating"></i>
-                                        <div class="absolute top-3 left-3 bg-white/90 px-3 py-1 rounded-full text-[9px] font-black text-orange-500 tracking-widest uppercase">${p.cat}</div>
-                                    </div>
-                                    <h3 class="font-bold text-gray-800 text-sm line-clamp-1">${p.name}</h3>
-                                    <div class="flex justify-between items-center mt-3 pt-3 border-t border-gray-50 text-">
-                                        <p class="font-black text-orange-500 text-lg">${toIDR(p.price)}</p>
-                                        <button onclick="addCart(${p.id})" class="cute-gradient text-white p-3 rounded-2xl shadow-lg active:scale-75 transition"><i data-lucide="plus" class="w-4 h-4"></i></button>
-                                    </div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                `;
-            }
             else if (currentPage === 'activities') {
                 main.innerHTML = `
                     <div class="space-y-6 animate-pop">
                         <h2 class="text-2xl font-black text-gray-800 ml-2">Agenda Kucing 📅</h2>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             ${ACTIVITIES.map(a => `
-                                <div class="bg-white p-5 rounded-[2rem] border border-orange-50 flex items-center gap-5 shadow-sm hover:shadow-md transition text-">
-                                    <div class="${a.bg} ${a.color} w-16 h-16 rounded-[1.5rem] flex flex-col items-center justify-center border-2 border-white shadow-inner">
-                                        <span class="text-[8px] font-black uppercase tracking-widest">${a.date.split(' ')[1]}</span>
-                                        <span class="text-xl font-black">${a.date.split(' ')[0]}</span>
+                                <div class="bg-white p-5 rounded-[2rem] border border-orange-50 flex items-center gap-5 shadow-sm hover:shadow-md transition text-[Image of Agenda]">
+                                    <div class="${a.bg} ${a.color} w-16 h-16 rounded-[1.5rem] flex flex-col items-center justify-center border-2 border-white shadow-inner font-black uppercase tracking-widest">
+                                        <span class="text-[8px]">${a.date.split(' ')[1]}</span><span class="text-xl">${a.date.split(' ')[0]}</span>
                                     </div>
                                     <div class="flex-1">
-                                        <div class="flex items-center gap-1.5 mb-0.5">
-                                            <i data-lucide="${a.icon}" class="${a.color} w-3 h-3"></i>
-                                            <h3 class="font-black text-sm text-gray-800 leading-tight">${a.title}</h3>
-                                        </div>
-                                        <p class="text-[10px] text-gray-400 font-bold uppercase tracking-tight"><i data-lucide="map-pin" class="w-2.5 h-2.5 inline"></i> ${a.loc}</p>
-                                        <button onclick="window.open('https://wa.me/${WHATSAPP_ADMIN}?text=Halo%20Admin,%20saya%20tertarik%20dengan%20${a.title}', '_blank')" class="mt-2 text-orange-500 font-black text-[10px] uppercase tracking-widest hover:underline">Daftar Sekarang</button>
+                                        <h3 class="font-black text-sm text-gray-800 leading-tight">${a.title}</h3>
+                                        <p class="text-[10px] text-gray-400 font-bold uppercase"><i data-lucide="map-pin" class="w-2.5 h-2.5 inline"></i> ${a.loc}</p>
+                                        <button onclick="window.open('https://wa.me/${WHATSAPP_ADMIN}?text=Halo%20Admin,%20saya%20tertarik%20dengan%20${a.title}', '_blank')" class="mt-2 text-orange-500 font-black text-[10px] uppercase tracking-widest">Daftar &rarr;</button>
                                     </div>
                                 </div>
                             `).join('')}
                         </div>
-                        <div class="bg-blue-500 rounded-[2.5rem] p-8 text-white relative overflow-hidden shadow-2xl shadow-blue-100 text-[Image of Info]">
+                        <div class="bg-blue-500 rounded-[2.5rem] p-8 text-white relative overflow-hidden shadow-2xl shadow-blue-100">
                             <div class="absolute right-0 bottom-0 w-32 h-32 bg-white/10 rounded-full -mb-10 -mr-10 blur-xl"></div>
                             <div class="relative z-10 flex flex-col md:flex-row items-center gap-6">
                                 <div class="bg-white/20 p-4 rounded-3xl"><i data-lucide="info" class="w-8 h-8"></i></div>
                                 <div class="text-center md:text-left flex-1">
                                     <h4 class="text-xl font-black">Punya Info Kegiatan?</h4>
-                                    <p class="text-blue-50 text-sm font-medium mt-1">Bantu kami memperbarui jadwal komunitas di wilayahmu melalui WA admin.</p>
-                                    <button onclick="window.open('https://wa.me/${WHATSAPP_ADMIN}', '_blank')" class="mt-5 bg-white text-blue-600 px-8 py-3 rounded-full font-black shadow-lg active:scale-95 transition">Chat Admin LTC</button>
+                                    <p class="text-blue-50 text-sm font-medium mt-1 leading-relaxed">Hubungi WhatsApp Admin untuk menambahkan agenda wilayahmu.</p>
+                                    <button onclick="window.open('https://wa.me/${WHATSAPP_ADMIN}', '_blank')" class="mt-5 bg-white text-blue-600 px-8 py-3 rounded-full font-black shadow-lg">Chat Admin</button>
                                 </div>
                             </div>
                         </div>
@@ -408,25 +522,30 @@
                             <div class="bg-white p-10 rounded-[3rem] shadow-2xl border border-orange-50 text-center relative overflow-hidden">
                                 <div class="absolute top-0 left-0 w-full h-32 cute-gradient rounded-b-[4rem]"></div>
                                 <div class="relative z-10">
-                                    <div class="cat-avatar-frame w-32 h-32 mx-auto mb-6 ring-8 ring-white shadow-xl overflow-hidden">
-                                        <div class="w-full h-full rounded-full bg-orange-100 flex items-center justify-center">
+                                    <div class="cat-avatar-frame w-32 h-32 mx-auto mb-6 ring-8 ring-white shadow-xl overflow-hidden shadow-orange-100">
+                                        <div class="w-full h-full rounded-full overflow-hidden bg-orange-100 flex items-center justify-center">
                                             ${currentUser.img ? `<img src="${currentUser.img}" class="w-full h-full object-cover">` : `<span class="text-4xl font-black text-orange-400">${currentUser.name.charAt(0)}</span>`}
                                         </div>
                                     </div>
                                     <h2 class="text-2xl font-black text-gray-900 leading-tight">${currentUser.name}</h2>
-                                    <p class="text-gray-400 text-[10px] font-black uppercase tracking-widest mt-1">LTC Member • Aktif</p>
-                                    <button onclick="handleLogout()" class="w-full mt-10 bg-red-50 text-red-500 py-4 rounded-[1.8rem] font-black border border-red-100 active:scale-95 transition flex items-center justify-center gap-2 text-[Image of Logout]">
-                                        <i data-lucide="log-out" class="w-4 h-4"></i> Logout
-                                    </button>
+                                    <p class="text-gray-400 text-[10px] font-black uppercase tracking-widest mt-1">LookTheCats Member</p>
+                                    <div class="mt-8">
+                                        <button onclick="triggerAppInstall()" class="w-full bg-orange-50 text-orange-500 py-3 rounded-2xl font-black border border-orange-100 active:scale-95 transition mb-3 flex items-center justify-center gap-2">
+                                            <i data-lucide="smartphone" class="w-4 h-4 text-"></i> Pasang Ikon di HP
+                                        </button>
+                                        <button onclick="handleLogout()" class="w-full bg-red-50 text-red-500 py-3 rounded-2xl font-black border border-red-100 active:scale-95 transition flex items-center justify-center gap-2">
+                                            <i data-lucide="log-out" class="w-4 h-4"></i> Logout
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     `;
                 } else {
                     main.innerHTML = `
-                        <div class="max-w-md mx-auto bg-white p-10 rounded-[3.5rem] shadow-2xl border border-orange-50 animate-pop mt-4">
-                            <div class="text-center mb-10 text-[Image of Login]">
-                                <div class="cute-gradient w-14 h-14 rounded-[1.5rem] flex items-center justify-center mx-auto mb-4 shadow-xl"><i data-lucide="${isLoginView ? 'log-in' : 'user-plus'}" class="text-white"></i></div>
+                        <div class="max-w-md mx-auto bg-white p-10 rounded-[3.5rem] shadow-2xl border border-orange-50 animate-pop mt-4 text-[Image of Login]">
+                            <div class="text-center mb-10">
+                                <div class="cute-gradient w-14 h-14 rounded-[1.5rem] flex items-center justify-center mx-auto mb-4 shadow-xl shadow-orange-100"><i data-lucide="${isLoginView ? 'log-in' : 'user-plus'}" class="text-white"></i></div>
                                 <h2 class="text-3xl font-black text-gray-900 leading-tight">${isLoginView ? 'Masuk LTC' : 'Daftar Member'}</h2>
                             </div>
                             <form onsubmit="${isLoginView ? 'handleLogin(event)' : 'handleRegister(event)'}" class="space-y-4">
@@ -438,7 +557,7 @@
                                     ${isLoginView ? 'Login Sekarang' : 'Daftar & Bergabung'}
                                 </button>
                             </form>
-                            <button onclick="isLoginView = !isLoginView; renderContent();" class="w-full text-center mt-10 text-[10px] font-black text-gray-400 uppercase tracking-widest underline decoration-orange-300 text-">
+                            <button onclick="isLoginView = !isLoginView; renderContent();" class="w-full text-center mt-10 text-[10px] font-black text-gray-400 uppercase tracking-widest underline decoration-orange-300">
                                 ${isLoginView ? 'Buat Akun Baru' : 'Sudah Punya Akun'}
                             </button>
                         </div>
@@ -451,24 +570,24 @@
                         <div class="max-w-md mx-auto space-y-6 animate-pop mt-10 text-">
                             <div class="bg-white p-10 rounded-[3.5rem] shadow-2xl border border-orange-50 text-center relative overflow-hidden">
                                 <div class="cute-gradient w-20 h-20 rounded-[2rem] flex items-center justify-center mx-auto mb-6 text-white shadow-lg shadow-orange-100"><i data-lucide="lock" class="w-10 h-10"></i></div>
-                                <h2 class="text-2xl font-black text-gray-800 leading-tight">Dashboard Terkunci</h2>
-                                <p class="text-gray-400 mt-2 text-sm leading-relaxed">Area khusus pengelola Look The Cats. <br> Masukkan password admin.</p>
+                                <h2 class="text-2xl font-black text-gray-800 leading-tight">Area Pengelola</h2>
+                                <p class="text-gray-400 mt-2 text-sm leading-relaxed">Masukkan password admin untuk mengelola anggota, produk, dan maskot global.</p>
                                 <div class="mt-8 space-y-4">
-                                    <input type="password" id="admin-pass-input" placeholder="Password Khusus" class="w-full p-4 rounded-[1.5rem] bg-gray-50 border-none outline-none focus:ring-2 focus:ring-orange-300 text-center font-bold tracking-[0.4em] text-lg transition-all">
-                                    <button onclick="checkAdminPassword()" class="w-full cute-gradient text-white py-4 rounded-[1.5rem] font-black shadow-xl shadow-orange-200 active:scale-95 transition">Akses Dashboard</button>
+                                    <input type="password" id="admin-pass-input" placeholder="Password Admin" class="w-full p-4 rounded-[1.5rem] bg-gray-50 border-none outline-none focus:ring-2 focus:ring-orange-300 text-center font-bold tracking-[0.4em] text-lg transition-all">
+                                    <button onclick="checkAdminPassword()" class="w-full cute-gradient text-white py-4 rounded-[1.5rem] font-black shadow-xl shadow-orange-200 active:scale-95 transition">Buka Panel Admin</button>
                                 </div>
                             </div>
                         </div>
                     `;
                 } else {
                     main.innerHTML = `
-                        <div class="space-y-8 animate-pop">
-                            <div class="bg-gray-900 text-white p-10 rounded-[3.5rem] shadow-2xl relative overflow-hidden text-">
+                        <div class="space-y-8 animate-pop text-[Image of Data]">
+                            <div class="bg-gray-900 text-white p-10 rounded-[3.5rem] shadow-2xl relative overflow-hidden">
                                 <div class="absolute right-0 bottom-0 w-64 h-64 bg-white/5 rounded-full -mb-20 -mr-20 blur-3xl"></div>
                                 <div class="relative z-10 flex flex-col md:flex-row justify-between items-center gap-6">
                                     <div>
-                                        <span class="bg-orange-500 text-white px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-3 inline-block shadow-lg">Root Admin Mode</span>
-                                        <h2 class="text-3xl font-black leading-tight">Manajemen Sistem <br> Look The Cats</h2>
+                                        <span class="bg-orange-500 text-white px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-3 inline-block shadow-lg">LTC Super Admin</span>
+                                        <h2 class="text-3xl font-black leading-tight">Manajemen Pusat <br> Look The Cats</h2>
                                     </div>
                                     <button onclick="lockAdmin()" class="bg-red-500/20 text-red-400 p-4 rounded-2xl border border-red-500/30 font-black text-xs flex items-center gap-2 active:scale-90 transition"><i data-lucide="power" class="w-4 h-4"></i> Keluar Admin</button>
                                 </div>
@@ -476,21 +595,18 @@
                             <div class="bg-white rounded-[2.5rem] border border-orange-50 shadow-sm overflow-hidden">
                                 <div class="overflow-x-auto no-scrollbar">
                                     <table class="w-full text-left text-sm">
-                                        <thead class="bg-orange-50/50 border-b text-[10px] font-black uppercase text-gray-500 tracking-widest"><tr><th class="p-6">Member</th><th class="p-6">Role</th><th class="p-6 text-center">Aksi</th></tr></thead>
+                                        <thead class="bg-orange-50/50 border-b text-[10px] font-black uppercase text-gray-500 tracking-widest"><tr><th class="p-6">Member</th><th class="p-6 text-center">Tindakan</th></tr></thead>
                                         <tbody class="divide-y divide-orange-50 text-">
                                             ${mockUsers.map((u, i) => `
-                                                <tr class="hover:bg-orange-50/20 transition">
+                                                <tr>
                                                     <td class="p-6 flex items-center gap-4">
                                                         <div class="w-12 h-12 rounded-2xl bg-orange-100 flex items-center justify-center font-black shadow-inner overflow-hidden border border-white">
                                                             ${u.img ? `<img src="${u.img}" class="w-full h-full object-cover">` : u.name.charAt(0)}
                                                         </div>
                                                         <div><p class="font-black text-gray-900 leading-none mb-1">${u.name}</p><p class="text-[9px] text-gray-400 font-bold uppercase">${u.wa}</p></div>
                                                     </td>
-                                                    <td class="p-6">
-                                                        <span class="px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest bg-gray-100 text-gray-500 shadow-sm">${u.role}</span>
-                                                    </td>
                                                     <td class="p-6 text-center">
-                                                        <button onclick="mockUsers[${i}].status='Nonaktif'; renderContent(); showMsg('Member Dinonaktifkan')" class="p-2 bg-red-50 text-red-500 rounded-xl border border-red-100 hover:bg-red-500 hover:text-white transition-all"><i data-lucide="user-x" class="w-4 h-4 mx-auto"></i></button>
+                                                        <button onclick="mockUsers[${i}].status='Nonaktif'; renderContent(); showMsg('Akses Dinonaktifkan')" class="p-2 bg-red-50 text-red-500 rounded-xl border border-red-100 active:scale-90 transition-all"><i data-lucide="user-x" class="w-4 h-4 mx-auto"></i></button>
                                                     </td>
                                                 </tr>
                                             `).join('')}
@@ -505,110 +621,32 @@
             lucide.createIcons();
         }
 
-        // --- OTHER FUNCTIONS ---
-        function toggleCart() { document.getElementById('cart-modal').classList.toggle('hidden'); renderCart(); }
-        function addCart(id) {
-            const p = PRODUCTS.find(x => x.id === id);
-            const i = cart.find(x => x.id === id);
-            if (i) i.q++; else cart.push({...p, q: 1});
-            updateBadge(); showMsg('Berhasil Ditambah! 🛒');
-        }
-        function updateBadge() {
-            const b = document.getElementById('cart-badge');
-            const c = cart.reduce((t, i) => t + i.q, 0);
-            b.innerText = c; b.classList.toggle('hidden', c === 0);
-        }
+        // --- KERANJANG ---
+        function toggleCart() { document.getElementById('cart-modal').classList.toggle('hidden'); document.body.classList.toggle('modal-open'); renderCart(); }
+        function addCart(id) { const p = PRODUCTS.find(x => x.id === id); const i = cart.find(x => x.id === id); if (i) i.q++; else cart.push({...p, q: 1}); updateBadge(); showMsg('Berhasil Ditambah! 🛒'); }
+        function updateBadge() { const b = document.getElementById('cart-badge'); const c = cart.reduce((t, i) => t + i.q, 0); b.innerText = c; b.classList.toggle('hidden', c === 0); }
         function renderCart() {
-            const c = document.getElementById('cart-items-container');
-            const f = document.getElementById('cart-footer');
-            if (cart.length === 0) {
-                c.innerHTML = `<div class="h-full flex flex-col items-center justify-center text-gray-300 gap-4 mt-20 opacity-30"><i data-lucide="shopping-bag" class="w-20 h-20"></i><p class="font-black">Kosong Bro...</p></div>`;
-                f.classList.add('hidden');
-            } else {
-                let total = 0;
-                c.innerHTML = cart.map(i => {
-                    total += i.price * i.q;
-                    return `<div class="bg-white p-4 rounded-[2rem] border border-orange-50 shadow-sm flex gap-4 animate-pop">
-                        <div class="${i.color} w-16 h-16 rounded-[1.2rem] flex items-center justify-center text-white"><i data-lucide="${i.icon}"></i></div>
-                        <div class="flex-1">
-                            <p class="font-black text-sm text-gray-800 leading-tight">${i.name}</p>
-                            <div class="flex justify-between items-center mt-1">
-                                <p class="text-orange-500 font-black text-xs">${toIDR(i.price)} x${i.q}</p>
-                                <button onclick="cart = cart.filter(x => x.id !== ${i.id}); renderCart(); updateBadge();" class="text-red-300 active:scale-75 transition"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                            </div>
-                        </div>
-                    </div>`;
-                }).join('');
-                document.getElementById('cart-total-price').innerText = toIDR(total);
-                f.classList.remove('hidden');
-            }
+            const c = document.getElementById('cart-items-container'); const f = document.getElementById('cart-footer');
+            if (cart.length === 0) { c.innerHTML = `<div class="h-full flex flex-col items-center justify-center text-gray-300 gap-4 mt-20 opacity-30"><i data-lucide="shopping-bag" class="w-20 h-20 text-"></i><p class="font-black uppercase tracking-widest text-xs">Kosong Bro...</p></div>`; f.classList.add('hidden'); }
+            else { let total = 0; c.innerHTML = cart.map(i => { total += i.price * i.q; return `<div class="bg-white p-4 rounded-[2rem] border border-orange-50 shadow-sm flex gap-4 animate-pop"><div class="${i.color} w-16 h-16 rounded-[1.2rem] flex items-center justify-center text-white shadow-inner"><i data-lucide="${i.icon}"></i></div><div class="flex-1"><p class="font-black text-sm text-gray-800 leading-tight">${i.name}</p><div class="flex justify-between items-center mt-1"><p class="text-orange-500 font-black text-xs">${toIDR(i.price)} x${i.q}</p><button onclick="cart = cart.filter(x => x.id !== ${i.id}); renderCart(); updateBadge();" class="text-red-300 active:scale-75 transition p-1.5 bg-red-50 rounded-xl shadow-sm"><i data-lucide="trash-2" class="w-4 h-4 text-"></i></button></div></div></div>`; }).join(''); document.getElementById('cart-total-price').innerText = toIDR(total); f.classList.remove('hidden'); }
             lucide.createIcons();
         }
-        function checkout() {
-            const list = cart.map(i => `- ${i.name} (${i.q}x)`).join('%0A');
-            const total = toIDR(cart.reduce((t, i) => t + (i.price * i.q), 0));
-            const msg = `Halo Admin Look The Cats,%0ASaya ingin memesan:%0A${list}%0ATotal: ${total}`;
-            window.open(`https://wa.me/${WHATSAPP_ADMIN}?text=${msg}`, '_blank');
-            toggleCart(); cart = []; updateBadge();
-        }
+        function checkout() { const list = cart.map(i => `- ${i.name} (${i.q}x)`).join('%0A'); const total = toIDR(cart.reduce((t, i) => t + (i.price * i.q), 0)); const msg = `Halo Admin Look The Cats,%0ASaya ingin memesan:%0A${list}%0ATotal: ${total}`; window.open(`https://wa.me/${WHATSAPP_ADMIN}?text=${msg}`, '_blank'); toggleCart(); cart = []; updateBadge(); }
 
-        function startConsult() {
-            const topic = prompt("Tulis topik konsul (Cth: Kucing tidak mau makan):");
-            if (topic) {
-                consultations.unshift({ id: Date.now(), sender: currentUser.name, topic, status: 'Aktif', messages: [{from: currentUser.name, text: 'Halo Mentor, saya ingin bertanya tentang ' + topic}] });
-                renderContent();
-            }
-        }
-
+        // --- CHAT ---
+        function startConsult() { const topic = prompt("Tulis topik konsul (Cth: Kucing Muntah):"); if (topic) { consultations.unshift({ id: Date.now(), sender: currentUser.name, topic, status: 'Aktif', messages: [{from: currentUser.name, text: 'Halo Admin, saya ingin konsultasi tentang ' + topic}] }); renderContent(); } }
         function viewChat(id) {
             const c = consultations.find(x => x.id === id);
-            const chatHtml = c.messages.map(m => `
-                <div class="flex flex-col ${m.from === currentUser.name ? 'items-end' : 'items-start'}">
-                    <div class="p-4 rounded-3xl max-w-[85%] text-sm font-bold ${m.from === currentUser.name ? 'chat-bubble-member' : 'chat-bubble-admin shadow-sm'}">${m.text}</div>
-                    <span class="text-[8px] font-black uppercase text-gray-400 mt-1 px-1">${m.from}</span>
-                </div>
-            `).join('');
-            document.getElementById('main-content').innerHTML = `
-                <div class="flex flex-col h-[75vh] animate-pop text-">
-                    <div class="flex items-center gap-4 bg-white p-6 rounded-t-[3rem] border-b shadow-sm">
-                        <button onclick="navigateTo('consultation')" class="p-2 bg-gray-50 rounded-xl"><i data-lucide="chevron-left"></i></button>
-                        <div><h3 class="font-black text-gray-800 text-sm leading-none">${c.topic}</h3><p class="text-[9px] font-black uppercase text-orange-500 mt-1 tracking-widest">Mentor LTC Active</p></div>
-                    </div>
-                    <div class="flex-1 overflow-y-auto p-6 space-y-4 no-scrollbar bg-orange-50/20">${chatHtml}</div>
-                    <div class="p-4 bg-white rounded-b-[3rem] border-t flex gap-2">
-                        <input type="text" id="msgInput" placeholder="Tulis balasan..." class="flex-1 bg-gray-100 border-none rounded-2xl px-4 py-3 outline-none text-sm font-bold">
-                        <button onclick="sendMsg(${c.id})" class="cute-gradient p-3 rounded-2xl text-white shadow-lg"><i data-lucide="send"></i></button>
-                    </div>
-                </div>
-            `;
+            const chatHtml = c.messages.map(m => `<div class="flex flex-col ${m.from === currentUser.name ? 'items-end' : 'items-start'}"><div class="p-4 rounded-3xl max-w-[85%] text-sm font-bold ${m.from === currentUser.name ? 'cute-gradient text-white rounded-tr-none' : 'bg-white text-gray-800 rounded-tl-none border shadow-sm'}">${m.text}</div><span class="text-[8px] font-black uppercase text-gray-400 mt-1 px-1">${m.from}</span></div>`).join('');
+            document.getElementById('main-content').innerHTML = `<div class="flex flex-col h-[75vh] animate-pop"><div class="flex items-center gap-4 bg-white p-6 rounded-t-[3rem] border-b shadow-sm"><button onclick="navigateTo('consultation')" class="p-2 bg-gray-50 rounded-xl shadow-sm active:scale-75 transition"><i data-lucide="chevron-left"></i></button><div><h3 class="font-black text-gray-800 text-sm leading-none">${c.topic}</h3><p class="text-[9px] font-black uppercase text-orange-500 mt-1 tracking-widest">Mentor LTC Active</p></div></div><div class="flex-1 overflow-y-auto p-6 space-y-4 no-scrollbar bg-orange-50/20 text-[Image of Chat]">${chatHtml}</div><div class="p-4 bg-white rounded-b-[3rem] border-t flex gap-2"><input type="text" id="msgInput" placeholder="Kirim balasan..." class="flex-1 bg-gray-100 border-none rounded-2xl px-4 py-3 outline-none text-sm font-bold shadow-inner"><button onclick="sendMsg(${c.id})" class="cute-gradient p-3 rounded-2xl text-white shadow-lg active:scale-75 transition shadow-orange-200"><i data-lucide="send"></i></button></div></div>`;
             lucide.createIcons();
         }
+        function sendMsg(id) { const i = document.getElementById('msgInput'); if (!i.value.trim()) return; consultations.find(x => x.id === id).messages.push({ from: currentUser.name, text: i.value }); viewChat(id); }
 
-        function sendMsg(id) {
-            const i = document.getElementById('msgInput');
-            if (!i.value.trim()) return;
-            consultations.find(x => x.id === id).messages.push({ from: currentUser.name, text: i.value });
-            viewChat(id);
-        }
-
-        function handleLogin(e) {
-            e.preventDefault();
-            const em = document.getElementById('login-email').value.toLowerCase();
-            currentUser = mockUsers.find(u => u.email === em) || { id: Date.now(), name: 'Cat Lover', email: em, wa: '-', role: 'member', status: 'Aktif', img: null };
-            showMsg('Selamat Datang! 🐾');
-            navigateTo('home');
-        }
-        function handleRegister(e) {
-            e.preventDefault();
-            const u = { id: Date.now(), name: document.getElementById('reg-name').value, email: document.getElementById('reg-email').value, wa: document.getElementById('reg-wa').value, role: 'member', status: 'Aktif', img: null };
-            mockUsers.push(u); currentUser = u; showMsg('Berhasil Daftar! 😻'); navigateTo('home');
-        }
+        // --- AUTH ---
+        function handleLogin(e) { e.preventDefault(); const em = document.getElementById('login-email').value.toLowerCase(); currentUser = mockUsers.find(u => u.email === em) || { id: Date.now(), name: 'Cat Lover', email: em, wa: '-', role: 'member', status: 'Aktif', img: null }; showMsg('Selamat Datang! 🐾'); navigateTo('home'); }
+        function handleRegister(e) { e.preventDefault(); const u = { id: Date.now(), name: document.getElementById('reg-name').value, email: document.getElementById('reg-email').value, wa: document.getElementById('reg-wa').value, role: 'member', status: 'Aktif', img: null }; mockUsers.push(u); currentUser = u; showMsg('Daftar Berhasil! 😻'); navigateTo('home'); }
         function handleLogout() { currentUser = null; isAdminUnlocked = false; showMsg('Sampai Jumpa! 👋'); navigateTo('home'); }
-
-        function addProd() {
-            const n = prompt("Nama Produk:"); const p = parseInt(prompt("Harga:"));
-            if (n && p) { PRODUCTS.unshift({ id: Date.now(), name: n, price: p, cat: 'Baru', color: 'bg-green-100', icon: 'star' }); renderContent(); }
-        }
 
         document.addEventListener('DOMContentLoaded', () => navigateTo('home'));
     </script>
