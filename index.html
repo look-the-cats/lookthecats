@@ -3,24 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Look The Cats - Sahabat Anabul</title>
+    <title>Look The Cats - Sahabat Anabul Terbaik</title>
     
-    <!-- Meta Tags PWA & Mobile App Experience -->
+    <!-- Meta Tags PWA (Aplikasi Web Progresif) -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="LookTheCats">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#fb923c">
     
-    <!-- Ikon Jejak Telapak Kucing SVG Custom -->
+    <!-- Ikon Jejak Kaki Kucing Lucu (SVG) -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23fb923c'%3E%3Cpath d='M12 11c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm-4.5-1c1.38 0 2.5-1.12 2.5-2.5S8.88 5 7.5 5 5 6.12 5 7.5 6.12 10 7.5 10zm9 0c1.38 0 2.5-1.12 2.5-2.5S17.88 5 16.5 5 14 6.12 14 7.5 15.12 10 16.5 10zm-4.5-2c1.38 0 2.5-1.12 2.5-2.5S13.38 3 12 3 9.5 4.12 9.5 5.5 10.62 8 12 8z'/%3E%3C/svg%3E">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23fb923c'%3E%3Cpath d='M12 11c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm-4.5-1c1.38 0 2.5-1.12 2.5-2.5S8.88 5 7.5 5 5 6.12 5 7.5 6.12 10 7.5 10zm9 0c1.38 0 2.5-1.12 2.5-2.5S17.88 5 16.5 5 14 6.12 14 7.5 15.12 10 16.5 10zm-4.5-2c1.38 0 2.5-1.12 2.5-2.5S13.38 3 12 3 9.5 4.12 9.5 5.5 10.62 8 12 8z'/%3E%3C/svg%3E">
 
-    <!-- Tailwind & Icons -->
+    <!-- Tailwind CSS & Lucide Icons -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
         
         :root {
             --primary: #fb923c;
@@ -38,8 +39,8 @@
         }
 
         .glass-nav {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
@@ -49,12 +50,12 @@
 
         @keyframes floating {
             0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
+            50% { transform: translateY(-12px); }
             100% { transform: translateY(0px); }
         }
 
         .animate-pop {
-            animation: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         @keyframes pop {
@@ -64,70 +65,84 @@
 
         .cat-avatar-frame {
             position: relative;
-            padding: 8px;
+            padding: 10px;
             background: white;
             border-radius: 9999px;
-            box-shadow: 0 10px 25px -5px rgba(251, 146, 60, 0.4);
+            box-shadow: 0 15px 35px -5px rgba(251, 146, 60, 0.4);
         }
 
+        /* Hilangkan Scrollbar tapi tetap bisa scroll */
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
-        .image-slider {
+        /* Slider Foto Produk/Klinik */
+        .item-slider {
             display: flex;
             overflow-x: auto;
             scroll-snap-type: x mandatory;
             scroll-behavior: smooth;
         }
-        .image-slider img {
+        .item-slider img {
             scroll-snap-align: start;
             flex-shrink: 0;
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
+
+        /* Navigasi Aktif */
+        .nav-item-active {
+            color: #fb923c;
+            transform: translateY(-2px);
+        }
+        .nav-item-active .icon-box {
+            background: linear-gradient(135deg, #fb923c 0%, #f472b6 100%);
+            box-shadow: 0 4px 15px rgba(251, 146, 60, 0.4);
+            color: white;
+        }
     </style>
 </head>
 <body class="text-gray-800 min-h-screen flex flex-col overflow-x-hidden">
 
-    <!-- --- HEADER --- -->
+    <!-- --- ATAS: HEADER --- -->
     <header class="sticky top-0 z-50 px-4 py-3 glass-nav border-b border-orange-50">
-        <div class="max-w-6xl mx-auto flex justify-between items-center text-">
+        <div class="max-w-6xl mx-auto flex justify-between items-center text-[Image of Logo Atas]">
             <div class="flex items-center gap-2 cursor-pointer" onclick="navigateTo('home')">
                 <div class="cute-gradient p-2 rounded-2xl shadow-lg shadow-orange-200">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
                         <path d="M12 11c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm-4.5-1c1.38 0 2.5-1.12 2.5-2.5S8.88 5 7.5 5 5 6.12 5 7.5 6.12 10 7.5 10zm9 0c1.38 0 2.5-1.12 2.5-2.5S17.88 5 16.5 5 14 6.12 14 7.5 15.12 10 16.5 10zm-4.5-2c1.38 0 2.5-1.12 2.5-2.5S13.38 3 12 3 9.5 4.12 9.5 5.5 10.62 8 12 8z"/>
                     </svg>
                 </div>
-                <span class="font-extrabold text-xl tracking-tight bg-clip-text text-transparent cute-gradient">Look The Cats</span>
+                <span class="font-extrabold text-xl tracking-tighter bg-clip-text text-transparent cute-gradient uppercase">Look The Cats</span>
             </div>
             
-            <button onclick="toggleCart()" class="relative p-2.5 bg-orange-50 text-orange-600 rounded-2xl transition-all active:scale-90 shadow-sm border border-orange-100">
-                <i data-lucide="shopping-basket" class="w-6 h-6"></i>
-                <span id="cart-badge" class="hidden absolute -top-1 -right-1 bg-pink-500 text-white text-[10px] font-bold rounded-full h-5 w-5 flex items-center justify-center border-2 border-white">0</span>
-            </button>
+            <div class="flex items-center gap-3">
+                <button onclick="toggleCart()" class="relative p-2.5 bg-orange-50 text-orange-600 rounded-2xl transition-all active:scale-90 shadow-sm border border-orange-100">
+                    <i data-lucide="shopping-basket" class="w-6 h-6"></i>
+                    <span id="cart-badge" class="hidden absolute -top-1 -right-1 bg-pink-500 text-white text-[10px] font-bold rounded-full h-5 w-5 flex items-center justify-center border-2 border-white">0</span>
+                </button>
+            </div>
         </div>
     </header>
 
-    <!-- --- MOBILE NAVIGATION (7 MENU) --- -->
-    <nav class="md:hidden fixed bottom-6 left-4 right-4 z-50 glass-nav rounded-[2.5rem] shadow-2xl px-2 py-2 flex justify-around items-center" id="mobile-bottom-nav">
+    <!-- --- BAWAH: NAVIGASI MOBILE (7 MENU LENGKAP) --- -->
+    <nav class="md:hidden fixed bottom-6 left-2 right-2 z-50 glass-nav rounded-[2.2rem] shadow-2xl px-1 py-1.5 flex justify-around items-center overflow-x-auto no-scrollbar" id="mobile-bottom-nav">
     </nav>
 
-    <!-- --- MAIN CONTENT --- -->
+    <!-- --- TENGAH: KONTEN UTAMA --- -->
     <main id="main-content" class="flex-grow px-4 pt-4 pb-32 max-w-6xl mx-auto w-full">
-        <!-- Konten dinamis dari Firestore akan muncul di sini -->
     </main>
 
-    <!-- --- INSTALL BANNER --- -->
-    <div id="install-banner" class="hidden fixed bottom-28 left-6 right-6 z-[40] animate-pop">
+    <!-- --- BANNER INSTALL HP --- -->
+    <div id="install-banner" class="hidden fixed bottom-28 left-6 right-6 z-[40] animate-pop text-">
         <div class="bg-white p-5 rounded-[2.5rem] shadow-2xl border border-orange-100 flex items-center justify-between gap-4">
             <div class="flex items-center gap-3">
                 <div class="cute-gradient p-2.5 rounded-2xl shadow-lg">
-                    <i data-lucide="download-cloud" class="text-white w-5 h-5"></i>
+                    <i data-lucide="smartphone" class="text-white w-5 h-5"></i>
                 </div>
                 <div>
-                    <p class="font-black text-sm text-gray-800 leading-tight">Install di HP Anda?</p>
-                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">Akses Lebih Cepat!</p>
+                    <p class="font-black text-sm text-gray-800">Pasang di HP?</p>
+                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest leading-none mt-1">Lebih Cepat & Praktis!</p>
                 </div>
             </div>
             <div class="flex gap-2">
@@ -137,160 +152,113 @@
         </div>
     </div>
 
-    <!-- --- MODAL KERANJANG --- -->
+    <!-- --- KERANJANG MODAL --- -->
     <div id="cart-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex justify-end items-end md:items-stretch">
-        <div class="bg-white w-full max-w-md h-[80vh] md:h-full shadow-2xl flex flex-col animate-pop rounded-t-[3rem] md:rounded-t-none md:rounded-l-[3rem] overflow-hidden border border-orange-50 text-">
+        <div class="bg-white w-full max-w-md h-[85vh] md:h-full shadow-2xl flex flex-col animate-pop rounded-t-[3rem] md:rounded-t-none md:rounded-l-[3rem] overflow-hidden border border-orange-50 text-">
             <div class="p-6 cute-gradient text-white flex justify-between items-center">
-                <h2 class="text-xl font-black flex items-center gap-3"><i data-lucide="shopping-cart"></i> Keranjang Anabul</h2>
-                <button onclick="toggleCart()" class="bg-white/20 p-2 rounded-2xl transition"><i data-lucide="x"></i></button>
+                <h2 class="text-xl font-black flex items-center gap-3"><i data-lucide="shopping-cart"></i> Keranjang Kamu</h2>
+                <button onclick="toggleCart()" class="bg-white/20 p-2 rounded-2xl transition hover:bg-white/30"><i data-lucide="x"></i></button>
             </div>
             <div id="cart-items-container" class="flex-1 overflow-y-auto p-6 space-y-4 no-scrollbar"></div>
-            <div id="cart-footer" class="hidden p-8 border-t bg-gray-50 rounded-t-[2rem]">
+            <div id="cart-footer" class="hidden p-8 border-t bg-gray-50 rounded-t-[2.5rem]">
                 <div class="flex justify-between text-2xl font-black mb-6">
-                    <span class="text-gray-400 text-sm uppercase self-center">Total</span>
+                    <span class="text-gray-400 text-sm uppercase self-center tracking-widest font-extrabold">Total Belanja</span>
                     <span class="text-orange-600" id="cart-total-price">Rp 0</span>
                 </div>
-                <button onclick="checkout()" class="w-full cute-gradient text-white py-4 rounded-[2rem] font-black shadow-xl shadow-orange-200 active:scale-95 transition-all text-lg">
-                    Check Out (WA)
+                <button onclick="checkout()" class="w-full cute-gradient text-white py-4 rounded-[2rem] font-black shadow-xl shadow-orange-200 active:scale-95 transition-all text-lg uppercase tracking-wider">
+                    Check Out (WhatsApp)
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- --- TOAST MESSAGE --- -->
-    <div id="message-box" class="hidden fixed top-24 left-1/2 -translate-x-1/2 bg-white/90 backdrop-blur-md border border-orange-100 px-6 py-3 rounded-full shadow-2xl z-[100] flex items-center gap-3 animate-pop">
-        <div class="bg-orange-100 p-1.5 rounded-full text-orange-600"><i data-lucide="sparkles" class="w-4 h-4"></i></div>
+    <!-- --- PESAN NOTIFIKASI --- -->
+    <div id="message-box" class="hidden fixed top-24 left-1/2 -translate-x-1/2 bg-white/95 backdrop-blur-md border border-orange-100 px-6 py-3 rounded-full shadow-2xl z-[100] flex items-center gap-3 animate-pop">
+        <div class="bg-orange-100 p-1.5 rounded-full text-orange-600 shadow-inner"><i data-lucide="sparkles" class="w-4 h-4"></i></div>
         <span id="message-box-text" class="font-bold text-sm"></span>
     </div>
 
-    <!-- --- FIREBASE LOGIC --- -->
+    <!-- --- LOGIKA FIREBASE & APLIKASI --- -->
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
-        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
-        import { getFirestore, collection, doc, addDoc, setDoc, updateDoc, deleteDoc, onSnapshot, query } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
+        import { getAuth, signInAnonymously, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
+        import { getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot, query, orderBy } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
 
-        // 1. Firebase Initialization
-        const firebaseConfig = JSON.parse(__firebase_config);
-        {
-  apiKey: "AIzaSyBARlWoWFwiRI6VUuRMURYSbDaVzSRmn_U",
-  authDomain: "look-the-cats-official.firebaseapp.com",
-  projectId: "look-the-cats-official",
-  storageBucket: "look-the-cats-official.firebasestorage.app",
-  messagingSenderId: "1286590659",
-  appId: "1:1286590659:web:1878a970fc778ae6f19276",
-  measurementId: "G-XGF86YXY3Y"
-};
+        // 1. Konfigurasi Firebase Resmi Look The Cats
+        const firebaseConfig = {
+            apiKey: "AIzaSyBARlWoWFwiRI6VUuRMURYSbDaVzSRmn_U",
+            authDomain: "look-the-cats-official.firebaseapp.com",
+            projectId: "look-the-cats-official",
+            storageBucket: "look-the-cats-official.firebasestorage.app",
+            messagingSenderId: "1286590659",
+            appId: "1:1286590659:web:1878a970fc778ae6f19276",
+            measurementId: "G-XGF86YXY3Y"
+        };
+
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'look-the-cats-v1';
+        const appId = 'look-the-cats-official-prod'; // ID Unik untuk Path Database
 
-        // 2. Global State
+        // 2. Global State (Data Awal)
         window.WHATSAPP_ADMIN = "6281296629033";
         window.ADMIN_PASS = "Yakin537@";
         window.PRODUCTS = [];
-        window.CLINIC_SERVICES = [];
+        window.CLINICS = [];
+        window.consultations = [];
+        window.currentPage = 'home';
+        window.cart = [];
+        window.currentUser = null;
+        window.isAdminUnlocked = false;
+        window.tempUploadImages = [];
+        window.productEditId = null;
+        window.clinicEditId = null;
+        window.deferredPrompt = null;
+        
         window.ACTIVITIES = [
             { id: 1, title: 'Adopsi Kucing Bersama', date: '25 April', loc: 'Tangerang Mall', type: 'Adopsi', icon: 'heart', color: 'text-orange-500', bg: 'bg-orange-50' },
             { id: 2, title: 'Vaksinasi Rabies Gratis', date: '02 Mei', loc: 'Klinik LTC', type: 'Kesehatan', icon: 'shield-check', color: 'text-blue-500', bg: 'bg-blue-50' },
             { id: 3, title: 'Kontes Kucing Sehat', date: '15 Mei', loc: 'Alam Sutera', type: 'Event', icon: 'trophy', color: 'text-pink-500', bg: 'bg-pink-50' },
             { id: 4, title: 'Seminar Perawatan Kitten', date: '20 Mei', loc: 'Zoom Online', type: 'Edukasi', icon: 'book', color: 'text-purple-500', bg: 'bg-purple-50' }
         ];
-        window.consultations = [];
-        window.currentPage = 'home';
-        window.cart = [];
-        window.currentUser = null;
-        window.isAdminUnlocked = false;
-        window.globalMascot = null;
-        window.tempUploadImages = [];
-        window.productEditId = null;
-        window.clinicEditId = null;
 
-        // 3. Auth Management
-        const initAuth = async () => {
-            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                await signInWithCustomToken(auth, __initial_auth_token);
-            } else {
-                await signInAnonymously(auth);
-            }
+        // 3. Database Cloud Listener (Sinkronisasi Realtime)
+        const initCloudSync = () => {
+            // Listen Produk (Cloud Path Rule 1)
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'products'), (snap) => {
+                window.PRODUCTS = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                if (window.currentPage === 'shop') renderContent();
+            });
+
+            // Listen Klinik (Cloud Path Rule 1)
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'clinics'), (snap) => {
+                window.CLINICS = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                if (window.currentPage === 'clinic') renderContent();
+            });
+
+            // Listen Konsultasi (Cloud Path Rule 1)
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'consultations'), (snap) => {
+                window.consultations = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                if (window.currentPage === 'consultation') renderContent();
+            });
         };
 
-        onAuthStateChanged(auth, (user) => {
-            window.currentUser = user;
+        // 4. Autentikasi Pengguna
+        onAuthStateChanged(auth, async (user) => {
             if (user) {
-                setupRealtimeListeners();
+                window.currentUser = user;
+                initCloudSync();
+            } else {
+                await signInAnonymously(auth);
             }
             renderNavs();
             renderContent();
         });
 
-        // 4. Realtime Database Listeners
-        const setupRealtimeListeners = () => {
-            // Listen Products
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'products'), (snap) => {
-                window.PRODUCTS = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                if (window.currentPage === 'shop') renderContent();
-            }, (err) => console.error("Firestore Products Error:", err));
-
-            // Listen Clinics
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'clinics'), (snap) => {
-                window.CLINIC_SERVICES = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                if (window.currentPage === 'clinic') renderContent();
-            }, (err) => console.error("Firestore Clinics Error:", err));
-
-            // Listen Consultations
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'consultations'), (snap) => {
-                window.consultations = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                if (window.currentPage === 'consultation') renderContent();
-            }, (err) => console.error("Firestore Consultations Error:", err));
-        };
-
-        // 5. Expose Actions to Global for HTML
-        window.navigateTo = (page) => {
-            window.currentPage = page;
-            window.productEditId = null;
-            window.clinicEditId = null;
-            window.tempUploadImages = [];
-            renderNavs();
-            renderContent();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        };
-
-        window.checkAdminPassword = () => {
-            const input = document.getElementById('admin-pass-input');
-            if (input.value === window.ADMIN_PASS) {
-                window.isAdminUnlocked = true;
-                showMsg('Akses Pengelola Terbuka! 🔓');
-                renderContent();
-            } else { showMsg('Password Salah! ❌'); }
-        };
-
-        window.lockAdmin = () => {
-            window.isAdminUnlocked = false;
-            showMsg('Admin Dikunci 🔒');
-            window.navigateTo('home');
-        };
-
-        window.handlePhotos = (e) => {
-            const files = Array.from(e.target.files);
-            if (files.length > 5) { showMsg("Maksimal 5 foto!"); return; }
-            window.tempUploadImages = [];
-            files.forEach(file => {
-                const reader = new FileReader();
-                reader.onload = (ev) => {
-                    window.tempUploadImages.push(ev.target.result);
-                    const preview = document.getElementById('upload-preview');
-                    if (preview) {
-                        preview.innerHTML = window.tempUploadImages.map(img => `<div class="w-16 h-16 rounded-xl overflow-hidden border border-orange-200"><img src="${img}" class="w-full h-full object-cover"></div>`).join('');
-                    }
-                };
-                reader.readAsDataURL(file);
-            });
-        };
-
+        // 5. Aksi Cloud (Tambah, Edit, Hapus)
         window.saveToFirestore = async (e, type) => {
             e.preventDefault();
-            if (!window.currentUser) return showMsg("Harap Login!");
+            if (!window.currentUser) return showMsg("Tunggu koneksi cloud...");
             
             const name = document.getElementById('item-name').value;
             const collName = type === 'shop' ? 'products' : 'clinics';
@@ -301,7 +269,7 @@
             if (type === 'shop') {
                 const price = parseInt(document.getElementById('item-price').value);
                 const cat = document.getElementById('item-cat').value;
-                dataObj = { ...dataObj, price, cat, images: window.tempUploadImages.length > 0 ? window.tempUploadImages : [] };
+                dataObj = { ...dataObj, price, cat, images: window.tempUploadImages };
                 if (window.productEditId) {
                     await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'products', window.productEditId), dataObj);
                 } else { await addDoc(collRef, dataObj); }
@@ -314,56 +282,90 @@
                     owner: document.getElementById('c-owner').value,
                     address: document.getElementById('c-address').value,
                     services: document.getElementById('c-services').value,
-                    images: window.tempUploadImages.length > 0 ? window.tempUploadImages : []
+                    images: window.tempUploadImages,
+                    color: 'bg-blue-100'
                 };
                 if (window.clinicEditId) {
                     await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'clinics', window.clinicEditId), dataObj);
                 } else { await addDoc(collRef, dataObj); }
                 window.navigateTo('clinic');
             }
-            showMsg("Cloud Berhasil Diperbarui! ☁️");
+            showMsg("Data Tersimpan di Awan! ☁️");
         };
 
-        window.deleteFromFirestore = async (id, type) => {
-            if (!confirm("Hapus data selamanya?")) return;
+        window.deleteFromCloud = async (id, type) => {
+            if (!confirm("Hapus data secara permanen?")) return;
             const collName = type === 'shop' ? 'products' : 'clinics';
             await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', collName, id));
-            showMsg("Dihapus dari Cloud! 🗑️");
+            showMsg("Terhapus! 🗑️");
         };
 
-        window.startConsultFirestore = async () => {
-            const topic = prompt("Tulis topik konsul:");
+        window.startConsultCloud = async () => {
+            const topic = prompt("Tulis topik konsul Anda:");
             if (topic) {
                 await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'consultations'), {
-                    sender: window.currentUser.email || "CatLover",
+                    senderId: window.currentUser.uid.substring(0, 6),
                     topic,
                     status: 'Aktif',
-                    messages: [{ from: 'User', text: 'Tanya seputar ' + topic, time: Date.now() }]
+                    messages: [{ from: 'User', text: 'Halo Mentor, mohon info tentang ' + topic, time: Date.now() }]
                 });
-                showMsg("Konsultasi Dimulai! 🐾");
+                showMsg("Terkirim ke Mentor! 🐾");
             }
         };
 
-        window.sendChatFirestore = async (id) => {
+        window.sendChatCloud = async (id) => {
             const input = document.getElementById('msgInput');
             if (!input.value.trim()) return;
-            const consult = window.consultations.find(c => c.id === id);
-            const newMessages = [...consult.messages, { from: window.isAdminUnlocked ? 'Admin' : 'User', text: input.value, time: Date.now() }];
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'consultations', id), { messages: newMessages });
+            const convo = window.consultations.find(c => c.id === id);
+            const updateMsgs = [...convo.messages, { from: window.isAdminUnlocked ? 'Admin' : 'User', text: input.value, time: Date.now() }];
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'consultations', id), { messages: updateMsgs });
             window.viewChat(id);
         };
 
-        window.handleLogout = async () => {
-            await auth.signOut();
+        // 6. Navigasi & Helper Global
+        window.navigateTo = (page) => {
+            window.currentPage = page;
+            window.productEditId = null;
+            window.clinicEditId = null;
+            window.tempUploadImages = [];
+            renderNavs();
+            renderContent();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        window.checkAdminPassword = () => {
+            const val = document.getElementById('admin-pass-input').value;
+            if (val === window.ADMIN_PASS) {
+                window.isAdminUnlocked = true;
+                showMsg('Akses Admin Terbuka! 🔓');
+                renderContent();
+            } else { showMsg('Password Salah! ❌'); }
+        };
+
+        window.lockAdmin = () => {
             window.isAdminUnlocked = false;
-            showMsg("Logout Berhasil!");
+            showMsg('Dashboard Terkunci 🔒');
             window.navigateTo('home');
         };
 
-        // Start Auth
-        initAuth();
+        window.handlePhotos = (e) => {
+            const files = Array.from(e.target.files);
+            if (files.length > 5) { showMsg("Maksimal 5 foto!"); return; }
+            window.tempUploadImages = [];
+            files.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    window.tempUploadImages.push(ev.target.result);
+                    const container = document.getElementById('upload-preview');
+                    if (container) {
+                        container.innerHTML = window.tempUploadImages.map(img => `<div class="w-16 h-16 rounded-xl overflow-hidden border border-orange-200 shadow-sm"><img src="${img}" class="w-full h-full object-cover"></div>`).join('');
+                    }
+                };
+                reader.readAsDataURL(file);
+            });
+        };
 
-        // 6. DRAWERS & UI RENDERING
+        // 7. UI Rendering Functions (7 Menu)
         function renderNavs() {
             const items = [
                 { id: 'home', label: 'Home', icon: 'home' },
@@ -376,9 +378,9 @@
             ];
             const mob = document.getElementById('mobile-bottom-nav');
             mob.innerHTML = items.map(m => `
-                <button onclick="navigateTo('${m.id}')" class="flex flex-col items-center px-3 py-2 rounded-2xl transition-all ${window.currentPage === m.id ? 'text-orange-500 scale-110' : 'text-gray-400'}">
-                    <div class="${window.currentPage === m.id ? 'cute-gradient p-2 rounded-xl shadow-lg' : ''}"><i data-lucide="${m.icon}" class="w-4 h-4 ${window.currentPage === m.id ? 'text-white' : ''}"></i></div>
-                    <span class="text-[6px] font-black uppercase mt-1 ${window.currentPage === m.id ? 'block' : 'hidden'}">${m.label}</span>
+                <button onclick="navigateTo('${m.id}')" class="flex flex-col items-center px-3 py-2 rounded-2xl transition-all ${window.currentPage === m.id ? 'nav-item-active' : 'text-gray-400'}">
+                    <div class="p-2.5 rounded-xl icon-box"><i data-lucide="${m.icon}" class="w-4 h-4"></i></div>
+                    <span class="text-[7px] font-black uppercase mt-1 ${window.currentPage === m.id ? 'block' : 'hidden'}">${m.label}</span>
                 </button>
             `).join('');
             lucide.createIcons();
@@ -389,100 +391,154 @@
             const isAdmin = window.isAdminUnlocked;
 
             if (window.currentPage === 'home') {
+                const displayMascot = window.currentUser?.photoURL || window.globalMascot || null;
                 main.innerHTML = `
-                    <div class="space-y-10 animate-pop text-[Image of Banner Home]">
-                        <section class="cute-gradient rounded-[3rem] p-8 md:p-16 text-center text-white relative overflow-hidden shadow-2xl shadow-orange-200">
+                    <div class="space-y-10 animate-pop text-">
+                        <section class="cute-gradient rounded-[3.5rem] p-8 md:p-16 text-center text-white relative overflow-hidden shadow-2xl shadow-orange-200">
                             <div class="absolute top-0 left-0 w-32 h-32 bg-white/10 rounded-full -ml-10 -mt-10 blur-2xl"></div>
                             <div class="relative z-10 flex flex-col items-center gap-6">
                                 <div class="cat-avatar-frame floating cursor-pointer group" onclick="navigateTo('account')">
-                                    <div class="w-40 h-40 md:w-56 md:h-56 rounded-full overflow-hidden bg-orange-100 flex items-center justify-center border-4 border-white shadow-inner">
-                                        <i data-lucide="cat" class="w-20 h-20 text-orange-300"></i>
+                                    <div class="w-40 h-40 md:w-60 md:h-60 rounded-full overflow-hidden bg-orange-100 flex items-center justify-center border-4 border-white shadow-inner">
+                                        ${displayMascot ? `<img src="${displayMascot}" class="w-full h-full object-cover">` : `<i data-lucide="cat" class="w-24 h-24 text-orange-300"></i>`}
                                     </div>
-                                    <div class="absolute bottom-2 right-2 bg-white text-orange-500 p-2 rounded-full shadow-lg group-hover:scale-125 transition"><i data-lucide="camera" class="w-5 h-5"></i></div>
+                                    <div class="absolute bottom-3 right-3 bg-white text-orange-500 p-2.5 rounded-full shadow-lg group-hover:scale-125 transition-all duration-300"><i data-lucide="camera" class="w-6 h-6"></i></div>
                                 </div>
-                                <h1 class="text-3xl md:text-5xl font-black leading-tight tracking-tighter">Look The Cats <br> Indonesia</h1>
-                                <p class="text-orange-50 font-medium max-w-md opacity-90 leading-relaxed px-4">Cloud Database Aktif. Kelola data kucing nasional secara realtime dalam satu aplikasi HP.</p>
+                                <h1 class="text-3xl md:text-5xl font-black leading-tight tracking-tighter uppercase">Look The Cats <br> Indonesia</h1>
+                                <p class="text-orange-50 font-medium max-w-md opacity-90 leading-relaxed px-4 text-[Image of Slogan]">Cloud Firestore Aktif. Kelola data kucing nasional secara realtime dalam satu aplikasi HP.</p>
                                 <div class="flex gap-3 w-full max-w-xs px-4">
-                                    <button onclick="navigateTo('shop')" class="flex-1 bg-white text-orange-600 py-4 rounded-[1.5rem] font-black shadow-xl active:scale-95 transition">Toko</button>
-                                    <button onclick="navigateTo('clinic')" class="flex-1 bg-black/20 backdrop-blur-md text-white py-4 rounded-[1.5rem] font-black border border-white/30 active:scale-95 transition">Klinik</button>
+                                    <button onclick="navigateTo('shop')" class="flex-1 bg-white text-orange-600 py-4 rounded-[1.8rem] font-black shadow-xl active:scale-95 transition uppercase tracking-widest text-xs">Toko</button>
+                                    <button onclick="navigateTo('clinic')" class="flex-1 bg-black/20 backdrop-blur-md text-white py-4 rounded-[1.8rem] font-black border border-white/30 active:scale-95 transition uppercase tracking-widest text-xs">Klinik</button>
                                 </div>
                             </div>
                         </section>
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 px-2">
                             <div class="bg-white p-5 rounded-[2rem] border border-orange-50 text-center shadow-sm"><div class="bg-orange-100 w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2 text-orange-500 shadow-inner"><i data-lucide="zap" class="w-5 h-5"></i></div><p class="font-bold text-xs uppercase text-gray-400">Kilat</p></div>
-                            <div class="bg-white p-5 rounded-[2rem] border border-orange-50 text-center shadow-sm"><div class="bg-pink-100 w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2 text-pink-500 shadow-inner"><i data-lucide="heart" class="w-5 h-5"></i></div><p class="font-bold text-xs uppercase text-gray-400">Sayang</p></div>
-                            <div class="bg-white p-5 rounded-[2rem] border border-orange-50 text-center shadow-sm"><div class="bg-blue-100 w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2 text-blue-500 shadow-inner"><i data-lucide="shield-check" class="w-5 h-5"></i></div><p class="font-bold text-xs uppercase text-gray-400">PWA</p></div>
+                            <div class="bg-white p-5 rounded-[2rem] border border-orange-50 text-center shadow-sm text-"><div class="bg-pink-100 w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2 text-pink-500 shadow-inner"><i data-lucide="heart" class="w-5 h-5"></i></div><p class="font-bold text-xs uppercase text-gray-400">Sayang</p></div>
+                            <div class="bg-white p-5 rounded-[2rem] border border-orange-50 text-center shadow-sm"><div class="bg-blue-100 w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2 text-blue-500 shadow-inner"><i data-lucide="shield-check" class="w-5 h-5"></i></div><p class="font-bold text-xs uppercase text-gray-400">Member</p></div>
                             <div class="bg-white p-5 rounded-[2rem] border border-orange-50 text-center shadow-sm"><div class="bg-purple-100 w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2 text-purple-500 shadow-inner"><i data-lucide="cloud" class="w-5 h-5"></i></div><p class="font-bold text-xs uppercase text-gray-400">Cloud</p></div>
                         </div>
                     </div>
                 `;
             }
-            else if (window.currentPage === 'shop' || window.currentPage === 'clinic') {
-                const type = window.currentPage;
-                const isShop = type === 'shop';
-                const list = isShop ? window.PRODUCTS : window.CLINIC_SERVICES;
-                const editId = isShop ? window.productEditId : window.clinicEditId;
-                const editTarget = editId ? list.find(x => x.id === editId) : null;
-
+            else if (window.currentPage === 'clinic') {
+                const editTarget = window.clinicEditId ? window.CLINICS.find(c => c.id === window.clinicEditId) : null;
                 main.innerHTML = `
-                    <div class="space-y-6 animate-pop">
-                        <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-orange-50 text-">
-                            <div class="flex justify-between items-center">
-                                <div><h2 class="text-2xl font-black text-gray-800 tracking-tight uppercase">${isShop ? 'Toko Anabul' : 'Klinik Kucing'}</h2><p class="text-xs text-gray-400 font-medium">${isShop ? 'Pakan & Aksesoris' : 'Direktori Medis Terpercaya'}</p></div>
-                                <div class="bg-orange-100 p-3 rounded-2xl text-orange-500 shadow-inner"><i data-lucide="${isShop ? 'shopping-bag' : 'stethoscope'}" class="w-6 h-6"></i></div>
+                    <div class="space-y-6 animate-pop text-">
+                        <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-orange-50">
+                            <div class="flex justify-between items-center text-">
+                                <div><h2 class="text-2xl font-black text-gray-800 tracking-tight uppercase">Direktori Klinik</h2><p class="text-xs text-gray-400 font-medium">Pusat medis kucing berizin resmi.</p></div>
+                                <div class="bg-blue-100 p-3 rounded-2xl text-blue-500 shadow-inner"><i data-lucide="stethoscope" class="w-7 h-7"></i></div>
                             </div>
                             ${isAdmin ? `
-                            <div class="mt-6 p-6 bg-orange-50/50 border border-orange-100 rounded-[2rem] animate-fade-in text-">
-                                <h3 class="font-black text-orange-600 text-xs mb-4 uppercase tracking-[0.2em]">${editId ? 'Update Data' : 'Tambah Baru'}</h3>
-                                <form onsubmit="saveToFirestore(event, '${type}')" class="space-y-4">
+                            <div class="mt-6 p-6 bg-blue-50/50 border border-blue-100 rounded-[2.2rem] animate-fade-in text-">
+                                <h3 class="font-black text-blue-600 text-xs mb-5 uppercase tracking-[0.2em]">${window.clinicEditId ? 'Update Klinik' : 'Daftarkan Klinik Baru'}</h3>
+                                <form onsubmit="window.saveToFirestore(event, 'clinic')" class="space-y-4">
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <input type="text" id="item-name" placeholder="Nama" required value="${editTarget ? editTarget.name : ''}" class="p-3.5 rounded-2xl bg-white border-none outline-none focus:ring-2 focus:ring-orange-300 text-sm font-bold shadow-sm">
-                                        ${isShop ? `<input type="number" id="item-price" placeholder="Harga" required value="${editTarget ? editTarget.price : ''}" class="p-3.5 rounded-2xl bg-white border-none outline-none focus:ring-2 focus:ring-orange-300 text-sm font-bold shadow-sm">` : `<input type="text" id="c-license" placeholder="Nomor Izin" required value="${editTarget ? editTarget.license : ''}" class="p-3.5 rounded-2xl bg-white border-none outline-none focus:ring-2 focus:ring-blue-300 text-sm font-bold shadow-sm">`}
+                                        <input type="text" id="item-name" placeholder="Nama Klinik" required value="${editTarget ? editTarget.name : ''}" class="p-4 rounded-2xl bg-white border-none outline-none focus:ring-2 focus:ring-blue-300 text-sm font-bold shadow-sm">
+                                        <input type="text" id="c-license" placeholder="Nomor Izin" required value="${editTarget ? editTarget.license : ''}" class="p-4 rounded-2xl bg-white border-none outline-none focus:ring-2 focus:ring-blue-300 text-sm font-bold shadow-sm">
+                                        <input type="text" id="c-doctor" placeholder="Dr. Penanggung Jawab" required value="${editTarget ? editTarget.doctor : ''}" class="p-4 rounded-2xl bg-white text-sm font-bold">
+                                        <input type="text" id="c-owner" placeholder="Pemilik Klinik" required value="${editTarget ? editTarget.owner : ''}" class="p-4 rounded-2xl bg-white text-sm font-bold shadow-sm">
                                     </div>
-                                    ${!isShop ? `
-                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            <input type="text" id="c-doctor" placeholder="Dr. Penanggung Jawab" required value="${editTarget ? editTarget.doctor : ''}" class="p-3.5 rounded-2xl bg-white text-sm font-bold">
-                                            <input type="text" id="c-owner" placeholder="Nama Pemilik" required value="${editTarget ? editTarget.owner : ''}" class="p-3.5 rounded-2xl bg-white text-sm font-bold">
+                                    <input type="text" id="c-address" placeholder="Alamat Lengkap" required value="${editTarget ? editTarget.address : ''}" class="w-full p-4 rounded-2xl bg-white text-sm font-bold shadow-sm">
+                                    <textarea id="c-services" placeholder="Pelayanan (Cth: Vaksin, Steril, USG)" class="w-full p-4 rounded-2xl bg-white h-24 text-sm font-bold shadow-inner">${editTarget ? editTarget.services : ''}</textarea>
+                                    <div class="flex flex-col gap-2">
+                                        <label class="text-[9px] font-black text-gray-400 uppercase px-2 tracking-widest">Unggah Foto (Maks 5)</label>
+                                        <input type="file" multiple accept="image/*" onchange="window.handlePhotos(event)" class="p-3 rounded-2xl bg-white text-xs font-bold shadow-sm border border-orange-50">
+                                        <div id="upload-preview" class="flex gap-2 px-2 mt-1 text-"></div>
+                                    </div>
+                                    <button type="submit" class="w-full bg-blue-500 text-white py-4 rounded-2xl font-black shadow-lg uppercase tracking-widest text-xs">Simpan Klinik</button>
+                                </form>
+                            </div>` : ''}
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-5">
+                            ${window.CLINICS.map(item => `
+                                <div class="bg-white p-5 rounded-[2.8rem] border border-orange-50 shadow-sm flex flex-col md:flex-row gap-6 relative overflow-hidden text-">
+                                    <div class="w-full md:w-64 h-56 rounded-[2.2rem] overflow-hidden relative shadow-inner bg-blue-50 flex-shrink-0">
+                                        <div class="item-slider no-scrollbar h-full w-full">
+                                            ${item.images && item.images.length > 0 ? item.images.map(img => `<img src="${img}">`).join('') : `<div class="w-full h-full flex items-center justify-center text-blue-200 opacity-30"><i data-lucide="image" class="w-12 h-12"></i></div>`}
                                         </div>
-                                        <input type="text" id="c-address" placeholder="Alamat Klinik" required value="${editTarget ? editTarget.address : ''}" class="w-full p-3.5 rounded-2xl bg-white text-sm font-bold">
-                                        <textarea id="c-services" placeholder="Layanan (Vaksin, Steril, dll)" class="w-full p-3.5 rounded-2xl bg-white h-20 text-sm font-bold">${editTarget ? editTarget.services : ''}</textarea>
-                                    ` : ''}
-                                    <div class="flex flex-col gap-2 text-">
-                                        <label class="text-[9px] font-black text-gray-400 uppercase px-2">Unggah Foto (3-5 Foto)</label>
-                                        <input type="file" multiple accept="image/*" onchange="handlePhotos(event)" class="p-3 rounded-2xl bg-white text-xs font-bold shadow-sm border border-orange-50">
+                                        ${item.images && item.images.length > 1 ? `<div class="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">${item.images.map(() => `<div class="w-1.5 h-1.5 rounded-full bg-white shadow-sm opacity-60"></div>`).join('')}</div>` : ''}
+                                    </div>
+                                    <div class="flex-1 flex flex-col justify-center gap-2">
+                                        <h3 class="font-black text-2xl text-gray-800 tracking-tight leading-none">${item.name}</h3>
+                                        <div class="space-y-1 mt-1 text-">
+                                            <p class="text-[10px] font-bold text-blue-600 uppercase tracking-widest flex items-center gap-2"><i data-lucide="shield-check" class="w-3.5 h-3.5"></i> SIP: ${item.license}</p>
+                                            <p class="text-xs text-gray-500 font-medium flex items-center gap-2"><i data-lucide="user-round" class="w-4 h-4"></i> Dr: <span class="text-gray-800 font-bold">${item.doctor}</span></p>
+                                            <p class="text-xs text-gray-500 font-medium flex items-center gap-2"><i data-lucide="map-pin" class="w-4 h-4"></i> ${item.address}</p>
+                                        </div>
+                                        <div class="mt-3 p-4 bg-blue-50/60 rounded-[1.8rem] border border-blue-100">
+                                            <p class="text-[9px] font-black text-blue-400 uppercase tracking-tighter mb-1">Layanan Utama</p>
+                                            <p class="text-xs font-bold text-blue-800 leading-relaxed">${item.services}</p>
+                                        </div>
+                                    </div>
+                                    <div class="md:w-36 flex md:flex-col justify-between items-center md:items-end gap-3">
+                                        ${isAdmin ? `
+                                            <div class="flex gap-2">
+                                                <button onclick="window.clinicEditId='${item.id}'; window.renderContent();" class="p-3.5 bg-blue-50 text-blue-500 rounded-2xl active:scale-75 transition border border-blue-100"><i data-lucide="edit-3" class="w-5 h-5"></i></button>
+                                                <button onclick="window.deleteFromCloud('${item.id}', 'clinic')" class="p-3.5 bg-red-50 text-red-400 rounded-2xl active:scale-75 transition border border-red-100"><i data-lucide="trash-2" class="w-5 h-5"></i></button>
+                                            </div>
+                                        ` : `
+                                            <button onclick="window.open('https://wa.me/${window.WHATSAPP_ADMIN}?text=Halo%20Admin%20LTC,%20saya%20tertarik%20dengan%20klinik%20${item.name}', '_blank')" class="w-full bg-blue-500 text-white py-4 px-6 rounded-2xl font-black text-[11px] uppercase shadow-lg shadow-blue-100 active:scale-95 transition tracking-widest text-">Hubungi WA</button>
+                                        `}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            else if (window.currentPage === 'shop') {
+                const editTarget = window.productEditId ? window.PRODUCTS.find(p => p.id === window.productEditId) : null;
+                main.innerHTML = `
+                    <div class="space-y-6 animate-pop text-">
+                        <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-orange-50">
+                            <div class="flex justify-between items-center">
+                                <div><h2 class="text-2xl font-black text-gray-800 tracking-tight uppercase">Toko Anabul</h2><p class="text-xs text-gray-400 font-medium text-">Pakan & Aksesoris Realtime Cloud.</p></div>
+                                <div class="bg-orange-100 p-3 rounded-2xl text-orange-500 shadow-inner"><i data-lucide="shopping-bag" class="w-7 h-7"></i></div>
+                            </div>
+                            ${isAdmin ? `
+                            <div class="mt-6 p-6 bg-orange-50/50 border border-orange-100 rounded-[2.2rem] animate-fade-in text-">
+                                <h3 class="font-black text-orange-600 text-xs mb-5 uppercase tracking-[0.2em]">${window.productEditId ? 'Edit Produk' : 'Tambah Produk Baru'}</h3>
+                                <form onsubmit="window.saveToFirestore(event, 'shop')" class="space-y-4">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <input type="text" id="item-name" placeholder="Nama Produk" required value="${editTarget ? editTarget.name : ''}" class="p-4 rounded-2xl bg-white border-none outline-none focus:ring-2 focus:ring-orange-300 text-sm font-bold shadow-sm">
+                                        <input type="number" id="item-price" placeholder="Harga (Rp)" required value="${editTarget ? editTarget.price : ''}" class="p-4 rounded-2xl bg-white border-none outline-none focus:ring-2 focus:ring-orange-300 text-sm font-bold shadow-sm">
+                                    </div>
+                                    <div class="flex flex-col gap-2">
+                                        <label class="text-[9px] font-black text-gray-400 uppercase px-2 tracking-widest">Foto Produk (Maks 5)</label>
+                                        <input type="file" multiple accept="image/*" onchange="window.handlePhotos(event)" class="p-3 rounded-2xl bg-white text-xs font-bold shadow-sm border border-orange-50">
                                         <div id="upload-preview" class="flex gap-2 px-2 mt-1"></div>
                                     </div>
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <select id="item-cat" class="p-3.5 rounded-2xl bg-white border-none outline-none text-sm font-bold shadow-sm">
-                                            ${isShop ? '<option value="Makanan">Makanan</option><option value="Kesehatan">Kesehatan</option><option value="Mainan">Mainan</option>' : '<option value="Klinik">Klinik</option>'}
+                                        <select id="item-cat" class="p-4 rounded-2xl bg-white border-none outline-none text-sm font-bold shadow-sm">
+                                            <option value="Makanan">Makanan</option><option value="Kesehatan">Kesehatan</option><option value="Mainan">Mainan</option>
                                         </select>
-                                        <button type="submit" class="cute-gradient text-white py-4 rounded-2xl font-black shadow-lg shadow-orange-100 uppercase tracking-widest text-xs">Simpan ke Cloud</button>
+                                        <button type="submit" class="cute-gradient text-white py-4 rounded-2xl font-black shadow-lg shadow-orange-100 uppercase tracking-widest text-xs">Simpan Produk</button>
                                     </div>
                                 </form>
                             </div>` : ''}
                         </div>
 
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 text-">
-                            ${list.map(item => `
-                                <div class="bg-white p-4 rounded-[2.5rem] border border-orange-50 shadow-sm flex flex-col h-full overflow-hidden">
-                                    <div class="h-56 rounded-[2rem] mb-4 overflow-hidden relative shadow-inner bg-orange-50">
-                                        <div class="image-slider no-scrollbar h-full w-full">
-                                            ${item.images && item.images.length > 0 ? item.images.map(img => `<img src="${img}">`).join('') : `<div class="w-full h-full flex items-center justify-center text-orange-200 opacity-30"><i data-lucide="camera" class="w-12 h-12"></i></div>`}
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                            ${window.PRODUCTS.map(item => `
+                                <div class="bg-white p-4 rounded-[2.8rem] border border-orange-50 shadow-sm flex flex-col h-full overflow-hidden text-">
+                                    <div class="h-60 rounded-[2.2rem] mb-4 overflow-hidden relative shadow-inner bg-orange-50">
+                                        <div class="item-slider no-scrollbar h-full w-full">
+                                            ${item.images && item.images.length > 0 ? item.images.map(img => `<img src="${img}">`).join('') : `<div class="w-full h-full flex items-center justify-center text-orange-200 opacity-30"><i data-lucide="package" class="w-14 h-14 text-"></i></div>`}
                                         </div>
-                                        <div class="absolute top-3 left-3 bg-white/95 px-3 py-1 rounded-full text-[8px] font-black text-orange-500 uppercase tracking-widest z-10 border border-orange-50 shadow-sm">${item.cat || 'LTC'}</div>
+                                        <div class="absolute top-3 left-3 bg-white/95 px-3 py-1 rounded-full text-[8px] font-black text-orange-500 uppercase tracking-widest z-10 border border-orange-50 shadow-sm">${item.cat}</div>
                                     </div>
-                                    <h3 class="font-black text-gray-800 text-sm px-1 leading-none uppercase mb-2 tracking-tight">${item.name}</h3>
-                                    ${item.address ? `<p class="text-[10px] text-gray-400 font-bold px-1 mb-1 italic line-clamp-1"><i data-lucide="map-pin" class="w-3 h-3 inline"></i> ${item.address}</p>` : ''}
-                                    ${item.doctor ? `<p class="text-[10px] text-blue-500 font-black px-1 mb-3 uppercase tracking-tighter">Dr: ${item.doctor}</p>` : ''}
-                                    <div class="mt-auto pt-3 flex justify-between items-center border-t border-gray-50 px-1 text-">
-                                        <p class="font-black text-orange-600 text-lg tracking-tighter">${item.price ? toIDR(item.price) : 'INFO WA'}</p>
-                                        <div class="flex gap-1 text-">
+                                    <h3 class="font-black text-gray-800 text-sm px-1 leading-tight mb-3 line-clamp-2">${item.name}</h3>
+                                    <div class="mt-auto pt-4 flex justify-between items-center border-t border-gray-50 px-1 text-">
+                                        <p class="font-black text-orange-600 text-xl tracking-tighter">${toIDR(item.price)}</p>
+                                        <div class="flex gap-1.5">
                                             ${isAdmin ? `
-                                                <button onclick="${isShop ? 'productEditId' : 'clinicEditId'}='${item.id}'; renderContent();" class="p-2.5 bg-blue-50 text-blue-500 rounded-xl active:scale-75 transition border border-blue-100 shadow-sm"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
-                                                <button onclick="deleteItemFirestore('${item.id}', '${type}')" class="p-2.5 bg-red-50 text-red-400 rounded-xl active:scale-75 transition border border-red-100 shadow-sm"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                                            ` : (isShop ? `
-                                                <button onclick="addCartLocal('${item.id}')" class="cute-gradient text-white p-3 rounded-2xl shadow-lg active:scale-75 transition"><i data-lucide="plus" class="w-4 h-4"></i></button>
-                                            ` : `<button onclick="window.open('https://wa.me/${window.WHATSAPP_ADMIN}?text=Halo%20Admin%20LTC,%20saya%20tertarik%20dengan%20${item.name}', '_blank')" class="bg-blue-500 text-white px-5 py-2.5 rounded-2xl font-black text-[10px] uppercase shadow-lg active:scale-95 transition">Booking</button>`)}
+                                                <button onclick="window.productEditId='${item.id}'; window.renderContent();" class="p-3 bg-blue-50 text-blue-500 rounded-2xl border shadow-sm"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
+                                                <button onclick="window.deleteFromCloud('${item.id}', 'shop')" class="p-3 bg-red-50 text-red-400 rounded-2xl border shadow-sm"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                                            ` : `
+                                                <button onclick="window.addCartLocal('${item.id}')" class="cute-gradient text-white p-3.5 rounded-2xl shadow-lg active:scale-75 transition-all shadow-orange-100"><i data-lucide="plus" class="w-5 h-5 text-"></i></button>
+                                            `}
                                         </div>
                                     </div>
                                 </div>
@@ -492,32 +548,96 @@
                 `;
             };
 
-            // ACTIVITIES VIEW
+            // 7. AGENDA VIEW (Activities)
             if (window.currentPage === 'activities') {
-                main.innerHTML = `<div class="space-y-6 animate-pop text-[Image of Agenda]"><h2 class="text-2xl font-black text-gray-800 ml-2 tracking-tight">Agenda Kucing 📅</h2><div class="grid grid-cols-1 md:grid-cols-2 gap-4">${window.ACTIVITIES.map(a => `<div class="bg-white p-5 rounded-[2rem] border border-orange-50 flex items-center gap-5 shadow-sm hover:shadow-md transition text-"><div class="${a.bg} ${a.color} w-16 h-16 rounded-[1.5rem] flex flex-col items-center justify-center border-2 border-white shadow-inner font-black uppercase tracking-widest"><span class="text-[8px]">${a.date.split(' ')[1]}</span><span class="text-xl">${a.date.split(' ')[0]}</span></div><div class="flex-1"><h3 class="font-black text-sm text-gray-800 leading-tight">${a.title}</h3><p class="text-[10px] text-gray-400 font-bold uppercase mt-1 tracking-tight"><i data-lucide="map-pin" class="w-2.5 h-2.5 inline text-[Image of Pin]"></i> ${a.loc}</p><button onclick="window.open('https://wa.me/${window.WHATSAPP_ADMIN}?text=Daftar%20Agenda:%20${a.title}', '_blank')" class="mt-2 text-orange-500 font-black text-[10px] uppercase tracking-widest hover:underline">Daftar Sekarang</button></div></div>`).join('')}</div></div>`;
+                main.innerHTML = `<div class="space-y-6 animate-pop text-"><h2 class="text-2xl font-black text-gray-800 ml-2 tracking-tight uppercase">Jadwal Agenda 📅</h2><div class="grid grid-cols-1 md:grid-cols-2 gap-5">${window.ACTIVITIES.map(a => `<div class="bg-white p-6 rounded-[2.5rem] border border-orange-50 flex items-center gap-6 shadow-sm hover:shadow-md transition text-"><div class="${a.bg} ${a.color} w-20 h-20 rounded-[1.8rem] flex flex-col items-center justify-center border-2 border-white shadow-inner font-black uppercase tracking-widest"><span class="text-[9px]">${a.date.split(' ')[1]}</span><span class="text-2xl">${a.date.split(' ')[0]}</span></div><div class="flex-1"><h3 class="font-black text-base text-gray-800 leading-tight uppercase tracking-tight">${a.title}</h3><p class="text-[10px] text-gray-400 font-bold uppercase mt-1 tracking-tight"><i data-lucide="map-pin" class="w-3.5 h-3.5 inline"></i> ${a.loc}</p><button onclick="window.open('https://wa.me/${window.WHATSAPP_ADMIN}?text=Info%20Agenda:%20${a.title}', '_blank')" class="mt-3 text-orange-500 font-black text-[11px] uppercase tracking-widest hover:underline">Daftar & Detail &rarr;</button></div></div>`).join('')}</div></div>`;
             }
 
-            // ACCOUNT VIEW
+            // 8. CONSULT VIEW (Consultation)
+            else if (window.currentPage === 'consultation') {
+                main.innerHTML = `<div class="space-y-6 animate-pop text-"><div class="flex justify-between items-center bg-white p-6 rounded-[2.5rem] shadow-sm border border-orange-50"><div><h2 class="text-2xl font-black text-gray-800 uppercase tracking-tighter leading-none">Ruang Konsul</h2><p class="text-xs text-gray-400 font-medium">Diskusi mentor secara realtime cloud.</p></div><button onclick="window.startConsultation()" class="cute-gradient text-white p-4 rounded-2xl shadow-lg active:scale-90 transition"><i data-lucide="plus" class="w-7 h-7"></i></button></div><div class="space-y-3 text-">${window.consultations.map(c => `<div class="bg-white p-6 rounded-[2.5rem] border border-orange-50 shadow-sm flex items-center justify-between group hover:border-orange-300 transition-all text-"><div class="flex items-center gap-5 text-"><div class="bg-orange-100 p-3.5 rounded-2xl text-orange-500 shadow-inner"><i data-lucide="message-circle" class="w-6 h-6"></i></div><div><h3 class="font-bold text-gray-800 text-sm leading-none tracking-tight uppercase">${c.topic}</h3><p class="text-[10px] text-gray-400 font-black uppercase tracking-widest mt-1.5">ID: ${c.senderId} • ${c.status}</p></div></div><button onclick="window.viewChat('${c.id}')" class="p-2.5 bg-orange-50 text-orange-500 rounded-xl shadow-sm"><i data-lucide="chevron-right" class="w-5 h-5"></i></button></div>`).join('')}</div></div>`;
+            }
+
+            // 9. ACCOUNT VIEW (Profile)
             else if (window.currentPage === 'account') {
-                if (window.currentUser) {
-                    main.innerHTML = `<div class="max-w-md mx-auto animate-pop pt-10 text-"><div class="bg-white p-10 rounded-[3rem] shadow-2xl border border-orange-50 text-center relative overflow-hidden"><div class="absolute top-0 left-0 w-full h-32 cute-gradient rounded-b-[4rem]"></div><div class="relative z-10"><div class="cat-avatar-frame w-32 h-32 mx-auto mb-6 ring-8 ring-white shadow-xl overflow-hidden text-"><div class="w-full h-full rounded-full overflow-hidden bg-orange-100 flex items-center justify-center">${window.currentUser.photoURL ? `<img src="${window.currentUser.photoURL}" class="w-full h-full object-cover">` : `<i data-lucide="user" class="w-16 h-16 text-orange-300"></i>`}</div></div><h2 class="text-2xl font-black text-gray-900 leading-tight uppercase tracking-tighter">ID: ${window.currentUser.uid.substring(0,8)}</h2><p class="text-gray-400 text-[10px] font-black uppercase tracking-widest mt-1">Sesi Cloud Aktif</p><div class="mt-8 space-y-3"><button onclick="triggerAppInstall()" class="w-full bg-orange-50 text-orange-500 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest border border-orange-100 shadow-sm transition active:scale-95"><i data-lucide="smartphone" class="w-4 h-4 inline"></i> Pasang di HP</button><button onclick="handleLogout()" class="w-full bg-red-50 text-red-500 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest border border-red-100 shadow-sm transition active:scale-95"><i data-lucide="log-out" class="w-4 h-4 inline"></i> Logout Sesi</button></div></div></div></div>`;
-                } else {
-                    main.innerHTML = `<div class="max-w-md mx-auto bg-white p-10 rounded-[3.5rem] shadow-2xl border border-orange-50 animate-pop mt-4 text-"><div class="text-center mb-10"><div class="cute-gradient w-14 h-14 rounded-[1.5rem] flex items-center justify-center mx-auto mb-4 shadow-xl"><i data-lucide="log-in" class="text-white"></i></div><h2 class="text-3xl font-black text-gray-900 leading-tight tracking-tight uppercase">Login Look The Cats</h2></div><form onsubmit="handleLogin(event)" class="space-y-4 text-"><input type="email" id="login-email" required placeholder="Alamat Email (Dummy)" class="w-full p-4 rounded-[1.5rem] bg-gray-50 border-none outline-none focus:ring-2 focus:ring-orange-300 transition-all shadow-inner text-sm font-bold"><button class="w-full cute-gradient text-white py-4 rounded-[1.5rem] font-black shadow-xl shadow-orange-200 mt-2 text-lg active:scale-95 transition uppercase tracking-widest font-extrabold text-">Mulai Sesi</button></form></div>`;
-                }
+                main.innerHTML = `<div class="max-w-md mx-auto animate-pop pt-10 text-"><div class="bg-white p-10 rounded-[3.5rem] shadow-2xl border border-orange-50 text-center relative overflow-hidden"><div class="absolute top-0 left-0 w-full h-36 cute-gradient rounded-b-[4.5rem]"></div><div class="relative z-10"><div class="cat-avatar-frame w-36 h-36 mx-auto mb-6 ring-8 ring-white shadow-xl overflow-hidden"><div class="w-full h-full rounded-full overflow-hidden bg-orange-100 flex items-center justify-center text-"><i data-lucide="user" class="w-20 h-20 text-orange-300"></i></div></div><h2 class="text-2xl font-black text-gray-900 leading-tight uppercase tracking-tighter">Member Cloud</h2><p class="text-gray-400 text-[10px] font-black uppercase mt-1.5 tracking-widest">Sesi Firestore Aktif ✅</p><div class="mt-10 space-y-3.5 text-"><button onclick="window.triggerAppInstall()" class="w-full bg-orange-50 text-orange-500 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest border border-orange-100 shadow-sm transition active:scale-95"><i data-lucide="smartphone" class="w-4 h-4 inline mr-2"></i> Pasang Ikon HP</button><button onclick="window.handleLogout()" class="w-full bg-red-50 text-red-500 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest border border-red-100 shadow-sm transition active:scale-95 text-"><i data-lucide="log-out" class="w-4 h-4 inline mr-2"></i> Logout Akun</button></div></div></div></div>`;
             }
 
-            // ADMIN VIEW
+            // 10. ADMIN VIEW (Dashboard)
             else if (window.currentPage === 'admin') {
                 if (!window.isAdminUnlocked) {
-                    main.innerHTML = `<div class="max-w-md mx-auto space-y-6 animate-pop mt-10 text-"><div class="bg-white p-10 rounded-[3.5rem] shadow-2xl border border-orange-50 text-center relative overflow-hidden"><div class="cute-gradient w-20 h-20 rounded-[2rem] flex items-center justify-center mx-auto mb-6 text-white shadow-lg"><i data-lucide="lock" class="w-10 h-10"></i></div><h2 class="text-2xl font-black text-gray-800 leading-none mb-3 uppercase tracking-tighter">Area Pengelola</h2><p class="text-gray-400 text-sm leading-relaxed px-4 font-medium mt-1">Akses database pusat LTC. Masukkan password admin.</p><div class="mt-8 space-y-4 px-4"><input type="password" id="admin-pass-input" placeholder="Password Admin" class="w-full p-4 rounded-[1.5rem] bg-gray-50 border-none outline-none focus:ring-2 focus:ring-orange-300 text-center font-bold tracking-[0.4em] text-lg shadow-inner"><button onclick="checkAdminPassword()" class="w-full cute-gradient text-white py-4 rounded-[1.5rem] font-black shadow-xl active:scale-95 transition shadow-orange-200 uppercase tracking-widest text-">Buka Panel</button></div></div></div>`;
+                    main.innerHTML = `<div class="max-w-md mx-auto space-y-6 animate-pop mt-10 text-"><div class="bg-white p-10 rounded-[3.5rem] shadow-2xl border border-orange-50 text-center relative overflow-hidden text-"><div class="cute-gradient w-20 h-20 rounded-[2rem] flex items-center justify-center mx-auto mb-6 text-white shadow-lg"><i data-lucide="lock" class="w-10 h-10 text-"></i></div><h2 class="text-2xl font-black text-gray-800 leading-none mb-3 uppercase tracking-tighter">Area Pengelola</h2><p class="text-gray-400 text-sm leading-relaxed px-6 font-medium mt-1">Akses database pusat LTC secara realtime. Masukkan password admin.</p><div class="mt-10 space-y-4 px-4 text-"><input type="password" id="admin-pass-input" placeholder="Password Admin" class="w-full p-4 rounded-[1.8rem] bg-gray-50 border-none outline-none focus:ring-2 focus:ring-orange-300 text-center font-bold tracking-[0.4em] text-lg shadow-inner"><button onclick="window.checkAdminPassword()" class="w-full cute-gradient text-white py-4 rounded-[1.8rem] font-black shadow-xl active:scale-95 transition shadow-orange-200 uppercase tracking-widest text-xs">Buka Panel Database</button></div></div></div>`;
                 } else {
-                    main.innerHTML = `<div class="space-y-8 animate-pop text-"><div class="bg-gray-900 text-white p-10 rounded-[3.5rem] shadow-2xl relative overflow-hidden text-"><div class="absolute right-0 bottom-0 w-64 h-64 bg-white/5 rounded-full -mb-20 -mr-20 blur-3xl"></div><div class="relative z-10 flex flex-col md:flex-row justify-between items-center gap-6"><div><span class="bg-orange-500 text-white px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-3 inline-block shadow-lg">LTC Cloud Terminal</span><h2 class="text-3xl font-black leading-tight tracking-tight uppercase">Manajemen Pusat <br> Realtime Database</h2></div><button onclick="lockAdmin()" class="bg-red-500/20 text-red-400 p-4 rounded-2xl border border-red-500/30 font-black text-xs active:scale-90 transition shadow-sm uppercase tracking-widest flex items-center gap-2"><i data-lucide="power" class="w-4 h-4"></i> Keluar</button></div></div><div class="bg-white rounded-[2.5rem] border border-orange-50 shadow-sm overflow-hidden text-[Image of Status Cloud]"><div class="p-6 text-center text-gray-400 font-bold uppercase text-[10px] tracking-widest bg-gray-50 flex items-center justify-center gap-2">Sistem Firebase Firestore Aktif <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div></div></div></div>`;
+                    main.innerHTML = `<div class="space-y-8 animate-pop text-"><div class="bg-gray-900 text-white p-10 rounded-[3.5rem] shadow-2xl relative overflow-hidden text-"><div class="absolute right-0 bottom-0 w-64 h-64 bg-white/5 rounded-full -mb-20 -mr-20 blur-3xl text- font-black uppercase tracking-widest opacity-10 text-4xl">CLOUD</div><div class="relative z-10 flex flex-col md:flex-row justify-between items-center gap-6"><div><span class="bg-orange-500 text-white px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-3 inline-block shadow-lg">LTC Root Controller</span><h2 class="text-3xl font-black leading-tight tracking-tight uppercase leading-none">Manajemen Pusat <br> Cloud Firestore</h2></div><button onclick="window.lockAdmin()" class="bg-red-500/20 text-red-400 p-4 rounded-2xl border border-red-500/30 font-black text-xs active:scale-90 transition shadow-sm uppercase tracking-widest flex items-center gap-2 text-"><i data-lucide="power" class="w-4 h-4"></i> Keluar Admin</button></div></div><div class="bg-white rounded-[2.5rem] border border-orange-50 shadow-sm overflow-hidden text-"><div class="p-8 text-center text-gray-400 font-bold uppercase text-[10px] tracking-widest bg-gray-50 flex items-center justify-center gap-2">Firebase Firestore Database Online <div class="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></div></div></div></div>`;
                 }
             }
             lucide.createIcons();
         };
 
-        // UI HELPERS
+        window.viewChat = (id) => {
+            const convo = window.consultations.find(x => x.id === id);
+            const chatHtml = convo.messages.map(m => `<div class="flex flex-col ${m.from === 'User' ? 'items-end' : 'items-start'} text-"><div class="p-4 rounded-[1.8rem] max-w-[88%] text-sm font-bold ${m.from === 'User' ? 'cute-gradient text-white rounded-tr-none shadow-lg shadow-orange-100' : 'bg-white text-gray-800 rounded-tl-none border border-orange-100 shadow-sm'}">${m.text}</div><span class="text-[8px] font-black uppercase text-gray-400 mt-1.5 px-1 tracking-widest">${m.from}</span></div>`).join('');
+            document.getElementById('main-content').innerHTML = `<div class="flex flex-col h-[75vh] animate-pop text-"><div class="flex items-center gap-4 bg-white p-6 rounded-t-[3.5rem] border-b shadow-sm text-"><button onclick="navigateTo('consultation')" class="p-3 bg-gray-50 rounded-2xl active:scale-75 transition shadow-sm border border-orange-50"><i data-lucide="chevron-left" class="w-5 h-5"></i></button><div><h3 class="font-black text-gray-800 text-base leading-none tracking-tight uppercase">${convo.topic}</h3><p class="text-[10px] font-black uppercase text-orange-500 mt-1.5 tracking-widest">Mentor LTC Active</p></div></div><div class="flex-1 overflow-y-auto p-6 space-y-5 no-scrollbar bg-orange-50/20 shadow-inner text-">${chatHtml}</div><div class="p-5 bg-white rounded-b-[3.5rem] border-t border-orange-50 flex gap-3"><input type="text" id="msgInput" placeholder="Tulis balasan..." class="flex-1 bg-gray-100 border-none rounded-2xl px-5 py-4 outline-none text-sm font-bold shadow-inner focus:bg-white focus:ring-2 focus:ring-orange-300 transition-all text-"><button onclick="window.sendChatCloud('${convo.id}')" class="cute-gradient p-4 rounded-2xl text-white shadow-lg active:scale-75 transition shadow-orange-200 text-"><i data-lucide="send" class="w-6 h-6"></i></button></div></div>`;
+            lucide.createIcons();
+        };
+
+        // UI HELPERS (LOGIKA NON-CLOUDS)
+        window.addCartLocal = (id) => {
+            const p = window.PRODUCTS.find(x => x.id === id);
+            const item = window.cart.find(x => x.id === id);
+            if (item) item.q++; else window.cart.push({...p, q: 1});
+            window.updateBadge();
+            showMsg('Masuk Keranjang! 🛒');
+        };
+
+        window.updateBadge = () => {
+            const b = document.getElementById('cart-badge');
+            const count = window.cart.reduce((t, i) => t + i.q, 0);
+            if (b) { b.innerText = count; b.classList.toggle('hidden', count === 0); }
+        };
+
+        window.toggleCart = () => {
+            const m = document.getElementById('cart-modal');
+            if (m) { m.classList.toggle('hidden'); document.body.classList.toggle('modal-open'); window.renderCartItems(); }
+        };
+
+        window.renderCartItems = () => {
+            const c = document.getElementById('cart-items-container');
+            const f = document.getElementById('cart-footer');
+            if (!c) return;
+            if (window.cart.length === 0) {
+                c.innerHTML = `<div class="h-full flex flex-col items-center justify-center text-gray-300 gap-4 mt-20 opacity-30 text-"><i data-lucide="shopping-bag" class="w-20 h-20 shadow-inner"></i><p class="font-black uppercase tracking-widest text-xs text-">Keranjang Masih Kosong</p></div>`;
+                if(f) f.classList.add('hidden');
+            } else {
+                let total = 0;
+                c.innerHTML = window.cart.map(i => {
+                    total += i.price * i.q;
+                    return `<div class="bg-white p-4 rounded-[2rem] border border-orange-50 shadow-sm flex gap-4 animate-pop text-"><div class="bg-orange-100 w-16 h-16 rounded-[1.2rem] flex items-center justify-center text-white shadow-inner"><i data-lucide="package"></i></div><div class="flex-1 text-"><p class="font-black text-sm text-gray-800 leading-tight uppercase tracking-tight leading-none mb-1">${i.name}</p><div class="flex justify-between items-center mt-1 text-"><p class="text-orange-500 font-black text-xs">${toIDR(i.price)} x${i.q}</p><button onclick="window.cart = window.cart.filter(x => x.id !== '${i.id}'); window.renderCartItems(); window.updateBadge();" class="text-red-300 active:scale-75 transition p-2 bg-red-50 rounded-xl shadow-sm border border-red-100"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div></div></div>`;
+                }).join('');
+                document.getElementById('cart-total-price').innerText = toIDR(total);
+                if(f) f.classList.remove('hidden');
+            }
+            lucide.createIcons();
+        };
+
+        window.checkout = () => {
+            const list = window.cart.map(i => `- ${i.name} (${i.q}x)`).join('%0A');
+            const total = toIDR(window.cart.reduce((t, i) => t + (i.price * i.q), 0));
+            const msg = `Halo%20Admin%20LTC,%0ASaya%20ingin%20memesan:%0A${list}%0ATotal:%20${total}`;
+            window.open(`https://wa.me/${window.WHATSAPP_ADMIN}?text=${msg}`, '_blank');
+            window.toggleCart(); window.cart = []; window.updateBadge();
+        };
+
+        window.hideInstallBanner = () => document.getElementById('install-banner').classList.add('hidden');
+        window.triggerAppInstall = async () => {
+            if (!window.deferredPrompt) { showMsg('Klik Menu Browser > Tambah ke Layar Utama'); return; }
+            window.deferredPrompt.prompt();
+            const { outcome } = await window.deferredPrompt.userChoice;
+            if (outcome === 'accepted') { showMsg('Berhasil Terpasang! 🐾'); window.hideInstallBanner(); }
+            window.deferredPrompt = null;
+        };
+
+        const toIDR = (n) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(n);
         function showMsg(txt) {
             const b = document.getElementById('message-box');
             const t = document.getElementById('message-box-text');
@@ -525,62 +645,6 @@
             if (b) b.classList.remove('hidden');
             setTimeout(() => { if(b) b.classList.add('hidden'); }, 3000);
         }
-
-        window.addCartLocal = (id) => {
-            const p = window.PRODUCTS.find(x => x.id === id);
-            const item = window.cart.find(x => x.id === id);
-            if (item) item.q++; else window.cart.push({...p, q: 1});
-            updateBadge();
-            showMsg('Masuk Keranjang! 🛒');
-        };
-
-        function updateBadge() {
-            const b = document.getElementById('cart-badge');
-            const count = window.cart.reduce((t, i) => t + i.q, 0);
-            if (b) { b.innerText = count; b.classList.toggle('hidden', count === 0); }
-        }
-
-        window.toggleCart = () => {
-            const m = document.getElementById('cart-modal');
-            if (m) { m.classList.toggle('hidden'); document.body.classList.toggle('modal-open'); renderCartItems(); }
-        };
-
-        function renderCartItems() {
-            const c = document.getElementById('cart-items-container');
-            const f = document.getElementById('cart-footer');
-            if (!c) return;
-            if (window.cart.length === 0) {
-                c.innerHTML = `<div class="h-full flex flex-col items-center justify-center text-gray-300 mt-20 opacity-30 text-"><i data-lucide="shopping-bag" class="w-20 h-20 shadow-inner"></i><p class="font-black uppercase tracking-widest text-xs">Kosong Bro...</p></div>`;
-                if(f) f.classList.add('hidden');
-            } else {
-                let total = 0;
-                c.innerHTML = window.cart.map(i => {
-                    total += i.price * i.q;
-                    return `<div class="bg-white p-4 rounded-[2rem] border border-orange-50 shadow-sm flex gap-4 animate-pop"><div class="bg-orange-100 w-16 h-16 rounded-[1.2rem] flex items-center justify-center text-white shadow-inner"><i data-lucide="package"></i></div><div class="flex-1"><p class="font-black text-sm text-gray-800 leading-tight">${i.name}</p><div class="flex justify-between items-center mt-1 text-"><p class="text-orange-500 font-black text-xs">${toIDR(i.price)} x${i.q}</p><button onclick="window.cart = window.cart.filter(x => x.id !== '${i.id}'); renderCartItems(); updateBadge();" class="text-red-300 active:scale-75 transition p-1.5 bg-red-50 rounded-xl shadow-sm"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div></div></div>`;
-                }).join('');
-                document.getElementById('cart-total-price').innerText = toIDR(total);
-                if(f) f.classList.remove('hidden');
-            }
-            lucide.createIcons();
-        }
-
-        window.checkout = () => {
-            const list = window.cart.map(i => `- ${i.name} (${i.q}x)`).join('%0A');
-            const total = toIDR(window.cart.reduce((t, i) => t + (i.price * i.q), 0));
-            const msg = `Halo%20Admin%20LTC,%0ASaya%20ingin%20memesan:%0A${list}%0ATotal:%20${total}`;
-            window.open(`https://wa.me/${window.WHATSAPP_ADMIN}?text=${msg}`, '_blank');
-            window.toggleCart(); window.cart = []; updateBadge();
-        };
-
-        window.hideInstallBanner = () => document.getElementById('install-banner').classList.add('hidden');
-        window.triggerAppInstall = async () => {
-            if (!window.deferredPrompt) { showMsg('Gunakan Menu Browser > Pasang Aplikasi'); return; }
-            window.deferredPrompt.prompt();
-            const { outcome } = await window.deferredPrompt.userChoice;
-            if (outcome === 'accepted') { showMsg('Terpasang! 🐾'); window.hideInstallBanner(); }
-            window.deferredPrompt = null;
-        };
-
     </script>
 </body>
 </html>
