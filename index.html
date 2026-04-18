@@ -89,26 +89,39 @@
             object-fit: cover;
         }
 
-        /* --- PERBAIKAN NAVIGASI MOBILE --- */
+        /* --- PERBAIKAN NAVIGASI MOBILE AGAR TIDAK TUMPANG TINDIH --- */
+        .mobile-nav-wrapper {
+            position: fixed;
+            bottom: 1.5rem;
+            left: 0.75rem;
+            right: 0.75rem;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 2rem;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            overflow: hidden;
+            border: 1px solid rgba(251, 146, 60, 0.1);
+        }
+
         .mobile-nav-scroll {
             display: flex;
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
-            padding: 0.5rem 0.5rem;
-            width: 100%;
+            padding: 0.75rem 0.5rem;
             gap: 0.25rem;
             scroll-snap-type: x mandatory;
         }
         
         .mobile-nav-item {
-            flex: 0 0 4.8rem; /* Ukuran tetap agar tidak menumpuk */
+            flex: 0 0 4.5rem; /* Lebar tetap agar setiap menu punya ruang sendiri */
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             scroll-snap-align: center;
-            position: relative;
-            z-index: 10;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         .nav-item-active {
@@ -117,9 +130,18 @@
 
         .nav-item-active .icon-box {
             background: linear-gradient(135deg, #fb923c 0%, #f472b6 100%);
-            box-shadow: 0 4px 12px rgba(251, 146, 60, 0.3);
+            box-shadow: 0 8px 15px rgba(251, 146, 60, 0.3);
             color: white;
-            transform: scale(1.1);
+            transform: scale(1.1) translateY(-2px);
+        }
+
+        .icon-box {
+            padding: 0.65rem;
+            border-radius: 1rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
     </style>
 </head>
@@ -127,7 +149,7 @@
 
     <!-- --- HEADER --- -->
     <header class="sticky top-0 z-[100] px-4 py-3 glass-nav border-b border-orange-50">
-        <div class="max-w-6xl mx-auto flex justify-between items-center text-">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-2 cursor-pointer" onclick="navigateTo('home')">
                 <div class="cute-gradient p-2 rounded-2xl shadow-lg shadow-orange-200">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg"><path d="M12 11c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm-4.5-1c1.38 0 2.5-1.12 2.5-2.5S8.88 5 7.5 5 5 6.12 5 7.5 6.12 10 7.5 10zm9 0c1.38 0 2.5-1.12 2.5-2.5S17.88 5 16.5 5 14 6.12 14 7.5 15.12 10 16.5 10zm-4.5-2c1.38 0 2.5-1.12 2.5-2.5S13.38 3 12 3 9.5 4.12 9.5 5.5 10.62 8 12 8z"/></svg>
@@ -142,27 +164,27 @@
         </div>
     </header>
 
-    <!-- --- NAVIGASI MOBILE (DIKUNCI AGAR RAPI) --- -->
-    <nav class="md:hidden fixed bottom-6 left-3 right-3 z-[100] glass-nav rounded-[2.5rem] shadow-2xl flex items-center overflow-hidden" id="mobile-nav-wrapper">
+    <!-- --- NAVIGASI MOBILE (7 MENU LENGKAP - RAPI & SCROLLABLE) --- -->
+    <div class="md:hidden mobile-nav-wrapper" id="mobile-nav-wrapper">
         <div class="mobile-nav-scroll no-scrollbar" id="mobile-bottom-nav">
-            <!-- Rendered by JS -->
+            <!-- Menu di-render via JavaScript -->
         </div>
-    </nav>
+    </div>
 
     <!-- --- DESKTOP NAV --- -->
     <nav class="hidden md:flex fixed top-24 right-10 flex-col gap-3 z-40 text-" id="desktop-menu">
     </nav>
 
     <!-- --- MAIN CONTENT --- -->
-    <main id="main-content" class="flex-grow px-4 pt-4 pb-32 max-w-6xl mx-auto w-full">
+    <main id="main-content" class="flex-grow px-4 pt-4 pb-36 max-w-6xl mx-auto w-full">
     </main>
 
     <!-- --- INSTALL BANNER --- -->
-    <div id="install-banner" class="hidden fixed bottom-28 left-6 right-6 z-[90] animate-pop">
+    <div id="install-banner" class="hidden fixed bottom-32 left-6 right-6 z-[900] animate-pop">
         <div class="bg-white p-5 rounded-[2.5rem] shadow-2xl border border-orange-100 flex items-center justify-between gap-4 text-">
             <div class="flex items-center gap-3">
                 <div class="cute-gradient p-2.5 rounded-2xl shadow-lg text-white"><i data-lucide="smartphone"></i></div>
-                <div><p class="font-black text-sm text-gray-800">Pasang di HP?</p><p class="text-[10px] text-gray-400 font-bold uppercase mt-1">Akses Lebih Cepat!</p></div>
+                <div><p class="font-black text-sm text-gray-800 leading-tight">Gunakan Aplikasi?</p><p class="text-[10px] text-gray-400 font-bold uppercase mt-1">Akses Lebih Cepat!</p></div>
             </div>
             <div class="flex gap-2">
                 <button onclick="hideInstallBanner()" class="p-3 bg-gray-50 text-gray-400 rounded-2xl"><i data-lucide="x" class="w-4 h-4"></i></button>
@@ -172,36 +194,38 @@
     </div>
 
     <!-- --- MODAL KERANJANG --- -->
-    <div id="cart-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[110] flex justify-end items-end md:items-stretch text-">
+    <div id="cart-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[2000] flex justify-end items-end md:items-stretch text-">
         <div class="bg-white w-full max-w-md h-[80vh] md:h-full shadow-2xl flex flex-col animate-pop rounded-t-[3rem] md:rounded-t-none md:rounded-l-[3rem] overflow-hidden border border-orange-50">
             <div class="p-6 cute-gradient text-white flex justify-between items-center">
                 <h2 class="text-xl font-black flex items-center gap-3 uppercase"><i data-lucide="shopping-cart"></i> Keranjang Anabul</h2>
-                <button onclick="toggleCart()" class="bg-white/20 p-2 rounded-2xl transition"><i data-lucide="x"></i></button>
+                <button onclick="toggleCart()" class="bg-white/20 p-2 rounded-2xl transition hover:bg-white/30"><i data-lucide="x"></i></button>
             </div>
-            <div id="cart-items-container" class="flex-1 overflow-y-auto p-6 space-y-4 no-scrollbar"></div>
+            <div id="cart-items-container" class="flex-1 overflow-y-auto p-6 space-y-4 no-scrollbar text-"></div>
             <div id="cart-footer" class="hidden p-8 border-t bg-gray-50 rounded-t-[2.5rem]">
                 <div class="flex justify-between text-2xl font-black mb-6">
-                    <span class="text-gray-400 text-sm uppercase tracking-widest font-extrabold">Total Belanja</span>
+                    <span class="text-gray-400 text-sm uppercase self-center tracking-widest font-extrabold">Total Belanja</span>
                     <span class="text-orange-600" id="cart-total-price">Rp 0</span>
                 </div>
-                <button onclick="checkout()" class="w-full cute-gradient text-white py-4 rounded-[2rem] font-black shadow-xl active:scale-95 transition-all text-lg uppercase tracking-wider">Lanjut ke WhatsApp</button>
+                <button onclick="checkout()" class="w-full cute-gradient text-white py-4 rounded-[2rem] font-black shadow-xl shadow-orange-200 active:scale-95 transition-all text-lg uppercase tracking-wider">
+                    Lanjut Bayar (WA)
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- --- TOAST --- -->
-    <div id="message-box" class="hidden fixed top-24 left-1/2 -translate-x-1/2 bg-white/95 backdrop-blur-md border border-orange-100 px-6 py-3 rounded-full shadow-2xl z-[150] flex items-center gap-3 animate-pop">
+    <!-- --- TOAST NOTIFIKASI --- -->
+    <div id="message-box" class="hidden fixed top-24 left-1/2 -translate-x-1/2 bg-white/95 backdrop-blur-md border border-orange-100 px-6 py-3 rounded-full shadow-2xl z-[3000] flex items-center gap-3 animate-pop">
         <div class="bg-orange-100 p-1.5 rounded-full text-orange-600 shadow-inner"><i data-lucide="sparkles" class="w-4 h-4"></i></div>
         <span id="message-box-text" class="font-bold text-sm"></span>
     </div>
 
-    <!-- --- SCRIPTS & FIREBASE --- -->
+    <!-- --- FIREBASE & APP LOGIC --- -->
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
         import { getAuth, signInAnonymously, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
         import { getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
 
-        // 1. Firebase Configuration Official
+        // 1. Firebase Configuration (look-the-cats-official)
         const firebaseConfig = {
             apiKey: "AIzaSyBARlWoWFwiRI6VUuRMURYSbDaVzSRmn_U",
             authDomain: "look-the-cats-official.firebaseapp.com",
@@ -239,7 +263,7 @@
             { id: 4, title: 'Seminar Perawatan Kitten', date: '20 Mei', loc: 'Zoom Online', type: 'Edukasi', icon: 'book', color: 'text-purple-500', bg: 'bg-purple-50' }
         ];
 
-        // 3. Realtime Cloud Sync
+        // 3. Realtime Sync
         const setupCloudSync = () => {
             onSnapshot(collection(db, 'artifacts', artifactAppId, 'public', 'data', 'products'), (snap) => {
                 window.PRODUCTS = snap.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -255,16 +279,16 @@
             });
         };
 
-        // 4. Initializing App & Auth
+        // 4. Initializing Auth
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 window.currentUser = user;
                 setupCloudSync();
-                renderNavs();
-                renderContent();
             } else {
                 signInAnonymously(auth);
             }
+            renderNavs();
+            renderContent();
         });
 
         // 5. Cloud Writes
@@ -300,23 +324,23 @@
                 } else { await addDoc(collRef, payload); }
                 window.navigateTo('clinic');
             }
-            showMsg("Data Cloud Tersimpan! ✨");
+            showMsg("Cloud Berhasil Diupdate! ✨");
         };
 
         window.deleteFromCloud = async (id, type) => {
-            if (!confirm("Hapus data selamanya?")) return;
+            if (!confirm("Hapus selamanya?")) return;
             const collName = type === 'shop' ? 'products' : 'clinics';
             await deleteDoc(doc(db, 'artifacts', artifactAppId, 'public', 'data', collName, id));
-            showMsg("Dihapus! 🗑️");
+            showMsg("Terhapus! 🗑️");
         };
 
         window.startConsultation = async () => {
-            const topic = prompt("Tulis topik konsul:");
+            const topic = prompt("Tulis topik konsul Anda:");
             if (topic) {
                 await addDoc(collection(db, 'artifacts', artifactAppId, 'public', 'data', 'consultations'), {
                     senderId: window.currentUser.uid.substring(0, 6),
                     topic, status: 'Aktif',
-                    messages: [{ from: 'User', text: 'Tanya Mentor: ' + topic, time: Date.now() }]
+                    messages: [{ from: 'User', text: 'Halo Mentor, mohon info: ' + topic, time: Date.now() }]
                 });
                 showMsg("Topik Terkirim! 🐾");
             }
@@ -331,7 +355,7 @@
             window.viewChat(id);
         };
 
-        // 6. Navigation Helpers
+        // 6. Global Navigation Helpers
         window.navigateTo = (p) => {
             window.currentPage = p;
             window.productEditId = null;
@@ -343,15 +367,13 @@
         };
 
         window.checkAdminPassword = () => {
-            const val = document.getElementById('admin-pass-input').value;
-            if (val === window.ADMIN_PASS) {
+            const v = document.getElementById('admin-pass-input').value;
+            if (v === window.ADMIN_PASS) {
                 window.isAdminUnlocked = true;
                 showMsg('Dashboard Admin Aktif! 🔓');
                 renderContent();
             } else { showMsg('Password Salah! ❌'); }
         };
-
-        window.lockAdmin = () => { window.isAdminUnlocked = false; showMsg('Admin Dikunci 🔒'); window.navigateTo('home'); };
 
         window.handlePhotos = (e) => {
             const files = Array.from(e.target.files);
@@ -362,13 +384,13 @@
                 reader.onload = (ev) => {
                     window.tempUploadImages.push(ev.target.result);
                     const container = document.getElementById('upload-preview');
-                    if (container) container.innerHTML = window.tempUploadImages.map(img => `<div class="w-12 h-12 rounded-lg overflow-hidden border"><img src="${img}" class="w-full h-full object-cover"></div>`).join('');
+                    if (container) container.innerHTML = window.tempUploadImages.map(img => `<div class="w-12 h-12 rounded-lg overflow-hidden border border-orange-200"><img src="${img}" class="w-full h-full object-cover"></div>`).join('');
                 };
                 reader.readAsDataURL(file);
             });
         };
 
-        // 7. RENDER NAVS (7 MENU)
+        // 7. RENDER NAVS (7 MENU ANTI-TUMPUK)
         function renderNavs() {
             const items = [
                 { id: 'home', label: 'Home', icon: 'home' },
@@ -381,11 +403,11 @@
             ];
             const mob = document.getElementById('mobile-bottom-nav');
             mob.innerHTML = items.map(m => `
-                <div onclick="navigateTo('${m.id}')" class="mobile-nav-item cursor-pointer group ${window.currentPage === m.id ? 'nav-item-active' : 'text-gray-400'}">
-                    <div class="p-2.5 rounded-2xl icon-box transition-all duration-300">
+                <div onclick="navigateTo('${m.id}')" class="mobile-nav-item ${window.currentPage === m.id ? 'nav-item-active' : 'text-gray-400'}">
+                    <div class="icon-box">
                         <i data-lucide="${m.icon}" class="w-5 h-5"></i>
                     </div>
-                    <span class="text-[8px] font-black uppercase mt-1 tracking-tighter leading-none">${m.label}</span>
+                    <span class="text-[9px] font-black uppercase mt-1 tracking-tight leading-none text-center">${m.label}</span>
                 </div>
             `).join('');
 
@@ -407,29 +429,29 @@
             if (window.currentPage === 'home') {
                 const displayMascot = window.currentUser?.photoURL || window.globalMascot || null;
                 main.innerHTML = `
-                    <div class="space-y-10 animate-pop text-">
+                    <div class="space-y-10 animate-pop text-[Image of Banner Home]">
                         <section class="cute-gradient rounded-[3.5rem] p-8 md:p-16 text-center text-white relative overflow-hidden shadow-2xl shadow-orange-200">
                             <div class="absolute top-0 left-0 w-32 h-32 bg-white/10 rounded-full -ml-10 -mt-10 blur-2xl"></div>
-                            <div class="relative z-10 flex flex-col items-center gap-6">
+                            <div class="relative z-10 flex flex-col items-center gap-6 text-">
                                 <div class="cat-avatar-frame floating cursor-pointer group" onclick="navigateTo('account')">
-                                    <div class="w-40 h-40 md:w-60 md:h-60 rounded-full overflow-hidden bg-orange-100 flex items-center justify-center border-4 border-white shadow-inner">
-                                        ${displayMascot ? `<img src="${displayMascot}" class="w-full h-full object-cover text-">` : `<i data-lucide="cat" class="w-24 h-24 text-orange-300"></i>`}
+                                    <div class="w-40 h-40 md:w-60 md:h-60 rounded-full overflow-hidden bg-orange-100 flex items-center justify-center border-4 border-white shadow-inner text-">
+                                        ${displayMascot ? `<img src="${displayMascot}" class="w-full h-full object-cover">` : `<i data-lucide="cat" class="w-24 h-24 text-orange-300"></i>`}
                                     </div>
-                                    <div class="absolute bottom-3 right-3 bg-white text-orange-50 p-2.5 rounded-full shadow-lg group-hover:scale-125 transition duration-300"><i data-lucide="camera" class="w-6 h-6"></i></div>
+                                    <div class="absolute bottom-3 right-3 bg-white text-orange-500 p-2.5 rounded-full shadow-lg group-hover:scale-125 transition duration-300"><i data-lucide="camera" class="w-6 h-6"></i></div>
                                 </div>
                                 <h1 class="text-3xl md:text-5xl font-black leading-tight tracking-tighter uppercase leading-none text-">Look The Cats <br> Indonesia</h1>
-                                <p class="text-orange-50 font-medium max-w-md opacity-90 leading-relaxed px-4">Pendaftaran anggota, belanja pakan premium, hingga direktori klinik kucing se-Indonesia secara realtime cloud.</p>
-                                <div class="flex gap-3 w-full max-w-xs px-4 text-">
+                                <p class="text-orange-50 font-medium max-w-md opacity-90 leading-relaxed px-4 text-">Pendaftaran anggota, belanja premium, hingga direktori klinik kucing se-Indonesia secara realtime cloud.</p>
+                                <div class="flex gap-3 w-full max-w-xs px-4">
                                     <button onclick="navigateTo('shop')" class="flex-1 bg-white text-orange-600 py-4 rounded-[1.8rem] font-black shadow-xl active:scale-95 transition uppercase tracking-widest text-xs">Toko</button>
                                     <button onclick="navigateTo('clinic')" class="flex-1 bg-black/20 backdrop-blur-md text-white py-4 rounded-[1.8rem] font-black border border-white/30 active:scale-95 transition uppercase tracking-widest text-xs">Klinik</button>
                                 </div>
                             </div>
                         </section>
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 px-2">
-                            <div class="bg-white p-5 rounded-[2rem] border border-orange-50 text-center shadow-sm"><div class="bg-orange-100 w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2 text-orange-500 shadow-inner"><i data-lucide="zap" class="w-5 h-5"></i></div><p class="font-black text-sm uppercase text-gray-400 leading-none">Respon</p></div>
-                            <div class="bg-white p-5 rounded-[2rem] border border-orange-50 text-center shadow-sm"><div class="bg-pink-100 w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2 text-pink-500 shadow-inner"><i data-lucide="heart" class="w-5 h-5"></i></div><p class="font-black text-sm uppercase text-gray-400 leading-none text-">Kasih</p></div>
-                            <div class="bg-white p-5 rounded-[2rem] border border-orange-50 text-center shadow-sm"><div class="bg-blue-100 w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2 text-blue-500 shadow-inner"><i data-lucide="shield-check" class="w-5 h-5"></i></div><p class="font-black text-sm uppercase text-gray-400 leading-none">Keamanan</p></div>
-                            <div class="bg-white p-5 rounded-[2rem] border border-orange-50 text-center shadow-sm"><div class="bg-purple-100 w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2 text-purple-500 shadow-inner"><i data-lucide="cloud" class="w-5 h-5 text-"></i></div><p class="font-black text-sm uppercase text-gray-400 leading-none">Cloud</p></div>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 px-2 text-">
+                            <div class="bg-white p-5 rounded-[2rem] border border-orange-50 text-center shadow-sm"><div class="bg-orange-100 w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2 text-orange-500 shadow-inner"><i data-lucide="zap" class="w-5 h-5 text-"></i></div><p class="font-bold text-xs uppercase text-gray-400 leading-none">Respon</p></div>
+                            <div class="bg-white p-5 rounded-[2rem] border border-orange-50 text-center shadow-sm"><div class="bg-pink-100 w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2 text-pink-500 shadow-inner"><i data-lucide="heart" class="w-5 h-5 text-"></i></div><p class="font-bold text-xs uppercase text-gray-400 leading-none">Sayang</p></div>
+                            <div class="bg-white p-5 rounded-[2rem] border border-orange-50 text-center shadow-sm"><div class="bg-blue-100 w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2 text-blue-500 shadow-inner"><i data-lucide="shield-check" class="w-5 h-5 text-"></i></div><p class="font-bold text-xs uppercase text-gray-400 leading-none">Aman</p></div>
+                            <div class="bg-white p-5 rounded-[2rem] border border-orange-50 text-center shadow-sm"><div class="bg-purple-100 w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2 text-purple-500 shadow-inner"><i data-lucide="cloud" class="w-5 h-5 text-[Image of Cloud]"></i></div><p class="font-bold text-xs uppercase text-gray-400 leading-none">Database</p></div>
                         </div>
                     </div>
                 `;
@@ -439,9 +461,9 @@
                 main.innerHTML = `
                     <div class="space-y-6 animate-pop text-">
                         <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-orange-50">
-                            <div class="flex justify-between items-center text-">
-                                <div><h2 class="text-2xl font-black text-gray-800 tracking-tight uppercase">Direktori Klinik</h2><p class="text-xs text-gray-400 font-medium">Layanan medis kucing profesional.</p></div>
-                                <div class="bg-blue-100 p-3 rounded-2xl text-blue-500 shadow-inner"><i data-lucide="stethoscope" class="w-7 h-7"></i></div>
+                            <div class="flex justify-between items-center">
+                                <div><h2 class="text-2xl font-black text-gray-800 tracking-tight uppercase leading-none mb-1 text-">Direktori Klinik</h2><p class="text-xs text-gray-400 font-medium">Layanan medis kucing profesional.</p></div>
+                                <div class="bg-blue-100 p-3 rounded-2xl text-blue-500 shadow-inner text-"><i data-lucide="stethoscope" class="w-7 h-7"></i></div>
                             </div>
                             ${isAdmin ? `
                             <div class="mt-6 p-6 bg-blue-50/50 border border-blue-100 rounded-[2.2rem] animate-fade-in text-">
@@ -449,11 +471,11 @@
                                 <form onsubmit="window.saveToFirestore(event, 'clinic')" class="space-y-4 text-">
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <input type="text" id="item-name" placeholder="Nama Klinik" required value="${editTarget ? editTarget.name : ''}" class="p-4 rounded-2xl bg-white border-none outline-none focus:ring-2 focus:ring-blue-300 text-sm font-bold shadow-sm">
-                                        <input type="text" id="c-license" placeholder="Nomor SIP/Izin" required value="${editTarget ? editTarget.license : ''}" class="p-4 rounded-2xl bg-white border-none outline-none focus:ring-2 focus:ring-blue-300 text-sm font-bold shadow-sm">
-                                        <input type="text" id="c-doctor" placeholder="Dr. Penanggung Jawab" required value="${editTarget ? editTarget.doctor : ''}" class="p-4 rounded-2xl bg-white text-sm font-bold">
-                                        <input type="text" id="c-owner" placeholder="Nama Pemilik Klinik" required value="${editTarget ? editTarget.owner : ''}" class="p-4 rounded-2xl bg-white text-sm font-bold shadow-sm">
+                                        <input type="text" id="c-license" placeholder="Nomor Izin SIP" required value="${editTarget ? editTarget.license : ''}" class="p-4 rounded-2xl bg-white border-none outline-none focus:ring-2 focus:ring-blue-300 text-sm font-bold shadow-sm">
+                                        <input type="text" id="c-doctor" placeholder="Dr. Penanggung Jawab" required value="${editTarget ? editTarget.doctor : ''}" class="p-4 rounded-2xl bg-white text-sm font-bold shadow-sm">
+                                        <input type="text" id="c-owner" placeholder="Nama Pemilik Klinik" required value="${editTarget ? editTarget.owner : ''}" class="p-4 rounded-2xl bg-white text-sm font-bold shadow-sm text-">
                                     </div>
-                                    <input type="text" id="c-address" placeholder="Alamat Klinik" required value="${editTarget ? editTarget.address : ''}" class="w-full p-4 rounded-2xl bg-white text-sm font-bold shadow-sm">
+                                    <input type="text" id="c-address" placeholder="Alamat Klinik Lengkap" required value="${editTarget ? editTarget.address : ''}" class="w-full p-4 rounded-2xl bg-white text-sm font-bold shadow-sm text-">
                                     <textarea id="c-services" placeholder="Pelayanan (Pisahkan dengan koma)" class="w-full p-4 rounded-2xl bg-white h-24 text-sm font-bold shadow-inner">${editTarget ? editTarget.services : ''}</textarea>
                                     <div class="flex flex-col gap-2">
                                         <label class="text-[9px] font-black text-gray-400 uppercase px-2 tracking-widest leading-none">Unggah Foto (Maks 5)</label>
@@ -464,28 +486,28 @@
                                 </form>
                             </div>` : ''}
                         </div>
-                        <div class="space-y-4 text-">
+                        <div class="space-y-4">
                             ${window.CLINICS.map(item => `
-                                <div class="bg-white p-5 rounded-[2.8rem] border border-orange-50 shadow-sm flex flex-col md:flex-row gap-6 relative overflow-hidden">
+                                <div class="bg-white p-5 rounded-[2.8rem] border border-orange-50 shadow-sm flex flex-col md:flex-row gap-6 relative overflow-hidden text-">
                                     <div class="w-full md:w-64 h-56 rounded-[2.2rem] overflow-hidden relative shadow-inner bg-blue-50 flex-shrink-0 text-">
                                         <div class="item-slider no-scrollbar h-full w-full">
                                             ${item.images && item.images.length > 0 ? item.images.map(img => `<img src="${img}">`).join('') : `<div class="w-full h-full flex items-center justify-center text-blue-200 opacity-30"><i data-lucide="image" class="w-12 h-12"></i></div>`}
                                         </div>
                                     </div>
-                                    <div class="flex-1 flex flex-col justify-center gap-2">
+                                    <div class="flex-1 flex flex-col justify-center gap-2 text-">
                                         <h3 class="font-black text-2xl text-gray-800 tracking-tight leading-none">${item.name}</h3>
                                         <div class="space-y-1 mt-1 text-">
-                                            <p class="text-[10px] font-bold text-blue-600 uppercase flex items-center gap-2 leading-none"><i data-lucide="shield-check" class="w-3.5 h-3.5"></i> IZIN: ${item.license}</p>
+                                            <p class="text-[10px] font-bold text-blue-600 uppercase flex items-center gap-2 leading-none"><i data-lucide="shield-check" class="w-3.5 h-3.5"></i> SIP: ${item.license}</p>
                                             <p class="text-xs text-gray-500 font-medium flex items-center gap-2 leading-none"><i data-lucide="user-round" class="w-4 h-4"></i> Dr: <span class="text-gray-800 font-bold">${item.doctor}</span></p>
-                                            <p class="text-xs text-gray-500 font-medium flex items-center gap-2 leading-tight"><i data-lucide="map-pin" class="w-4 h-4"></i> ${item.address}</p>
+                                            <p class="text-xs text-gray-500 font-medium flex items-center gap-2 leading-tight"><i data-lucide="map-pin" class="w-4 h-4 text-[Image of Pin Map]"></i> ${item.address}</p>
                                         </div>
                                         <div class="mt-3 p-4 bg-blue-50/60 rounded-[1.8rem] border border-blue-100 text-">
-                                            <p class="text-[9px] font-black text-blue-400 uppercase mb-1">Pelayanan Utama</p>
+                                            <p class="text-[9px] font-black text-blue-400 uppercase mb-1">Daftar Pelayanan</p>
                                             <p class="text-xs font-bold text-blue-800 leading-relaxed">${item.services}</p>
                                         </div>
                                     </div>
                                     <div class="md:w-36 flex md:flex-col justify-between items-center md:items-end gap-3 text-">
-                                        ${isAdmin ? `<div class="flex gap-2"><button onclick="window.clinicEditId='${item.id}'; window.renderContent(); window.scrollTo(0,0);" class="p-3.5 bg-blue-50 text-blue-500 rounded-2xl active:scale-75 transition border border-blue-100"><i data-lucide="edit-3" class="w-5 h-5"></i></button><button onclick="window.deleteFromCloud('${item.id}', 'clinic')" class="p-3.5 bg-red-50 text-red-400 rounded-2xl active:scale-75 transition border border-red-100"><i data-lucide="trash-2" class="w-5 h-5"></i></button></div>` : `<button onclick="window.open('https://wa.me/${window.WHATSAPP_ADMIN}?text=Halo%20Admin%20LTC,%20saya%20tertarik%20dengan%20klinik%20${item.name}', '_blank')" class="w-full bg-blue-500 text-white py-4 px-6 rounded-2xl font-black text-[11px] uppercase shadow-lg shadow-blue-100 active:scale-95 transition tracking-widest text-">Hubungi</button>`}
+                                        ${isAdmin ? `<div class="flex gap-2"><button onclick="window.clinicEditId='${item.id}'; window.renderContent(); window.scrollTo(0,0);" class="p-3.5 bg-blue-50 text-blue-500 rounded-2xl active:scale-75 transition border border-blue-100"><i data-lucide="edit-3" class="w-5 h-5"></i></button><button onclick="window.deleteFromCloud('${item.id}', 'clinic')" class="p-3.5 bg-red-50 text-red-400 rounded-2xl active:scale-75 transition border border-red-100"><i data-lucide="trash-2" class="w-5 h-5 text-"></i></button></div>` : `<button onclick="window.open('https://wa.me/${window.WHATSAPP_ADMIN}?text=Halo%20Admin%20LTC,%20saya%20tertarik%20dengan%20klinik%20${item.name}', '_blank')" class="w-full bg-blue-500 text-white py-4 px-6 rounded-2xl font-black text-[11px] uppercase shadow-lg shadow-blue-100 active:scale-95 transition tracking-widest text-">Booking</button>`}
                                     </div>
                                 </div>
                             `).join('')}
@@ -499,12 +521,12 @@
                     <div class="space-y-6 animate-pop text-">
                         <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-orange-50 text-">
                             <div class="flex justify-between items-center">
-                                <div><h2 class="text-2xl font-black text-gray-800 tracking-tight uppercase leading-none mb-1">Toko Anabul</h2><p class="text-xs text-gray-400 font-medium">Pakan & Aksesoris Premium.</p></div>
+                                <div><h2 class="text-2xl font-black text-gray-800 tracking-tight uppercase leading-none mb-1 text-">Toko Anabul</h2><p class="text-xs text-gray-400 font-medium">Pakan & Aksesoris Terlengkap.</p></div>
                                 <div class="bg-orange-100 p-3 rounded-2xl text-orange-500 shadow-inner text-"><i data-lucide="shopping-bag" class="w-7 h-7"></i></div>
                             </div>
                             ${isAdmin ? `
                             <div class="mt-6 p-6 bg-orange-50/50 border border-orange-100 rounded-[2.2rem] animate-fade-in text-">
-                                <h3 class="font-black text-orange-600 text-xs mb-5 uppercase tracking-[0.2em]">${window.productEditId ? 'Update Produk' : 'Tambah Produk Baru'}</h3>
+                                <h3 class="font-black text-orange-600 text-xs mb-5 uppercase tracking-[0.2em]">${window.productEditId ? 'Edit Produk' : 'Tambah Produk Baru'}</h3>
                                 <form onsubmit="window.saveToFirestore(event, 'shop')" class="space-y-4">
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-">
                                         <input type="text" id="item-name" placeholder="Nama Produk" required value="${editTarget ? editTarget.name : ''}" class="p-4 rounded-2xl bg-white border-none outline-none focus:ring-2 focus:ring-orange-300 text-sm font-bold shadow-sm">
@@ -529,15 +551,15 @@
                                 <div class="bg-white p-4 rounded-[2.8rem] border border-orange-50 shadow-sm flex flex-col h-full overflow-hidden text-">
                                     <div class="h-60 rounded-[2.2rem] mb-4 overflow-hidden relative shadow-inner bg-orange-50 text-">
                                         <div class="item-slider no-scrollbar h-full w-full">
-                                            ${item.images && item.images.length > 0 ? item.images.map(img => `<img src="${img}">`).join('') : `<div class="w-full h-full flex items-center justify-center text-orange-200 opacity-30"><i data-lucide="package" class="w-14 h-14 text-"></i></div>`}
+                                            ${item.images && item.images.length > 0 ? item.images.map(img => `<img src="${img}">`).join('') : `<div class="w-full h-full flex items-center justify-center text-orange-200 opacity-30"><i data-lucide="package" class="w-14 h-14"></i></div>`}
                                         </div>
                                         <div class="absolute top-3 left-3 bg-white/95 px-3 py-1 rounded-full text-[8px] font-black text-orange-500 uppercase tracking-widest z-10 border border-orange-50 shadow-sm">${item.cat}</div>
                                     </div>
                                     <h3 class="font-black text-gray-800 text-sm px-1 line-clamp-2 leading-tight uppercase mb-2">${item.name}</h3>
-                                    <div class="mt-auto pt-4 flex justify-between items-center border-t border-gray-50 px-1">
+                                    <div class="mt-auto pt-4 flex justify-between items-center border-t border-gray-50 px-1 text-">
                                         <p class="font-black text-orange-600 text-xl tracking-tighter leading-none">${toIDR(item.price)}</p>
-                                        <div class="flex gap-1.5 text-">
-                                            ${isAdmin ? `<button onclick="window.productEditId='${item.id}'; window.renderContent(); window.scrollTo(0,0);" class="p-3 bg-blue-50 text-blue-500 rounded-2xl border shadow-sm"><i data-lucide="edit-3" class="w-4 h-4"></i></button><button onclick="window.deleteFromCloud('${item.id}', 'shop')" class="p-3 bg-red-50 text-red-400 rounded-2xl border shadow-sm"><i data-lucide="trash-2" class="w-4 h-4"></i></button>` : `<button onclick="window.addCartLocal('${item.id}')" class="cute-gradient text-white p-3.5 rounded-2xl shadow-lg active:scale-75 transition-all shadow-orange-100"><i data-lucide="plus" class="w-5 h-5 text-"></i></button>`}
+                                        <div class="flex gap-1.5">
+                                            ${isAdmin ? `<button onclick="window.productEditId='${item.id}'; window.renderContent(); window.scrollTo(0,0);" class="p-3 bg-blue-50 text-blue-500 rounded-2xl border shadow-sm"><i data-lucide="edit-3" class="w-4 h-4"></i></button><button onclick="window.deleteFromCloud('${item.id}', 'shop')" class="p-3 bg-red-50 text-red-400 rounded-2xl border shadow-sm"><i data-lucide="trash-2" class="w-4 h-4"></i></button>` : `<button onclick="window.addCartLocal('${item.id}')" class="cute-gradient text-white p-3.5 rounded-2xl shadow-lg active:scale-75 transition-all shadow-orange-100"><i data-lucide="plus" class="w-5 h-5"></i></button>`}
                                         </div>
                                     </div>
                                 </div>
@@ -547,19 +569,19 @@
                 `;
             };
 
-            // AGENDA VIEW (Activities)
+            // 7. AGENDA VIEW (Activities)
             if (window.currentPage === 'activities') {
                 main.innerHTML = `
                     <div class="space-y-6 animate-pop text-">
-                        <h2 class="text-2xl font-black text-gray-800 ml-2 tracking-tight uppercase leading-none">Jadwal Agenda 📅</h2>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <h2 class="text-2xl font-black text-gray-800 ml-2 tracking-tight uppercase leading-none text-">Agenda Look The Cats 📅</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 text-">
                             ${window.ACTIVITIES.map(a => `
                                 <div class="bg-white p-6 rounded-[2.5rem] border border-orange-50 flex items-center gap-6 shadow-sm hover:shadow-md transition text-">
                                     <div class="${a.bg} ${a.color} w-20 h-20 rounded-[1.8rem] flex flex-col items-center justify-center border-2 border-white shadow-inner font-black uppercase tracking-widest text-">
                                         <span class="text-[9px]">${a.date.split(' ')[1]}</span>
                                         <span class="text-2xl">${a.date.split(' ')[0]}</span>
                                     </div>
-                                    <div class="flex-1">
+                                    <div class="flex-1 text-">
                                         <h3 class="font-black text-sm text-gray-800 leading-tight uppercase tracking-tight">${a.title}</h3>
                                         <p class="text-[10px] text-gray-400 font-bold uppercase mt-1 tracking-tight text-"><i data-lucide="map-pin" class="w-3.5 h-3.5 inline"></i> ${a.loc}</p>
                                         <button onclick="window.open('https://wa.me/${window.WHATSAPP_ADMIN}?text=Daftar%20Agenda:%20${a.title}', '_blank')" class="mt-2 text-orange-500 font-black text-[10px] uppercase tracking-widest hover:underline decoration-orange-200">Daftar Sekarang & Detail &rarr;</button>
@@ -569,16 +591,16 @@
                         </div>
                         
                         <!-- HIMBAUAN AGENDA (Hadir Lagi!) -->
-                        <div class="mt-8 bg-blue-500 rounded-[2.8rem] p-8 text-white relative overflow-hidden shadow-2xl shadow-blue-200 text-">
+                        <div class="mt-10 bg-blue-500 rounded-[2.8rem] p-8 text-white relative overflow-hidden shadow-2xl shadow-blue-200 text-">
                             <div class="absolute right-0 bottom-0 w-36 h-36 bg-white/10 rounded-full -mb-10 -mr-10 blur-xl"></div>
                             <div class="relative z-10 flex flex-col md:flex-row items-center gap-6">
-                                <div class="bg-white/20 p-5 rounded-3xl shadow-inner text-white">
+                                <div class="bg-white/20 p-5 rounded-3xl shadow-inner text-white text-">
                                     <i data-lucide="info" class="w-10 h-10"></i>
                                 </div>
                                 <div class="text-center md:text-left flex-1">
-                                    <h4 class="text-xl font-black uppercase tracking-tight leading-none mb-1">Punya Informasi Acara?</h4>
-                                    <p class="text-blue-50 text-sm font-medium mt-1 leading-relaxed">Bantu kami memperbarui jadwal komunitas di wilayah Anda. Hubungi WhatsApp Admin untuk mendaftarkan agenda kegiatan kucing baru atau informasi klinik tambahan.</p>
-                                    <button onclick="window.open('https://wa.me/${window.WHATSAPP_ADMIN}', '_blank')" class="mt-6 bg-white text-blue-600 px-8 py-3.5 rounded-2xl font-black shadow-lg hover:scale-105 active:scale-95 transition uppercase tracking-widest text-xs flex items-center justify-center gap-2">
+                                    <h4 class="text-xl font-black uppercase tracking-tight leading-none mb-1 text-">Punya Informasi Acara?</h4>
+                                    <p class="text-blue-50 text-sm font-medium mt-1 leading-relaxed text-">Bantu kami memperbarui jadwal komunitas di wilayah Anda. Hubungi WhatsApp Admin untuk mendaftarkan agenda kegiatan kucing baru atau informasi klinik tambahan secara gratis!</p>
+                                    <button onclick="window.open('https://wa.me/${window.WHATSAPP_ADMIN}', '_blank')" class="mt-6 bg-white text-blue-600 px-8 py-3.5 rounded-2xl font-black shadow-lg hover:scale-105 active:scale-95 transition uppercase tracking-widest text-xs flex items-center justify-center gap-2 text-">
                                         <i data-lucide="phone" class="w-4 h-4 text-"></i> Hubungi Admin Sekarang
                                     </button>
                                 </div>
@@ -588,22 +610,22 @@
                 `;
             }
 
-            // CONSULT VIEW
+            // 8. CONSULT VIEW (Consultation)
             else if (window.currentPage === 'consultation') {
-                main.innerHTML = `<div class="space-y-6 animate-pop text-"><div class="flex justify-between items-center bg-white p-6 rounded-[2.5rem] shadow-sm border border-orange-50 text-"><div><h2 class="text-2xl font-black text-gray-800 uppercase tracking-tighter leading-none mb-1">Ruang Konsul</h2><p class="text-xs text-gray-400 font-medium text-">Tanya jawab mentor realtime cloud.</p></div><button onclick="window.startConsultation()" class="cute-gradient text-white p-4 rounded-2xl shadow-lg active:scale-90 transition shadow-orange-100 text-"><i data-lucide="plus" class="w-7 h-7"></i></button></div><div class="space-y-3 text-">${window.consultations.map(c => `<div class="bg-white p-6 rounded-[2.5rem] border border-orange-50 shadow-sm flex items-center justify-between group hover:border-orange-300 transition-all text-"><div class="flex items-center gap-5 text-"><div class="bg-orange-100 p-3.5 rounded-2xl text-orange-500 shadow-inner text-"><i data-lucide="message-circle" class="w-6 h-6"></i></div><div><h3 class="font-bold text-gray-800 text-sm leading-none tracking-tight uppercase">${c.topic}</h3><p class="text-[10px] text-gray-400 font-black uppercase tracking-widest mt-1.5 leading-none">Oleh: ${c.sender} • ${c.status}</p></div></div><button onclick="window.viewChat('${c.id}')" class="p-2.5 bg-orange-50 text-orange-500 rounded-xl group-hover:bg-orange-500 group-hover:text-white transition-all shadow-sm"><i data-lucide="chevron-right" class="w-5 h-5 text-"></i></button></div>`).join('')}</div></div>`;
+                main.innerHTML = `<div class="space-y-6 animate-pop text-"><div class="flex justify-between items-center bg-white p-6 rounded-[2.5rem] shadow-sm border border-orange-50 text-"><div><h2 class="text-2xl font-black text-gray-800 uppercase tracking-tighter leading-none mb-1 text-">Ruang Konsul</h2><p class="text-xs text-gray-400 font-medium">Chat realtime dengan mentor cloud.</p></div><button onclick="window.startConsultation()" class="cute-gradient text-white p-4 rounded-2xl shadow-lg active:scale-90 transition shadow-orange-100 text-"><i data-lucide="plus" class="w-7 h-7"></i></button></div><div class="space-y-3 text-">${window.consultations.map(c => `<div class="bg-white p-6 rounded-[2.5rem] border border-orange-50 shadow-sm flex items-center justify-between group hover:border-orange-300 transition-all text-"><div class="flex items-center gap-5 text-"><div class="bg-orange-100 p-3.5 rounded-2xl text-orange-500 shadow-inner text-"><i data-lucide="message-circle" class="w-6 h-6 text-"></i></div><div><h3 class="font-bold text-gray-800 text-sm leading-none tracking-tight uppercase">${c.topic}</h3><p class="text-[10px] text-gray-400 font-black uppercase tracking-widest mt-1.5 leading-none">Oleh: ${c.sender} • ${c.status}</p></div></div><button onclick="window.viewChat('${c.id}')" class="p-2.5 bg-orange-50 text-orange-500 rounded-xl group-hover:bg-orange-500 group-hover:text-white transition-all shadow-sm text-"><i data-lucide="chevron-right" class="w-5 h-5"></i></button></div>`).join('')}</div></div>`;
             }
 
-            // PROFIL VIEW
+            // 9. PROFIL VIEW (Account)
             else if (window.currentPage === 'account') {
-                main.innerHTML = `<div class="max-w-md mx-auto animate-pop pt-10 text-"><div class="bg-white p-10 rounded-[3rem] shadow-2xl border border-orange-50 text-center relative overflow-hidden text-"><div class="absolute top-0 left-0 w-full h-36 cute-gradient rounded-b-[4.5rem]"></div><div class="relative z-10 text-"><div class="cat-avatar-frame w-36 h-36 mx-auto mb-6 ring-8 ring-white shadow-xl overflow-hidden text-"><div class="w-full h-full rounded-full overflow-hidden bg-orange-100 flex items-center justify-center text-"><i data-lucide="user" class="w-16 h-16 text-orange-300"></i></div></div><h2 class="text-2xl font-black text-gray-900 leading-tight uppercase tracking-tighter text-">Member Cloud</h2><p class="text-gray-400 text-[10px] font-black uppercase mt-1.5 tracking-widest leading-none">Sesi Firestore Aktif ✅</p><div class="mt-10 space-y-3.5 text-"><button onclick="window.handleLogout()" class="w-full bg-red-50 text-red-500 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest border border-red-100 shadow-sm transition active:scale-95 text-"><i data-lucide="log-out" class="w-4 h-4 inline mr-2 text-"></i> Logout Sesi</button></div></div></div></div>`;
+                main.innerHTML = `<div class="max-w-md mx-auto animate-pop pt-10 text-"><div class="bg-white p-10 rounded-[3rem] shadow-2xl border border-orange-50 text-center relative overflow-hidden text-"><div class="absolute top-0 left-0 w-full h-36 cute-gradient rounded-b-[4.5rem] text-"></div><div class="relative z-10 text-"><div class="cat-avatar-frame w-36 h-36 mx-auto mb-6 ring-8 ring-white shadow-xl overflow-hidden text-"><div class="w-full h-full rounded-full overflow-hidden bg-orange-100 flex items-center justify-center text-"><i data-lucide="user" class="w-16 h-16 text-orange-300"></i></div></div><h2 class="text-2xl font-black text-gray-900 leading-tight uppercase tracking-tighter text-">Member Cloud</h2><p class="text-gray-400 text-[10px] font-black uppercase mt-1.5 tracking-widest leading-none">Sesi Firestore Aktif ✅</p><div class="mt-10 space-y-3.5 text-"><button onclick="window.triggerAppInstall()" class="w-full bg-orange-50 text-orange-500 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest border border-orange-100 shadow-sm transition active:scale-95 text-"><i data-lucide="smartphone" class="w-4 h-4 inline mr-2"></i> Pasang Ikon HP</button><button onclick="window.handleLogout()" class="w-full bg-red-50 text-red-500 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest border border-red-100 shadow-sm transition active:scale-95 text-"><i data-lucide="log-out" class="w-4 h-4 inline mr-2"></i> Logout Sesi</button></div></div></div></div>`;
             }
 
-            // ADMIN VIEW
+            // 10. ADMIN VIEW (Dashboard)
             else if (window.currentPage === 'admin') {
                 if (!window.isAdminUnlocked) {
-                    main.innerHTML = `<div class="max-w-md mx-auto space-y-6 animate-pop mt-10 text-"><div class="bg-white p-10 rounded-[3.5rem] shadow-2xl border border-orange-50 text-center relative overflow-hidden text-"><div class="cute-gradient w-20 h-20 rounded-[2rem] flex items-center justify-center mx-auto mb-6 text-white shadow-lg"><i data-lucide="lock" class="w-10 h-10 text-"></i></div><h2 class="text-2xl font-black text-gray-800 leading-none mb-3 uppercase tracking-tighter text-">Akses Cloud</h2><p class="text-gray-400 text-sm leading-relaxed px-6 font-medium mt-1">Gunakan password pusat untuk mengelola database LTC secara realtime cloud.</p><div class="mt-10 space-y-4 px-4 text-"><input type="password" id="admin-pass-input" placeholder="Password Admin" class="w-full p-4 rounded-[1.8rem] bg-gray-50 border-none outline-none focus:ring-2 focus:ring-orange-300 text-center font-bold tracking-[0.4em] text-lg shadow-inner text-"><button onclick="window.checkAdminPassword()" class="w-full cute-gradient text-white py-4 rounded-[1.8rem] font-black shadow-xl active:scale-95 transition shadow-orange-200 uppercase tracking-widest text-xs text-">Buka Panel Cloud</button></div></div></div>`;
+                    main.innerHTML = `<div class="max-w-md mx-auto space-y-6 animate-pop mt-10 text-"><div class="bg-white p-10 rounded-[3.5rem] shadow-2xl border border-orange-50 text-center relative overflow-hidden text-"><div class="cute-gradient w-20 h-20 rounded-[2rem] flex items-center justify-center mx-auto mb-6 text-white shadow-lg text-"><i data-lucide="lock" class="w-10 h-10"></i></div><h2 class="text-2xl font-black text-gray-800 leading-none mb-3 uppercase tracking-tighter text-">Akses Database</h2><p class="text-gray-400 text-sm leading-relaxed px-6 font-medium mt-1 text-">Gunakan password pusat untuk mengelola database LTC secara realtime cloud.</p><div class="mt-10 space-y-4 px-4 text-"><input type="password" id="admin-pass-input" placeholder="Password Admin" class="w-full p-4 rounded-[1.8rem] bg-gray-50 border-none outline-none focus:ring-2 focus:ring-orange-300 text-center font-bold tracking-[0.4em] text-lg shadow-inner text-"><button onclick="window.checkAdminPassword()" class="w-full cute-gradient text-white py-4 rounded-[1.8rem] font-black shadow-xl active:scale-95 transition shadow-orange-200 uppercase tracking-widest text-xs text-">Buka Panel Database</button></div></div></div>`;
                 } else {
-                    main.innerHTML = `<div class="space-y-8 animate-pop text-"><div class="bg-gray-900 text-white p-10 rounded-[3.5rem] shadow-2xl relative overflow-hidden text-"><div class="absolute right-0 bottom-0 w-64 h-64 bg-white/5 rounded-full -mb-20 -mr-20 blur-3xl text- font-black uppercase tracking-widest opacity-10 text-4xl">CLOUD</div><div class="relative z-10 flex flex-col md:flex-row justify-between items-center gap-6 text-"><div><span class="bg-orange-500 text-white px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-3 inline-block shadow-lg">LTC Root Controller</span><h2 class="text-3xl font-black leading-tight tracking-tight uppercase leading-none">Manajemen Database <br> Cloud Firestore</h2></div><button onclick="window.lockAdmin()" class="bg-red-500/20 text-red-400 p-4 rounded-2xl border border-red-500/30 font-black text-xs active:scale-90 transition shadow-sm uppercase tracking-widest flex items-center gap-2 text-"><i data-lucide="power" class="w-4 h-4"></i> Keluar Admin</button></div></div><div class="bg-white rounded-[2.5rem] border border-orange-50 shadow-sm overflow-hidden text-[Image of Status Cloud]"><div class="p-10 text-center text-gray-400 font-bold uppercase text-[10px] tracking-widest bg-gray-50 flex items-center justify-center gap-2 text-">Firebase Firestore Online <div class="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse text-"></div></div></div></div>`;
+                    main.innerHTML = `<div class="space-y-8 animate-pop text-"><div class="bg-gray-900 text-white p-10 rounded-[3.5rem] shadow-2xl relative overflow-hidden text-"><div class="absolute right-0 bottom-0 w-64 h-64 bg-white/5 rounded-full -mb-20 -mr-20 blur-3xl text- font-black uppercase tracking-widest opacity-10 text-4xl text-">CLOUD</div><div class="relative z-10 flex flex-col md:flex-row justify-between items-center gap-6 text-"><div><span class="bg-orange-500 text-white px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-3 inline-block shadow-lg">LTC Root Controller</span><h2 class="text-3xl font-black leading-tight tracking-tight uppercase leading-none">Manajemen Database <br> Cloud Firestore</h2></div><button onclick="window.lockAdmin()" class="bg-red-500/20 text-red-400 p-4 rounded-2xl border border-red-500/30 font-black text-xs active:scale-90 transition shadow-sm uppercase tracking-widest flex items-center gap-2 text-"><i data-lucide="power" class="w-4 h-4"></i> Keluar Admin</button></div></div><div class="bg-white rounded-[2.5rem] border border-orange-50 shadow-sm overflow-hidden text-"><div class="p-10 text-center text-gray-400 font-bold uppercase text-[10px] tracking-widest bg-gray-50 flex items-center justify-center gap-2">Firebase Firestore Database Online <div class="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse text-"></div></div></div></div>`;
                 }
             }
             lucide.createIcons();
@@ -611,12 +633,12 @@
 
         window.viewChat = (id) => {
             const convo = window.consultations.find(x => x.id === id);
-            const chatHtml = convo.messages.map(m => `<div class="flex flex-col ${m.from === 'User' ? 'items-end' : 'items-start'} text-"><div class="p-4 rounded-[1.8rem] max-w-[88%] text-sm font-bold ${m.from === 'User' ? 'cute-gradient text-white rounded-tr-none shadow-lg shadow-orange-100' : 'bg-white text-gray-800 rounded-tl-none border border-orange-100 shadow-sm'} text-">${m.text}</div><span class="text-[8px] font-black uppercase text-gray-400 mt-1.5 px-1 tracking-widest text-">${m.from}</span></div>`).join('');
-            document.getElementById('main-content').innerHTML = `<div class="flex flex-col h-[75vh] animate-pop text-"><div class="flex items-center gap-4 bg-white p-6 rounded-t-[3.5rem] border-b shadow-sm text-"><button onclick="navigateTo('consultation')" class="p-3 bg-gray-50 rounded-xl active:scale-75 transition shadow-sm border border-orange-50 text-"><i data-lucide="chevron-left" class="w-5 h-5 text-"></i></button><div><h3 class="font-black text-gray-800 text-base leading-none tracking-tight uppercase text-">${convo.topic}</h3><p class="text-[10px] font-black uppercase text-orange-500 mt-1.5 tracking-widest leading-none">Mentor LTC Active</p></div></div><div class="flex-1 overflow-y-auto p-6 space-y-5 no-scrollbar bg-orange-50/20 shadow-inner text-">${chatHtml}</div><div class="p-5 bg-white rounded-b-[3.5rem] border-t border-orange-50 flex gap-3 text-"><input type="text" id="msgInput" placeholder="Balas mentor..." class="flex-1 bg-gray-100 border-none rounded-2xl px-5 py-4 outline-none text-sm font-bold shadow-inner focus:bg-white focus:ring-2 focus:ring-orange-300 transition-all text-"><button onclick="window.sendChatCloud('${convo.id}')" class="cute-gradient p-4 rounded-2xl text-white shadow-lg active:scale-75 transition shadow-orange-200 text-"><i data-lucide="send" class="w-6 h-6"></i></button></div></div>`;
+            const chatHtml = convo.messages.map(m => `<div class="flex flex-col ${m.from === 'User' ? 'items-end' : 'items-start'} text-"><div class="p-4 rounded-3xl max-w-[85%] text-sm font-bold ${m.from === 'User' ? 'cute-gradient text-white rounded-tr-none shadow-lg shadow-orange-100' : 'bg-white text-gray-800 rounded-tl-none border border-orange-100 shadow-sm'} text-">${m.text}</div><span class="text-[8px] font-black uppercase text-gray-400 mt-1.5 px-1 tracking-widest text-">${m.from}</span></div>`).join('');
+            document.getElementById('main-content').innerHTML = `<div class="flex flex-col h-[75vh] animate-pop text-"><div class="flex items-center gap-4 bg-white p-6 rounded-t-[3rem] border-b shadow-sm text-"><button onclick="navigateTo('consultation')" class="p-3 bg-gray-50 rounded-xl active:scale-75 transition shadow-sm border border-orange-50 text-"><i data-lucide="chevron-left" class="w-5 h-5 text-"></i></button><div><h3 class="font-black text-gray-800 text-base leading-none tracking-tight uppercase text-">${convo.topic}</h3><p class="text-[10px] font-black uppercase text-orange-500 mt-1.5 tracking-widest leading-none">Mentor LTC Active</p></div></div><div class="flex-1 overflow-y-auto p-6 space-y-5 no-scrollbar bg-orange-50/20 shadow-inner text-">${chatHtml}</div><div class="p-5 bg-white rounded-b-[3.5rem] border-t border-orange-50 flex gap-3 text-"><input type="text" id="msgInput" placeholder="Balas mentor..." class="flex-1 bg-gray-100 border-none rounded-2xl px-5 py-4 outline-none text-sm font-bold shadow-inner focus:bg-white focus:ring-2 focus:ring-orange-300 transition-all text-"><button onclick="window.sendChatCloud('${convo.id}')" class="cute-gradient p-4 rounded-2xl text-white shadow-lg active:scale-75 transition shadow-orange-200 text-"><i data-lucide="send" class="w-6 h-6 text-"></i></button></div></div>`;
             lucide.createIcons();
         };
 
-        // --- GLOBAL UI UTILS ---
+        // --- GLOBAL UI UTILS (LOGIKA NON-CLOUDS) ---
         window.addCartLocal = (id) => {
             const p = window.PRODUCTS.find(x => x.id === id);
             const item = window.cart.find(x => x.id === id);
@@ -624,26 +646,62 @@
             window.updateBadge();
             showMsg('Masuk Keranjang! 🛒');
         };
-        window.updateBadge = () => { const b = document.getElementById('cart-badge'); const count = window.cart.reduce((t, i) => t + i.q, 0); if (b) { b.innerText = count; b.classList.toggle('hidden', count === 0); } };
-        window.toggleCart = () => { const m = document.getElementById('cart-modal'); if (m) { m.classList.toggle('hidden'); document.body.classList.toggle('modal-open'); window.renderCartItems(); } };
+
+        window.updateBadge = () => {
+            const b = document.getElementById('cart-badge');
+            const count = window.cart.reduce((t, i) => t + i.q, 0);
+            if (b) { b.innerText = count; b.classList.toggle('hidden', count === 0); }
+        };
+
+        window.toggleCart = () => {
+            const m = document.getElementById('cart-modal');
+            if (m) { m.classList.toggle('hidden'); document.body.classList.toggle('modal-open'); window.renderCartItems(); }
+        };
+
         window.renderCartItems = () => {
-            const c = document.getElementById('cart-items-container'); const f = document.getElementById('cart-footer');
+            const c = document.getElementById('cart-items-container');
+            const f = document.getElementById('cart-footer');
             if (!c) return;
             if (window.cart.length === 0) {
                 c.innerHTML = `<div class="h-full flex flex-col items-center justify-center text-gray-300 gap-4 mt-20 opacity-30 text-"><i data-lucide="shopping-bag" class="w-20 h-20 shadow-inner text-"></i><p class="font-black uppercase tracking-widest text-xs text-">Keranjang Masih Kosong</p></div>`;
                 if(f) f.classList.add('hidden');
             } else {
                 let total = 0;
-                c.innerHTML = window.cart.map(i => { total += i.price * i.q; return `<div class="bg-white p-4 rounded-[2rem] border border-orange-50 shadow-sm flex gap-4 animate-pop text-"><div class="bg-orange-100 w-16 h-16 rounded-[1.2rem] flex items-center justify-center text-white shadow-inner text-"><i data-lucide="package"></i></div><div class="flex-1 text-"><p class="font-black text-sm text-gray-800 leading-tight uppercase tracking-tight leading-none mb-1 text-">${i.name}</p><div class="flex justify-between items-center mt-1 text-"><p class="text-orange-500 font-black text-xs text-">${toIDR(i.price)} x${i.q}</p><button onclick="window.cart = window.cart.filter(x => x.id !== '${i.id}'); window.renderCartItems(); window.updateBadge();" class="text-red-300 active:scale-75 transition p-2 bg-red-50 rounded-xl shadow-sm border border-red-100 text-"><i data-lucide="trash-2" class="w-4 h-4 text-"></i></button></div></div></div>`; }).join('');
+                c.innerHTML = window.cart.map(i => {
+                    total += i.price * i.q;
+                    return `<div class="bg-white p-4 rounded-[2rem] border border-orange-50 shadow-sm flex gap-4 animate-pop text-"><div class="bg-orange-100 w-16 h-16 rounded-[1.2rem] flex items-center justify-center text-white shadow-inner"><i data-lucide="package" class="text-"></i></div><div class="flex-1 text-"><p class="font-black text-sm text-gray-800 leading-tight uppercase tracking-tight leading-none mb-1">${i.name}</p><div class="flex justify-between items-center mt-1 text-"><p class="text-orange-500 font-black text-xs text-">${toIDR(i.price)} x${i.q}</p><button onclick="window.cart = window.cart.filter(x => x.id !== '${i.id}'); window.renderCartItems(); window.updateBadge();" class="text-red-300 active:scale-75 transition p-2 bg-red-50 rounded-xl shadow-sm border border-red-100 text-"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div></div></div>`;
+                }).join('');
                 document.getElementById('cart-total-price').innerText = toIDR(total);
                 if(f) f.classList.remove('hidden');
             }
             lucide.createIcons();
         };
-        window.checkout = () => { const list = window.cart.map(i => `- ${i.name} (${i.q}x)`).join('%0A'); const total = toIDR(window.cart.reduce((t, i) => t + (i.price * i.q), 0)); const msg = `Halo%20Admin%20LTC,%0ASaya%20ingin%20memesan:%0A${list}%0ATotal:%20${total}`; window.open(`https://wa.me/${window.WHATSAPP_ADMIN}?text=${msg}`, '_blank'); window.toggleCart(); window.cart = []; window.updateBadge(); };
+
+        window.checkout = () => {
+            const list = window.cart.map(i => `- ${i.name} (${i.q}x)`).join('%0A');
+            const total = toIDR(window.cart.reduce((t, i) => t + (i.price * i.q), 0));
+            const msg = `Halo%20Admin%20LTC,%0ASaya%20ingin%20memesan:%0A${list}%0ATotal:%20${total}`;
+            window.open(`https://wa.me/${window.WHATSAPP_ADMIN}?text=${msg}`, '_blank');
+            window.toggleCart(); window.cart = []; window.updateBadge();
+        };
+
+        window.hideInstallBanner = () => document.getElementById('install-banner').classList.add('hidden');
+        window.triggerAppInstall = async () => {
+            if (!window.deferredPrompt) { showMsg('Klik Menu Browser > Tambah ke Layar Utama'); return; }
+            window.deferredPrompt.prompt();
+            const { outcome } = await window.deferredPrompt.userChoice;
+            if (outcome === 'accepted') { showMsg('Terpasang! 🐾'); window.hideInstallBanner(); }
+            window.deferredPrompt = null;
+        };
 
         const toIDR = (n) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(n);
-        function showMsg(txt) { const b = document.getElementById('message-box'); const t = document.getElementById('message-box-text'); if (t) t.innerText = txt; if (b) b.classList.remove('hidden'); setTimeout(() => { if(b) b.classList.add('hidden'); }, 3000); }
+        function showMsg(txt) {
+            const b = document.getElementById('message-box');
+            const t = document.getElementById('message-box-text');
+            if (t) t.innerText = txt;
+            if (b) b.classList.remove('hidden');
+            setTimeout(() => { if(b) b.classList.add('hidden'); }, 3000);
+        }
     </script>
 </body>
 </html>
