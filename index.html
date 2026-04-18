@@ -25,7 +25,7 @@
         .pb-safe { padding-bottom: max(0.75rem, env(safe-area-inset-bottom)); }
     </style>
 </head>
-<body class="bg-gray-50 font-sans text-gray-800 min-h-screen flex flex-col">
+<body class="bg-gray-50 font-sans text-gray-800 min-h-screen flex flex-col text-">
 
     <!-- --- NAVBAR --- -->
     <nav class="bg-orange-500 text-white shadow-md sticky top-0 z-50">
@@ -41,36 +41,32 @@
 
                 <!-- Desktop Menu -->
                 <div class="hidden md:flex space-x-8 items-center" id="desktop-menu">
-                    <!-- Menu akan di-render oleh JavaScript -->
                 </div>
 
                 <!-- Cart & Mobile Toggle -->
                 <div class="flex items-center space-x-4">
                     <button onclick="toggleCart()" class="relative p-2 hover:bg-orange-600 rounded-full transition">
                         <i data-lucide="shopping-cart"></i>
-                        <span id="cart-badge" class="hidden absolute top-0 right-0 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">0</span>
+                        <span id="cart-badge" class="hidden absolute top-0 right-0 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center border-2 border-orange-500">0</span>
                     </button>
-                    <!-- Tombol Hamburger Dihapus untuk diganti Bottom Nav -->
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- --- MOBILE BOTTOM NAVIGATION (Aplikasi Style) --- -->
+    <!-- --- MOBILE BOTTOM NAVIGATION --- -->
     <nav class="md:hidden fixed bottom-0 w-full bg-white border-t border-gray-100 shadow-[0_-10px_20px_-10px_rgba(0,0,0,0.1)] z-[45] px-6 pt-2 pb-safe flex justify-between items-center" id="mobile-bottom-nav">
-        <!-- Menu Bawah akan di-render oleh JavaScript -->
     </nav>
 
     <!-- --- MAIN CONTENT --- -->
-    <!-- Menambahkan padding bawah (pb-24) agar konten tidak tertutup Bottom Nav di HP -->
     <main id="main-content" class="max-w-6xl mx-auto px-4 py-6 md:py-8 flex-grow w-full pb-24 md:pb-8">
-        <!-- Konten Halaman akan disuntikkan ke sini oleh JavaScript -->
     </main>
 
     <!-- --- FOOTER --- -->
     <footer class="bg-gray-800 text-gray-300 py-6 text-center mt-auto mb-16 md:mb-0">
         <p class="font-semibold text-white mb-2">Look The Cats &copy; 2026</p>
         <p class="text-sm">Platform terbaik untuk pecinta kucing di Indonesia.</p>
+        <p class="text-xs mt-2">WhatsApp Admin: 081296629033</p>
     </footer>
 
     <!-- --- CART MODAL --- -->
@@ -85,9 +81,7 @@
                 </button>
             </div>
             
-            <div id="cart-items-container" class="flex-1 overflow-y-auto p-4 bg-gray-50">
-                <!-- Item Keranjang di-render di sini -->
-            </div>
+            <div id="cart-items-container" class="flex-1 overflow-y-auto p-4 bg-gray-50"></div>
 
             <div id="cart-footer" class="hidden p-4 border-t bg-white shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
                 <div class="flex justify-between text-lg font-bold mb-4">
@@ -101,13 +95,12 @@
         </div>
     </div>
 
-    <!-- --- CUSTOM MESSAGE BOX --- -->
+    <!-- --- MESSAGE BOX --- -->
     <div id="message-box" class="hidden fixed top-20 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white px-6 py-3 rounded-full shadow-xl z-[70] flex items-center gap-3 animate-fade-in">
         <i data-lucide="info" class="text-orange-400"></i>
         <span id="message-box-text" class="font-medium"></span>
     </div>
 
-    <!-- --- JAVASCRIPT LOGIC --- -->
     <script>
         // --- DATA MOCKUP ---
         const PRODUCTS = [
@@ -129,41 +122,39 @@
         // --- STATE APP ---
         let currentPage = 'home';
         let cart = [];
-        let userCatImage = null; // Menyimpan foto kucing yang diupload
-
-        // --- NEW STATE: AUTH & ADMIN ---
-        let currentUser = null; // Menyimpan data user yang login
-        let isLoginView = false; // Toggle view login vs register
-        let mockUsers = []; // Simulasi database member
+        let userCatImage = null;
+        let currentUser = null; 
+        let isLoginView = false;
+        let mockUsers = [
+            { name: 'Andi Susanto', email: 'andi@email.com', wa: '081234567891', catName: 'Garfield', role: 'member', joinDate: 'Januari', wilayah: 'Jakarta', status: 'Aktif' },
+            { name: 'Rina Melati', email: 'rina@email.com', wa: '089876543210', catName: 'Mochi', role: 'member', joinDate: 'Februari', wilayah: 'Bandung', status: 'Aktif' }
+        ];
 
         // --- CORE FUNCTIONS ---
-        
-        // Fungsi untuk memicu klik pada input file tersembunyi
-        function triggerUpload() {
-            document.getElementById('cat-image-upload').click();
+        function triggerUpload() { 
+            const isAdmin = currentUser?.role?.includes('admin');
+            if (isAdmin) {
+                document.getElementById('cat-image-upload')?.click(); 
+            } else {
+                showMessage("Hanya Admin yang bisa mengganti foto maskot!");
+            }
         }
 
-        // Fungsi untuk menangani file yang dipilih dan menampilkannya
         function handleImageUpload(event) {
             const file = event.target.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    userCatImage = e.target.result; // Simpan data gambar
-                    if (currentPage === 'home') renderPage(); // Render ulang jika di beranda
-                    showMessage('Meow! Foto anabul berhasil diperbarui 😻');
-                    lucide.createIcons(); // Refresh icon
+                    userCatImage = e.target.result;
+                    if (currentPage === 'home') renderPage();
+                    showMessage('Foto maskot berhasil diperbarui oleh Admin! 😻');
                 }
                 reader.readAsDataURL(file);
             }
         }
 
-        // Format Harga ke Rupiah
-        const formatRupiah = (angka) => {
-            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
-        };
+        const formatRupiah = (angka) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
 
-        // Custom Message Box (Pengganti Alert)
         const showMessage = (text) => {
             const msgBox = document.getElementById('message-box');
             document.getElementById('message-box-text').innerText = text;
@@ -171,396 +162,218 @@
             setTimeout(() => { msgBox.classList.add('hidden'); }, 3000);
         };
 
-        // --- AUTH LOGIC ---
-        function toggleAuthView() {
-            isLoginView = !isLoginView;
+        // --- ADMIN ACTIONS ---
+        function toggleMemberStatus(index) {
+            const user = mockUsers[index];
+            user.status = user.status === 'Aktif' ? 'Nonaktif' : 'Aktif';
+            showMessage(`Akun ${user.name} sekarang ${user.status}`);
             renderPage();
-            lucide.createIcons();
         }
 
+        function addProductManual() {
+            const name = prompt("Nama Produk:");
+            const price = parseInt(prompt("Harga (Angka):"));
+            if (name && price) {
+                PRODUCTS.push({ id: PRODUCTS.length + 1, name, price, category: 'Lainnya', image: 'bg-gray-200' });
+                showMessage("Produk baru berhasil ditambahkan!");
+                if (currentPage === 'shop') renderPage();
+            }
+        }
+
+        // --- AUTH LOGIC ---
+        function toggleAuthView() { isLoginView = !isLoginView; renderPage(); }
+
         function handleRegister(event) {
-            event.preventDefault(); // Mencegah reload halaman
+            event.preventDefault();
             const name = document.getElementById('reg-name').value;
             const email = document.getElementById('reg-email').value;
+            const wa = document.getElementById('reg-wa').value;
             const catName = document.getElementById('reg-cat').value;
+            const wilayah = document.getElementById('reg-wilayah').value;
             
-            // Simpan sebagai user yang login
-            currentUser = { name, email, catName, role: 'member', joinDate: 'Hari ini' };
-            mockUsers.push(currentUser); // Masukkan ke simulasi database
-            
+            currentUser = { name, email, wa, catName, role: 'member', joinDate: 'Hari ini', wilayah, status: 'Aktif' };
+            mockUsers.push(currentUser);
             showMessage(`Meow! Selamat bergabung, ${name}!`);
-            renderNavbar();
-            renderPage();
-            lucide.createIcons();
-            window.scrollTo(0, 0);
+            navigateTo('home');
         }
 
         function handleLogin(event) {
             event.preventDefault();
-            const email = document.getElementById('login-email').value;
+            const email = document.getElementById('login-email').value.toLowerCase();
             
-            // Simulasi login sederhana (Berhasil jika email diisi)
-            if (email) {
-                currentUser = { name: 'Cat Lover', email: email, catName: 'Anabul', role: 'member', joinDate: 'Bulan lalu' };
-                showMessage('Berhasil masuk! Selamat datang kembali.');
-                renderNavbar();
-                renderPage();
-                lucide.createIcons();
-                window.scrollTo(0, 0);
+            if (email.includes('pusat')) {
+                currentUser = { name: 'Admin Pusat', email, role: 'admin_pusat', status: 'Aktif', wilayah: 'Pusat' };
+            } else if (email.includes('admin')) {
+                currentUser = { name: 'Admin Wilayah', email, role: 'admin_wilayah', status: 'Aktif', wilayah: 'Tangerang' };
+            } else {
+                currentUser = mockUsers.find(u => u.email === email) || { name: 'Cat Lover', email, role: 'member', status: 'Aktif', wilayah: 'Umum' };
             }
-        }
-
-        function handleLogout() {
-            currentUser = null;
-            showMessage('Anda berhasil keluar (Logout).');
+            showMessage(`Halo ${currentUser.name}, kamu berhasil masuk!`);
             navigateTo('home');
         }
+
+        function handleLogout() { currentUser = null; showMessage('Berhasil keluar.'); navigateTo('home'); }
 
         // --- NAVIGATION ---
         function navigateTo(page) {
             currentPage = page;
-            
             renderNavbar();
             renderPage();
-            lucide.createIcons(); // Refresh icons after rendering new HTML
             window.scrollTo(0, 0);
         }
 
         function renderNavbar() {
-            // Render Desktop Nav
-            const navHtml = `
-                <button onclick="navigateTo('home')" class="flex items-center space-x-1 hover:text-orange-200 transition ${currentPage === 'home' ? 'font-bold underline underline-offset-4' : ''}">
-                    <i data-lucide="home" class="w-4 h-4"></i> <span>Beranda</span>
-                </button>
-                <button onclick="navigateTo('shop')" class="flex items-center space-x-1 hover:text-orange-200 transition ${currentPage === 'shop' ? 'font-bold underline underline-offset-4' : ''}">
-                    <i data-lucide="shopping-bag" class="w-4 h-4"></i> <span>Toko</span>
-                </button>
-                <button onclick="navigateTo('activities')" class="flex items-center space-x-1 hover:text-orange-200 transition ${currentPage === 'activities' ? 'font-bold underline underline-offset-4' : ''}">
-                    <i data-lucide="calendar" class="w-4 h-4"></i> <span>Kegiatan</span>
-                </button>
-                <button onclick="navigateTo('account')" class="flex items-center space-x-1 hover:text-orange-200 transition ${currentPage === 'account' ? 'font-bold underline underline-offset-4' : ''}">
-                    <i data-lucide="user" class="w-4 h-4"></i> <span>Akun</span>
-                </button>
-                <button onclick="navigateTo('admin')" class="flex items-center space-x-1 hover:text-orange-200 transition ${currentPage === 'admin' ? 'font-bold underline underline-offset-4' : ''}">
-                    <i data-lucide="shield" class="w-4 h-4"></i> <span>Admin</span>
-                </button>
-            `;
-            document.getElementById('desktop-menu').innerHTML = navHtml;
+            const menuItems = [
+                { id: 'home', label: 'Beranda', icon: 'home' },
+                { id: 'shop', label: 'Toko', icon: 'shopping-bag' },
+                { id: 'activities', label: 'Kegiatan', icon: 'calendar' },
+                { id: 'account', label: 'Akun', icon: 'user' },
+                { id: 'admin', label: 'Admin', icon: 'shield' }
+            ];
 
-            // Render Mobile Bottom Nav (Ubah icon size jadi w-5 h-5 agar muat 5 menu)
-            const mobileNav = document.getElementById('mobile-bottom-nav');
-            if(mobileNav) {
-                mobileNav.innerHTML = `
-                    <button onclick="navigateTo('home')" class="flex flex-col items-center w-full py-1 ${currentPage === 'home' ? 'text-orange-600' : 'text-gray-400 hover:text-gray-600'} transition">
-                        <i data-lucide="home" class="w-5 h-5 mb-1 ${currentPage === 'home' ? 'fill-orange-100' : ''}"></i>
-                        <span class="text-[10px] font-bold">Beranda</span>
-                    </button>
-                    <button onclick="navigateTo('shop')" class="flex flex-col items-center w-full py-1 ${currentPage === 'shop' ? 'text-orange-600' : 'text-gray-400 hover:text-gray-600'} transition">
-                        <i data-lucide="shopping-bag" class="w-5 h-5 mb-1 ${currentPage === 'shop' ? 'fill-orange-100' : ''}"></i>
-                        <span class="text-[10px] font-bold">Toko</span>
-                    </button>
-                    <button onclick="navigateTo('activities')" class="flex flex-col items-center w-full py-1 ${currentPage === 'activities' ? 'text-orange-600' : 'text-gray-400 hover:text-gray-600'} transition">
-                        <i data-lucide="calendar" class="w-5 h-5 mb-1 ${currentPage === 'activities' ? 'fill-orange-100' : ''}"></i>
-                        <span class="text-[10px] font-bold">Kegiatan</span>
-                    </button>
-                    <button onclick="navigateTo('account')" class="flex flex-col items-center w-full py-1 ${currentPage === 'account' ? 'text-orange-600' : 'text-gray-400 hover:text-gray-600'} transition">
-                        <i data-lucide="user" class="w-5 h-5 mb-1 ${currentPage === 'account' ? 'fill-orange-100' : ''}"></i>
-                        <span class="text-[10px] font-bold">Akun</span>
-                    </button>
-                    <button onclick="navigateTo('admin')" class="flex flex-col items-center w-full py-1 ${currentPage === 'admin' ? 'text-orange-600' : 'text-gray-400 hover:text-gray-600'} transition">
-                        <i data-lucide="shield" class="w-5 h-5 mb-1 ${currentPage === 'admin' ? 'fill-orange-100' : ''}"></i>
-                        <span class="text-[10px] font-bold">Admin</span>
-                    </button>
-                `;
-            }
+            const desk = document.getElementById('desktop-menu');
+            const mob = document.getElementById('mobile-bottom-nav');
+
+            desk.innerHTML = menuItems.map(m => `
+                <button onclick="navigateTo('${m.id}')" class="flex items-center space-x-1 hover:text-orange-200 transition ${currentPage === m.id ? 'font-bold underline underline-offset-4' : ''}">
+                    <i data-lucide="${m.icon}" class="w-4 h-4"></i> <span>${m.label}</span>
+                </button>
+            `).join('');
+
+            mob.innerHTML = menuItems.map(m => `
+                <button onclick="navigateTo('${m.id}')" class="flex flex-col items-center w-full py-1 ${currentPage === m.id ? 'text-orange-600' : 'text-gray-400'} transition">
+                    <i data-lucide="${m.icon}" class="w-5 h-5 mb-1"></i>
+                    <span class="text-[10px] font-bold">${m.label}</span>
+                </button>
+            `).join('');
+            lucide.createIcons();
         }
 
         // --- CART LOGIC ---
         function toggleCart() {
-            const modal = document.getElementById('cart-modal');
-            if (modal.classList.contains('hidden')) {
-                modal.classList.remove('hidden');
-                document.body.classList.add('modal-open');
-                renderCart();
-            } else {
-                modal.classList.add('hidden');
-                document.body.classList.remove('modal-open');
-            }
-        }
-
-        function addToCart(productId) {
-            const product = PRODUCTS.find(p => p.id === productId);
-            const existingItem = cart.find(item => item.id === productId);
-            
-            if (existingItem) {
-                existingItem.quantity += 1;
-            } else {
-                cart.push({ ...product, quantity: 1 });
-            }
-            
-            updateCartBadge();
-            showMessage(`Berhasil menambahkan ${product.name} ke keranjang!`);
-            if (!document.getElementById('cart-modal').classList.contains('hidden')) {
-                renderCart();
-            }
-        }
-
-        function removeFromCart(productId) {
-            cart = cart.filter(item => item.id !== productId);
-            updateCartBadge();
+            const m = document.getElementById('cart-modal');
+            m.classList.toggle('hidden');
+            document.body.classList.toggle('modal-open');
             renderCart();
         }
 
-        function updateQuantity(productId, delta) {
-            const item = cart.find(item => item.id === productId);
-            if (item) {
-                item.quantity = Math.max(1, item.quantity + delta);
-                updateCartBadge();
-                renderCart();
-            }
+        function addToCart(productId) {
+            const p = PRODUCTS.find(x => x.id === productId);
+            const item = cart.find(x => x.id === productId);
+            if (item) item.quantity++; else cart.push({ ...p, quantity: 1 });
+            updateCartBadge();
+            showMessage('Masuk keranjang! 🛒');
         }
 
         function updateCartBadge() {
-            const count = cart.reduce((total, item) => total + item.quantity, 0);
-            const badge = document.getElementById('cart-badge');
-            if (count > 0) {
-                badge.innerText = count;
-                badge.classList.remove('hidden');
-            } else {
-                badge.classList.add('hidden');
-            }
-        }
-
-        function checkout() {
-            toggleCart();
-            showMessage("Fitur Checkout akan segera hadir di versi selanjutnya! 🐾");
+            const c = cart.reduce((t, i) => t + i.quantity, 0);
+            const b = document.getElementById('cart-badge');
+            b.innerText = c; b.classList.toggle('hidden', c === 0);
         }
 
         function renderCart() {
             const container = document.getElementById('cart-items-container');
             const footer = document.getElementById('cart-footer');
-            const totalPriceEl = document.getElementById('cart-total-price');
-
             if (cart.length === 0) {
-                container.innerHTML = `
-                    <div class="h-full flex flex-col items-center justify-center text-gray-400 space-y-4">
-                        <i data-lucide="shopping-bag" class="w-16 h-16 opacity-50"></i>
-                        <p class="text-center font-medium">Keranjang masih kosong, meow!</p>
-                        <button onclick="toggleCart(); navigateTo('shop');" class="mt-4 bg-orange-100 text-orange-600 px-5 py-2.5 rounded-full font-bold hover:bg-orange-200 transition">
-                            Mulai Belanja
-                        </button>
-                    </div>
-                `;
+                container.innerHTML = `<div class="h-full flex flex-col items-center justify-center text-gray-400 mt-20"><i data-lucide="shopping-bag" class="w-16 h-16 opacity-30 mb-2"></i><p>Keranjang Kosong</p></div>`;
                 footer.classList.add('hidden');
             } else {
-                let html = '<div class="space-y-4">';
                 let total = 0;
-                
-                cart.forEach(item => {
-                    total += item.price * item.quantity;
-                    html += `
-                        <div class="flex gap-4 bg-white p-3 rounded-xl shadow-sm border border-gray-100">
-                            <div class="w-20 h-20 rounded-lg ${item.image} flex-shrink-0 border border-black/5"></div>
-                            <div class="flex-1 flex flex-col justify-between">
-                                <div>
-                                    <h4 class="font-semibold text-sm leading-tight text-gray-800 line-clamp-2">${item.name}</h4>
-                                    <p class="text-orange-500 font-bold text-sm mt-1">${formatRupiah(item.price)}</p>
-                                </div>
-                                <div class="flex items-center justify-between mt-2">
-                                    <div class="flex items-center space-x-1 bg-gray-100 rounded-lg p-1">
-                                        <button onclick="updateQuantity(${item.id}, -1)" class="p-1 hover:bg-gray-200 rounded text-gray-600"><i data-lucide="minus" class="w-3.5 h-3.5"></i></button>
-                                        <span class="text-sm w-6 text-center font-bold text-gray-700">${item.quantity}</span>
-                                        <button onclick="updateQuantity(${item.id}, 1)" class="p-1 hover:bg-gray-200 rounded text-gray-600"><i data-lucide="plus" class="w-3.5 h-3.5"></i></button>
-                                    </div>
-                                    <button onclick="removeFromCart(${item.id})" class="text-red-400 hover:text-red-600 hover:bg-red-50 p-1.5 rounded transition">
-                                        <i data-lucide="trash-2" class="w-4 h-4"></i>
-                                    </button>
-                                </div>
-                            </div>
+                container.innerHTML = cart.map(i => {
+                    total += i.price * i.quantity;
+                    return `<div class="flex gap-4 bg-white p-3 rounded-xl border mb-2 shadow-sm">
+                        <div class="w-16 h-16 rounded-lg ${i.image} flex-shrink-0"></div>
+                        <div class="flex-1">
+                            <p class="font-bold text-sm leading-tight">${i.name}</p>
+                            <p class="text-orange-500 text-xs font-bold mt-1">${formatRupiah(i.price)} x ${i.quantity}</p>
+                            <button onclick="cart = cart.filter(x => x.id !== ${i.id}); renderCart(); updateCartBadge();" class="text-red-400 text-xs mt-1 underline font-bold">Hapus</button>
                         </div>
-                    `;
-                });
-                html += '</div>';
-                container.innerHTML = html;
-                
-                totalPriceEl.innerText = formatRupiah(total);
+                    </div>`;
+                }).join('');
+                document.getElementById('cart-total-price').innerText = formatRupiah(total);
                 footer.classList.remove('hidden');
             }
             lucide.createIcons();
         }
 
+        function checkout() {
+            window.open(`https://wa.me/6281296629033?text=Halo%20Admin,%20saya%20ingin%20memesan%20kebutuhan%20kucing.`, '_blank');
+            toggleCart();
+        }
+
         // --- PAGES RENDERER ---
         function renderPage() {
             const main = document.getElementById('main-content');
+            const isAdmin = currentUser?.role?.includes('admin');
             
             if (currentPage === 'home') {
                 main.innerHTML = `
-                    <div class="space-y-8 md:space-y-12 animate-fade-in">
-                        <!-- Hero Section -->
-                        <section class="bg-gradient-to-r from-orange-100 to-orange-50 rounded-[2rem] p-6 sm:p-8 md:p-12 flex flex-col-reverse md:flex-row items-center gap-6 md:gap-8 shadow-sm text-center md:text-left">
-                            <div class="flex-1 space-y-4 md:space-y-6">
-                                <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight">
-                                    Segala Kebutuhan Si Anabul <span class="text-orange-500 block mt-1 md:mt-2">Ada di Sini!</span>
-                                </h1>
-                                <p class="text-sm sm:text-base md:text-lg text-gray-600 leading-relaxed px-2 md:px-0">
-                                    Mulai dari makanan premium, mainan lucu, hingga informasi acara adopsi dan klinik. Look The Cats adalah sahabat terbaik untuk Anda dan kucing kesayangan.
-                                </p>
-                                <div class="flex flex-col sm:flex-row justify-center md:justify-start gap-3 pt-2">
-                                    <button onclick="navigateTo('shop')" class="w-full sm:w-auto bg-orange-500 hover:bg-orange-600 text-white px-8 py-3.5 rounded-full font-bold shadow-lg shadow-orange-500/30 transition flex items-center justify-center gap-2">
-                                        <i data-lucide="shopping-bag" class="w-5 h-5"></i> Belanja Sekarang
-                                    </button>
-                                    <button onclick="navigateTo('activities')" class="w-full sm:w-auto bg-white hover:bg-gray-50 text-orange-500 border-2 border-orange-200 px-8 py-3.5 rounded-full font-bold transition flex items-center justify-center gap-2">
-                                        <i data-lucide="calendar" class="w-5 h-5"></i> Lihat Kegiatan
-                                    </button>
+                    <div class="space-y-8 animate-fade-in">
+                        <section class="bg-gradient-to-r from-orange-100 to-orange-50 rounded-[2rem] p-6 sm:p-12 flex flex-col-reverse md:flex-row items-center gap-8 shadow-sm">
+                            <div class="flex-1 space-y-6 text-center md:text-left">
+                                <h1 class="text-3xl md:text-5xl font-extrabold text-gray-900 leading-tight">Look The Cats <span class="text-orange-500 block">Ada untuk Anabul</span></h1>
+                                <p class="text-gray-600">Platform pendaftaran anggota, belanja pakan, hingga info kegiatan kucing nasional.</p>
+                                <div class="flex flex-col sm:flex-row gap-3">
+                                    <button onclick="navigateTo('shop')" class="bg-orange-500 text-white px-8 py-3 rounded-full font-bold shadow-lg">Belanja Sekarang</button>
+                                    <button onclick="navigateTo('activities')" class="bg-white text-orange-500 border-2 border-orange-200 px-8 py-3 rounded-full font-bold">Lihat Event</button>
                                 </div>
                             </div>
-                            <div class="flex-1 flex justify-center w-full pb-4 md:pb-0">
-                                <div onclick="triggerUpload()" class="w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80 bg-orange-200 rounded-full flex items-center justify-center shadow-inner relative overflow-hidden cursor-pointer group hover:ring-4 hover:ring-orange-300 transition-all" title="Klik untuk upload foto">
-                                    <input type="file" id="cat-image-upload" class="hidden" accept="image/*" onchange="handleImageUpload(event)">
-                                    ${userCatImage ? 
-                                        `<img src="${userCatImage}" class="w-full h-full object-cover z-10 transition-transform duration-500 group-hover:scale-110" alt="Kucingku">
-                                         <div class="absolute inset-0 bg-black/40 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-20">
-                                            <i data-lucide="camera" class="w-8 h-8 text-white mb-1"></i>
-                                            <span class="text-white font-bold text-sm">Ganti Foto</span>
-                                         </div>`
-                                        :
-                                        `<div class="absolute inset-0 flex items-center justify-center opacity-20 group-hover:opacity-40 transition-opacity">
-                                            <i data-lucide="heart" class="w-32 h-32 md:w-48 md:h-48 text-orange-400"></i>
-                                        </div>
-                                        <div class="z-10 flex flex-col items-center group-hover:scale-110 transition-transform">
-                                            <i data-lucide="upload-cloud" class="w-8 h-8 md:w-10 md:h-10 text-orange-600 mb-2"></i>
-                                            <span class="text-sm md:text-lg font-bold text-orange-700 text-center px-4 leading-tight">Upload Foto<br>Kucingmu!</span>
-                                        </div>`
-                                    }
+                            <div class="flex-1 flex justify-center">
+                                <div onclick="triggerUpload()" class="w-52 h-52 md:w-80 md:h-80 bg-orange-200 rounded-full flex items-center justify-center relative overflow-hidden ring-4 ring-white shadow-xl ${isAdmin ? 'cursor-pointer group' : ''}">
+                                    ${isAdmin ? '<input type="file" id="cat-image-upload" class="hidden" accept="image/*" onchange="handleImageUpload(event)">' : ''}
+                                    ${userCatImage ? `<img src="${userCatImage}" class="w-full h-full object-cover">` : '<i data-lucide="cat" class="w-24 h-24 text-orange-400"></i>'}
+                                    ${isAdmin ? `<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white text-xs font-bold transition">GANTI FOTO MASKOT</div>` : ''}
                                 </div>
-                            </div>
-                        </section>
-
-                        <!-- Quick Features -->
-                        <section class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
-                            <div class="bg-white p-6 md:p-8 rounded-[1.5rem] shadow-sm border border-gray-100 flex flex-col items-center text-center space-y-4 hover:shadow-md transition">
-                                <div class="bg-orange-100 p-4 rounded-2xl text-orange-600"><i data-lucide="shopping-bag" class="w-8 h-8"></i></div>
-                                <h3 class="text-xl font-bold text-gray-800">Produk Lengkap</h3>
-                                <p class="text-gray-500 text-sm">Makanan, vitamin, hingga pasir kucing dengan kualitas terjamin.</p>
-                            </div>
-                            <div class="bg-white p-8 rounded-[1.5rem] shadow-sm border border-gray-100 flex flex-col items-center text-center space-y-4 hover:shadow-md transition">
-                                <div class="bg-blue-100 p-4 rounded-2xl text-blue-600"><i data-lucide="calendar" class="w-8 h-8"></i></div>
-                                <h3 class="text-xl font-bold text-gray-800">Event & Komunitas</h3>
-                                <p class="text-gray-500 text-sm">Ikuti kontes, seminar, dan temukan teman baru sesama cat lovers.</p>
-                            </div>
-                            <div class="bg-white p-8 rounded-[1.5rem] shadow-sm border border-gray-100 flex flex-col items-center text-center space-y-4 hover:shadow-md transition">
-                                <div class="bg-pink-100 p-4 rounded-2xl text-pink-600"><i data-lucide="heart" class="w-8 h-8"></i></div>
-                                <h3 class="text-xl font-bold text-gray-800">Adopsi & Klinik</h3>
-                                <p class="text-gray-500 text-sm">Bantu kucing jalanan temukan rumah atau periksa kesehatan rutin.</p>
                             </div>
                         </section>
                     </div>
                 `;
             } 
             else if (currentPage === 'shop') {
-                let productsHtml = '';
-                PRODUCTS.forEach(product => {
-                    productsHtml += `
-                        <div class="bg-white rounded-[1.5rem] shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition group flex flex-col h-full">
-                            <div class="h-52 w-full ${product.image} flex items-center justify-center relative">
-                                <span class="text-gray-600 font-medium opacity-50">[Gambar Produk]</span>
-                                <div class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-orange-600 shadow-sm">
-                                    ${product.category}
-                                </div>
-                            </div>
-                            
-                            <div class="p-6 flex flex-col flex-grow space-y-4">
-                                <div class="flex-grow">
-                                    <h3 class="font-semibold text-lg text-gray-800 leading-snug group-hover:text-orange-500 transition">${product.name}</h3>
-                                    <div class="flex items-center gap-1 mt-2 text-yellow-400">
-                                        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                                        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                                        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                                        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                                        <i data-lucide="star" class="w-4 h-4 fill-current opacity-50"></i>
-                                        <span class="text-xs text-gray-400 ml-1 font-medium">(100+ terjual)</span>
-                                    </div>
-                                </div>
-                                <div class="flex justify-between items-center mt-auto pt-4 border-t border-gray-50">
-                                    <span class="text-xl font-black text-orange-600">${formatRupiah(product.price)}</span>
-                                    <button 
-                                        onclick="addToCart(${product.id})"
-                                        class="bg-gray-900 hover:bg-orange-500 text-white p-2.5 rounded-xl transition shadow-md"
-                                        title="Tambah ke Keranjang"
-                                    >
-                                        <i data-lucide="shopping-cart" class="w-5 h-5"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                });
-
                 main.innerHTML = `
-                    <div class="space-y-8 animate-fade-in">
-                        <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
-                            <div>
-                                <h2 class="text-3xl font-bold text-gray-900 tracking-tight">Toko Kebutuhan</h2>
-                                <p class="text-gray-500 mt-2 text-lg">Produk pilihan terbaik untuk anabul kesayangan.</p>
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-3xl font-bold text-gray-800">Toko Kebutuhan</h2>
+                        ${isAdmin ? `<button onclick="addProductManual()" class="bg-green-500 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-md flex items-center gap-2"><i data-lucide="plus-circle" class="w-4 h-4"></i> Tambah Produk</button>` : ''}
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">` + 
+                    PRODUCTS.map(p => `
+                        <div class="bg-white rounded-2xl shadow-sm border overflow-hidden hover:shadow-lg transition">
+                            <div class="h-48 ${p.image} flex items-center justify-center font-bold text-gray-400">Produk</div>
+                            <div class="p-5">
+                                <h3 class="font-bold text-lg h-12 line-clamp-2">${p.name}</h3>
+                                <div class="flex justify-between items-center mt-4">
+                                    <span class="text-orange-600 font-bold">${formatRupiah(p.price)}</span>
+                                    <button onclick="addToCart(${p.id})" class="bg-gray-900 text-white p-2 rounded-lg transition hover:bg-orange-500"><i data-lucide="shopping-cart" class="w-5 h-5"></i></button>
+                                </div>
                             </div>
                         </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                            ${productsHtml}
-                        </div>
-                    </div>
-                `;
+                    `).join('') + `</div>`;
             }
             else if (currentPage === 'activities') {
-                let activitiesHtml = '';
-                ACTIVITIES.forEach(activity => {
-                    const dateParts = activity.date.split(' ');
-                    const day = dateParts[0];
-                    const monthYear = dateParts.slice(1).join(' ');
-                    
-                    activitiesHtml += `
-                        <div class="bg-white p-6 rounded-[1.5rem] shadow-sm border border-gray-100 flex gap-5 hover:shadow-md transition">
-                            <div class="${activity.bgColor} ${activity.iconColor} w-20 h-20 rounded-2xl flex flex-col items-center justify-center flex-shrink-0 shadow-inner">
-                                <span class="text-xs font-bold uppercase tracking-wider">${monthYear.substring(0,3)}</span>
-                                <span class="text-3xl font-black leading-none mt-1">${day}</span>
-                            </div>
-                            <div class="space-y-2.5 flex-1 py-1">
-                                <div class="flex flex-wrap justify-between items-start gap-2">
-                                    <h3 class="font-bold text-lg text-gray-900 leading-tight">${activity.title}</h3>
-                                    <span class="bg-gray-50 text-gray-600 text-xs px-2.5 py-1 rounded-md font-semibold border border-gray-200">
-                                        ${activity.type}
-                                    </span>
-                                </div>
-                                <p class="text-gray-500 text-sm flex items-center gap-1.5">
-                                    <i data-lucide="info" class="w-4 h-4"></i> ${activity.location}
-                                </p>
-                                <button onclick="showMessage('Pendaftaran ${activity.title} akan dibuka segera!')" class="text-orange-500 font-bold text-sm hover:text-orange-700 mt-2 inline-flex items-center gap-1 group">
-                                    Daftar Sekarang <i data-lucide="plus" class="w-3 h-3 group-hover:translate-x-1 transition-transform"></i>
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                });
-
                 main.innerHTML = `
                     <div class="space-y-8 animate-fade-in">
-                        <div>
-                            <h2 class="text-3xl font-bold text-gray-900 tracking-tight">Jadwal Kegiatan</h2>
-                            <p class="text-gray-500 mt-2 text-lg">Jangan lewatkan momen seru bersama komunitas Look The Cats.</p>
-                        </div>
+                        <h2 class="text-3xl font-bold">Agenda & Kegiatan</h2>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            ${activitiesHtml}
+                            ${ACTIVITIES.map(a => `
+                                <div class="bg-white p-6 rounded-2xl shadow-sm border flex gap-5">
+                                    <div class="${a.bgColor} ${a.iconColor} w-20 h-20 rounded-2xl flex flex-col items-center justify-center font-bold">
+                                        <span class="text-xs uppercase">${a.date.split(' ')[1]}</span>
+                                        <span class="text-2xl">${a.date.split(' ')[0]}</span>
+                                    </div>
+                                    <div class="flex-1">
+                                        <h3 class="font-bold text-lg leading-tight text-gray-800">${a.title}</h3>
+                                        <p class="text-gray-400 text-sm mt-1"><i data-lucide="map-pin" class="inline w-3 h-3"></i> ${a.location}</p>
+                                        <button onclick="window.open('https://wa.me/6281296629033', '_blank')" class="text-orange-500 font-bold text-sm mt-3 uppercase tracking-wider">Daftar &rarr;</button>
+                                    </div>
+                                </div>
+                            `).join('')}
                         </div>
-                        
-                        <div class="mt-10 bg-blue-50 border border-blue-100 rounded-[1.5rem] p-8 flex flex-col md:flex-row items-center md:items-start gap-6">
-                            <div class="bg-blue-500 text-white p-4 rounded-full shadow-lg shadow-blue-500/30">
-                                <i data-lucide="heart" class="w-8 h-8"></i>
-                            </div>
-                            <div class="text-center md:text-left">
-                                <h4 class="font-bold text-xl text-blue-900">Punya info acara atau klinik hewan?</h4>
-                                <p class="text-blue-700 mt-2">Bantu kami memperbarui jadwal. Hubungi admin untuk menambahkan acara Anda ke dalam kalender Look The Cats.</p>
-                                <button onclick="showMessage('Membuka aplikasi WhatsApp/Email...')" class="mt-4 bg-white text-blue-600 px-6 py-2 rounded-full font-bold shadow-sm hover:bg-blue-50 transition border border-blue-200">
-                                    Hubungi Admin
-                                </button>
+                        <div class="mt-10 bg-blue-50 border border-blue-100 rounded-3xl p-8 flex flex-col md:flex-row items-center gap-6 shadow-sm">
+                            <div class="bg-blue-500 text-white p-4 rounded-2xl shadow-lg"><i data-lucide="info" class="w-8 h-8"></i></div>
+                            <div class="text-center md:text-left flex-1">
+                                <h4 class="font-bold text-xl text-blue-900">Punya Info Kegiatan?</h4>
+                                <p class="text-blue-700 mt-1">Bantu kami memperbarui jadwal. Hubungi admin untuk menambahkan acara di wilayahmu.</p>
+                                <button onclick="window.open('https://wa.me/6281296629033', '_blank')" class="mt-4 bg-white text-blue-600 px-6 py-2 rounded-full font-bold shadow-sm border border-blue-100 hover:bg-blue-50 transition">Hubungi Admin (WA)</button>
                             </div>
                         </div>
                     </div>
@@ -568,230 +381,121 @@
             }
             else if (currentPage === 'account') {
                 if (currentUser) {
-                    // --- TAMPILAN PROFIL (JIKA SUDAH LOGIN) ---
                     main.innerHTML = `
-                        <div class="space-y-6 animate-fade-in max-w-2xl mx-auto pt-4">
-                            <h2 class="text-3xl font-bold text-gray-900 tracking-tight text-center md:text-left">Profil Anggota</h2>
-                            
-                            <div class="bg-white p-8 rounded-[1.5rem] shadow-sm border border-gray-100 flex flex-col md:flex-row gap-8 items-center md:items-start">
-                                <div class="w-32 h-32 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0 relative overflow-hidden ring-4 ring-orange-50">
-                                    ${userCatImage ? '<img src="' + userCatImage + '" class="w-full h-full object-cover">' : '<i data-lucide="cat" class="w-16 h-16 text-orange-400"></i>'}
-                                </div>
-                                <div class="flex-1 text-center md:text-left space-y-4 w-full">
-                                    <div>
-                                        <h3 class="text-2xl font-bold text-gray-800">${currentUser.name}</h3>
-                                        <p class="text-gray-500">${currentUser.email}</p>
-                                    </div>
-                                    <div class="grid grid-cols-2 gap-4 bg-gray-50 p-4 rounded-2xl border border-gray-100">
-                                        <div>
-                                            <span class="text-xs text-gray-500 font-bold uppercase tracking-wider block">Nama Anabul</span>
-                                            <span class="text-lg font-bold text-orange-600">${currentUser.catName || 'Kesayangan'}</span>
-                                        </div>
-                                        <div>
-                                            <span class="text-xs text-gray-500 font-bold uppercase tracking-wider block">Bergabung</span>
-                                            <span class="text-lg font-bold text-gray-800">${currentUser.joinDate}</span>
-                                        </div>
-                                    </div>
-                                    <button onclick="handleLogout()" class="w-full md:w-auto bg-red-50 hover:bg-red-100 text-red-600 px-6 py-2.5 rounded-full font-bold transition flex items-center justify-center gap-2">
-                                        <i data-lucide="log-out" class="w-4 h-4"></i> Keluar (Logout)
-                                    </button>
-                                </div>
+                        <div class="max-w-md mx-auto bg-white p-10 rounded-[3rem] shadow-lg border text-center animate-fade-in">
+                            <div class="w-24 h-24 bg-orange-100 rounded-full mx-auto flex items-center justify-center text-orange-600 font-bold text-3xl mb-4 border-4 border-white shadow-sm">${currentUser.name.charAt(0)}</div>
+                            <h2 class="text-2xl font-bold">${currentUser.name}</h2>
+                            <p class="text-gray-400 mb-6">${currentUser.email}</p>
+                            <div class="bg-gray-50 p-6 rounded-2xl text-left space-y-3 text-sm">
+                                <p><b>WhatsApp:</b> ${currentUser.wa || '-'}</p>
+                                <p><b>Wilayah:</b> ${currentUser.wilayah || 'Umum'}</p>
+                                <p><b>Status:</b> <span class="font-bold ${currentUser.status === 'Aktif' ? 'text-green-600' : 'text-red-600'}">${currentUser.status}</span></p>
                             </div>
+                            <button onclick="handleLogout()" class="w-full mt-8 bg-red-50 text-red-600 py-3 rounded-2xl font-bold transition hover:bg-red-100">Keluar (Logout)</button>
                         </div>
                     `;
                 } else {
-                    // --- TAMPILAN FORM LOGIN & REGISTRASI ---
                     main.innerHTML = `
-                        <div class="flex justify-center items-center py-4 animate-fade-in">
-                            <div class="bg-white p-8 md:p-10 rounded-[2rem] shadow-lg border border-gray-100 w-full max-w-md relative overflow-hidden">
-                                <!-- Dekorasi Latar -->
-                                <div class="absolute -top-10 -right-10 w-32 h-32 bg-orange-100 rounded-full blur-2xl opacity-50 z-0"></div>
-                                
-                                <div class="relative z-10 text-center mb-8">
-                                    <div class="bg-orange-100 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 text-orange-600">
-                                        <i data-lucide="${isLoginView ? 'log-in' : 'user-plus'}" class="w-8 h-8"></i>
-                                    </div>
-                                    <h2 class="text-3xl font-extrabold text-gray-900">${isLoginView ? 'Masuk Akun' : 'Daftar Anggota'}</h2>
-                                    <p class="text-gray-500 mt-2 text-sm">${isLoginView ? 'Selamat datang kembali, Cat Lover!' : 'Jadilah bagian dari komunitas pecinta kucing.'}</p>
-                                </div>
-
+                        <div class="max-w-md mx-auto bg-white p-10 rounded-[2.5rem] shadow-xl border animate-fade-in">
+                            <h2 class="text-3xl font-bold text-center mb-8">${isLoginView ? 'Masuk' : 'Daftar Member'}</h2>
+                            <form onsubmit="${isLoginView ? 'handleLogin(event)' : 'handleRegister(event)'}" class="space-y-4">
                                 ${!isLoginView ? `
-                                    <!-- FORM REGISTRASI -->
-                                    <form onsubmit="handleRegister(event)" class="relative z-10 space-y-4">
-                                        <div>
-                                            <label class="block text-sm font-bold text-gray-700 mb-1">Nama Lengkap</label>
-                                            <input type="text" id="reg-name" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-500 outline-none transition bg-gray-50 focus:bg-white" placeholder="Cth: Budi Santoso">
-                                        </div>
-                                        <div>
-                                            <label class="block text-sm font-bold text-gray-700 mb-1">Email</label>
-                                            <input type="email" id="reg-email" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-500 outline-none transition bg-gray-50 focus:bg-white" placeholder="email@contoh.com">
-                                        </div>
-                                        <div>
-                                            <label class="block text-sm font-bold text-gray-700 mb-1">Nama Kucing (Opsional)</label>
-                                            <input type="text" id="reg-cat" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-500 outline-none transition bg-gray-50 focus:bg-white" placeholder="Cth: Mochi">
-                                        </div>
-                                        <div>
-                                            <label class="block text-sm font-bold text-gray-700 mb-1">Password</label>
-                                            <input type="password" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-500 outline-none transition bg-gray-50 focus:bg-white" placeholder="••••••••">
-                                        </div>
-                                        <button type="submit" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3.5 rounded-xl transition shadow-md mt-2 flex justify-center items-center gap-2">
-                                            Daftar Sekarang <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                                        </button>
-                                    </form>
-                                ` : `
-                                    <!-- FORM LOGIN -->
-                                    <form onsubmit="handleLogin(event)" class="relative z-10 space-y-4">
-                                        <div>
-                                            <label class="block text-sm font-bold text-gray-700 mb-1">Email</label>
-                                            <input type="email" id="login-email" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-500 outline-none transition bg-gray-50 focus:bg-white" placeholder="email@contoh.com">
-                                        </div>
-                                        <div>
-                                            <label class="block text-sm font-bold text-gray-700 mb-1">Password</label>
-                                            <input type="password" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-500 outline-none transition bg-gray-50 focus:bg-white" placeholder="••••••••">
-                                        </div>
-                                        <button type="submit" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3.5 rounded-xl transition shadow-md mt-2 flex justify-center items-center gap-2">
-                                            Masuk <i data-lucide="log-in" class="w-4 h-4"></i>
-                                        </button>
-                                    </form>
-                                `}
-
-                                <div class="relative z-10 text-center mt-6 pt-6 border-t border-gray-100">
-                                    <p class="text-sm text-gray-500">
-                                        ${isLoginView ? 'Belum punya akun?' : 'Sudah punya akun?'} 
-                                        <button onclick="toggleAuthView()" class="text-orange-500 font-bold hover:underline">
-                                            ${isLoginView ? 'Daftar di sini' : 'Masuk di sini'}
-                                        </button>
-                                    </p>
+                                    <input type="text" id="reg-name" required placeholder="Nama Lengkap" class="w-full p-4 rounded-xl bg-gray-50 border outline-none">
+                                    <input type="tel" id="reg-wa" required placeholder="No WA (08...)" class="w-full p-4 rounded-xl bg-gray-50 border outline-none">
+                                    <select id="reg-wilayah" class="w-full p-4 rounded-xl bg-gray-50 border outline-none">
+                                        <option value="Jakarta">Jakarta</option><option value="Tangerang">Tangerang</option><option value="Bandung">Bandung</option>
+                                    </select>
+                                    <input type="text" id="reg-cat" placeholder="Nama Kucing (Kitty)" class="w-full p-4 rounded-xl bg-gray-50 border outline-none">
+                                ` : ''}
+                                <input type="email" id="${isLoginView ? 'login-email' : 'reg-email'}" required placeholder="Email (admin@... atau pusat@...)" class="w-full p-4 rounded-xl bg-gray-50 border outline-none">
+                                <input type="password" required placeholder="Password" class="w-full p-4 rounded-xl bg-gray-50 border outline-none">
+                                <button class="w-full bg-orange-500 text-white py-4 rounded-xl font-bold shadow-lg">${isLoginView ? 'Masuk' : 'Daftar & Aktifkan'}</button>
+                            </form>
+                            <p class="text-center mt-6 text-sm">
+                                ${isLoginView ? 'Belum punya akun?' : 'Sudah punya akun?'} 
+                                <button onclick="toggleAuthView()" class="text-orange-500 font-bold ml-1">Klik di sini</button>
+                            </p>
+                        </div>
+                    `;
+                }
+            }
+            else if (currentPage === 'admin') {
+                if (!currentUser || !currentUser.role?.includes('admin')) {
+                    main.innerHTML = `
+                        <div class="max-w-md mx-auto text-center p-12 bg-white rounded-[2.5rem] border shadow-xl animate-fade-in mt-10">
+                            <div class="bg-red-50 text-red-500 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6"><i data-lucide="shield-off" class="w-10 h-10"></i></div>
+                            <h2 class="text-2xl font-bold">Akses Admin</h2>
+                            <p class="text-gray-400 mt-2">Halaman ini hanya untuk Admin. Login dulu sebagai Admin (Email mengandung kata "admin" atau "pusat") ya!</p>
+                            <button onclick="navigateTo('account')" class="mt-8 bg-orange-500 text-white px-8 py-3 rounded-full font-bold shadow-lg">Ke Halaman Login</button>
+                        </div>
+                    `;
+                } else {
+                    const isPusat = currentUser.role === 'admin_pusat';
+                    main.innerHTML = `
+                        <div class="space-y-8 animate-fade-in">
+                            <div class="bg-gray-900 text-white p-8 rounded-[2rem] shadow-xl flex flex-col md:flex-row justify-between items-center gap-6">
+                                <div class="text-center md:text-left">
+                                    <span class="bg-orange-500 text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-3 inline-block">Role: ${isPusat ? 'Pusat' : 'Wilayah'}</span>
+                                    <h2 class="text-3xl font-bold">Panel Admin Look The Cats</h2>
+                                    <p class="text-gray-400 font-medium">Kelola anggota, produk, dan pengaturan sistem.</p>
+                                </div>
+                                <div class="bg-white/10 p-5 rounded-2xl backdrop-blur-md text-center border border-white/10 min-w-[150px]">
+                                    <p class="text-xs text-gray-400 font-bold uppercase">Total Member</p>
+                                    <p class="text-4xl font-black">${mockUsers.length}</p>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-white rounded-3xl border shadow-sm overflow-hidden">
+                                <div class="p-5 border-b flex justify-between items-center">
+                                    <h3 class="font-bold">Manajemen Anggota</h3>
+                                    <button onclick="addProductManual()" class="text-xs bg-orange-100 text-orange-600 px-3 py-1.5 rounded-lg font-bold">Tambah Produk Baru</button>
+                                </div>
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-left text-sm">
+                                        <thead class="bg-gray-50 border-b">
+                                            <tr>
+                                                <th class="p-6 font-bold text-gray-500 uppercase tracking-widest text-[10px]">Profil Member</th>
+                                                <th class="p-6 font-bold text-gray-500 uppercase tracking-widest text-[10px]">Kontak / Wilayah</th>
+                                                <th class="p-6 font-bold text-gray-500 uppercase tracking-widest text-[10px] text-center">Status</th>
+                                                <th class="p-6 font-bold text-gray-500 uppercase tracking-widest text-[10px] text-center">Aksi</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y">
+                                            ${mockUsers.map((u, i) => `
+                                                <tr class="hover:bg-gray-50/50 transition">
+                                                    <td class="p-6 flex items-center gap-4">
+                                                        <div class="w-10 h-10 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center font-bold">${u.name.charAt(0)}</div>
+                                                        <div><p class="font-bold text-gray-900">${u.name}</p><p class="text-[10px] text-orange-400 font-bold uppercase tracking-tighter">Anabul: ${u.catName || '-'}</p></div>
+                                                    </td>
+                                                    <td class="p-6">
+                                                        <p class="font-bold text-gray-700">${u.email}</p>
+                                                        <p class="text-xs text-green-600 font-bold"><i data-lucide="phone" class="inline w-3 h-3"></i> ${u.wa || '-'}</p>
+                                                        <p class="text-[10px] text-gray-400 font-bold uppercase mt-1 italic">${u.wilayah || '-'}</p>
+                                                    </td>
+                                                    <td class="p-6 text-center">
+                                                        <span class="px-3 py-1 rounded-lg text-[10px] font-bold ${u.status === 'Aktif' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'} shadow-sm">${u.status}</span>
+                                                    </td>
+                                                    <td class="p-6 text-center">
+                                                        <button onclick="toggleMemberStatus(${i})" class="flex items-center gap-2 font-bold text-xs mx-auto ${u.status === 'Aktif' ? 'text-red-500' : 'text-green-500'} active:scale-90 transition">
+                                                            <i data-lucide="${u.status === 'Aktif' ? 'power-off' : 'power'}" class="w-4 h-4"></i>
+                                                            ${u.status === 'Aktif' ? 'Matikan' : 'Aktifkan'}
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            `).reverse().join('')}
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
                     `;
                 }
             }
-            else if (currentPage === 'admin') {
-                // --- TAMPILAN DASHBOARD ADMIN ---
-                
-                // Render baris tabel untuk user baru dari simulasi pendaftaran
-                const newUsersHtml = mockUsers.map(user => 
-                    '<tr class="hover:bg-gray-50/50 transition bg-orange-50/30">' +
-                        '<td class="p-4 font-semibold text-gray-800 flex items-center gap-3">' +
-                            '<div class="w-8 h-8 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center font-bold">' + user.name.charAt(0).toUpperCase() + '</div>' +
-                            user.name + ' <span class="text-[10px] bg-orange-500 text-white px-1.5 rounded ml-1 font-bold">Baru</span>' +
-                        '</td>' +
-                        '<td class="p-4 text-gray-600">' + user.email + '</td>' +
-                        '<td class="p-4 text-gray-600 font-medium">' + (user.catName || '-') + '</td>' +
-                        '<td class="p-4"><span class="bg-green-100 text-green-700 px-2.5 py-1 rounded-md font-bold text-xs border border-green-200">Aktif</span></td>' +
-                    '</tr>'
-                ).join('');
-
-                main.innerHTML = `
-                    <div class="space-y-8 animate-fade-in pb-8">
-                        <!-- Header Admin -->
-                        <div class="bg-gray-900 text-white p-8 rounded-[2rem] shadow-lg flex flex-col md:flex-row justify-between items-center gap-6 relative overflow-hidden">
-                            <div class="absolute -right-10 -bottom-10 opacity-10">
-                                <i data-lucide="shield-check" class="w-64 h-64"></i>
-                            </div>
-                            <div class="relative z-10 text-center md:text-left">
-                                <h2 class="text-3xl font-extrabold tracking-tight">Dashboard Admin</h2>
-                                <p class="text-gray-400 mt-2 text-lg">Pusat pengelolaan data aplikasi Look The Cats.</p>
-                            </div>
-                            <div class="relative z-10 flex gap-4">
-                                <button onclick="showMessage('Laporan berhasil diunduh!')" class="bg-white/10 hover:bg-white/20 px-6 py-2.5 rounded-full font-bold transition backdrop-blur-sm flex items-center gap-2 border border-white/10">
-                                    <i data-lucide="download" class="w-4 h-4"></i> Laporan
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Statistik Cards -->
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-                            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 border-l-4 border-l-orange-500 hover:shadow-md transition">
-                                <div class="flex justify-between items-start">
-                                    <div>
-                                        <p class="text-xs md:text-sm font-bold text-gray-500 uppercase">Total Pesanan</p>
-                                        <h4 class="text-2xl font-black text-gray-800 mt-1">128</h4>
-                                    </div>
-                                    <div class="bg-orange-50 p-2 rounded-lg text-orange-600 hidden md:block"><i data-lucide="shopping-bag"></i></div>
-                                </div>
-                            </div>
-                            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 border-l-4 border-l-blue-500 hover:shadow-md transition">
-                                <div class="flex justify-between items-start">
-                                    <div>
-                                        <p class="text-xs md:text-sm font-bold text-gray-500 uppercase">Anggota Aktif</p>
-                                        <h4 class="text-2xl font-black text-gray-800 mt-1">${1024 + mockUsers.length}</h4>
-                                    </div>
-                                    <div class="bg-blue-50 p-2 rounded-lg text-blue-600 hidden md:block"><i data-lucide="users"></i></div>
-                                </div>
-                            </div>
-                            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 border-l-4 border-l-green-500 hover:shadow-md transition">
-                                <div class="flex justify-between items-start">
-                                    <div>
-                                        <p class="text-xs md:text-sm font-bold text-gray-500 uppercase">Produk Dijual</p>
-                                        <h4 class="text-2xl font-black text-gray-800 mt-1">${PRODUCTS.length}</h4>
-                                    </div>
-                                    <div class="bg-green-50 p-2 rounded-lg text-green-600 hidden md:block"><i data-lucide="box"></i></div>
-                                </div>
-                            </div>
-                            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 border-l-4 border-l-purple-500 hover:shadow-md transition">
-                                <div class="flex justify-between items-start">
-                                    <div>
-                                        <p class="text-xs md:text-sm font-bold text-gray-500 uppercase">Jadwal Acara</p>
-                                        <h4 class="text-2xl font-black text-gray-800 mt-1">${ACTIVITIES.length}</h4>
-                                    </div>
-                                    <div class="bg-purple-50 p-2 rounded-lg text-purple-600 hidden md:block"><i data-lucide="calendar"></i></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Daftar Anggota Terbaru (Tabel) -->
-                        <div class="bg-white rounded-[1.5rem] shadow-sm border border-gray-100 overflow-hidden">
-                            <div class="p-5 md:p-6 border-b border-gray-50 flex justify-between items-center">
-                                <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2"><i data-lucide="users" class="text-blue-500"></i> Pendaftar Terbaru</h3>
-                                <button class="text-sm font-bold text-orange-500 hover:text-orange-700">Lihat Semua</button>
-                            </div>
-                            <div class="overflow-x-auto">
-                                <table class="w-full text-left border-collapse min-w-[600px]">
-                                    <thead>
-                                        <tr class="bg-gray-50 text-gray-500 text-sm">
-                                            <th class="p-4 font-bold uppercase tracking-wider">Nama Anggota</th>
-                                            <th class="p-4 font-bold uppercase tracking-wider">Email</th>
-                                            <th class="p-4 font-bold uppercase tracking-wider">Nama Kucing</th>
-                                            <th class="p-4 font-bold uppercase tracking-wider">Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="text-sm divide-y divide-gray-50">
-                                        ${newUsersHtml}
-                                        <tr class="hover:bg-gray-50/50 transition">
-                                            <td class="p-4 font-semibold text-gray-800 flex items-center gap-3">
-                                                <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold">A</div>
-                                                Andi Susanto
-                                            </td>
-                                            <td class="p-4 text-gray-600">andi@email.com</td>
-                                            <td class="p-4 text-gray-600 font-medium">Garfield</td>
-                                            <td class="p-4"><span class="bg-green-100 text-green-700 px-2.5 py-1 rounded-md font-bold text-xs border border-green-200">Aktif</span></td>
-                                        </tr>
-                                        <tr class="hover:bg-gray-50/50 transition">
-                                            <td class="p-4 font-semibold text-gray-800 flex items-center gap-3">
-                                                <div class="w-8 h-8 rounded-full bg-pink-100 text-pink-600 flex items-center justify-center font-bold">R</div>
-                                                Rina Melati
-                                            </td>
-                                            <td class="p-4 text-gray-600">rina@email.com</td>
-                                            <td class="p-4 text-gray-600 font-medium">Mochi</td>
-                                            <td class="p-4"><span class="bg-gray-100 text-gray-600 px-2.5 py-1 rounded-md font-bold text-xs border border-gray-200">Offline</span></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
+            lucide.createIcons();
         }
 
-        // --- INISIALISASI PERTAMA KALI ---
-        document.addEventListener('DOMContentLoaded', () => {
-            navigateTo('home');
-        });
-
+        // --- INIT ---
+        document.addEventListener('DOMContentLoaded', () => navigateTo('home'));
     </script>
 </body>
 </html>
