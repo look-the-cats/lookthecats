@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Look The Cats - Segala Kebutuhan Anabul</title>
+    
+    <!-- Memanggil Tailwind CSS untuk Styling Responsif -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Memanggil Icon -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Animasi Kustom -->
+    <style>
+        .animate-fade-in { animation: fadeIn 0.4s ease-in-out; }
+        .animate-slide-in-right { animation: slideInRight 0.3s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideInRight { from { transform: translateX(100%); } to { transform: translateX(0); } }
+        
+        /* Mencegah scroll saat modal terbuka */
+        body.modal-open { overflow: hidden; }
+
+        /* Support untuk iPhone notch/safe area (Garis bawah iPhone) */
+        .pb-safe { padding-bottom: max(0.75rem, env(safe-area-inset-bottom)); }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans text-gray-800 min-h-screen flex flex-col">
+
+    <!-- --- NAVBAR --- -->
+    <nav class="bg-orange-500 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center space-x-2 cursor-pointer" onclick="navigateTo('home')">
+                    <div class="bg-white text-orange-500 p-1.5 rounded-full flex items-center justify-center">
+                        <i data-lucide="heart" fill="currentColor" class="w-5 h-5"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-wide">Look The Cats</span>
+                </div>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex space-x-8 items-center" id="desktop-menu">
+                    <!-- Menu akan di-render oleh JavaScript -->
+                </div>
+
+                <!-- Cart & Mobile Toggle -->
+                <div class="flex items-center space-x-4">
+                    <button onclick="toggleCart()" class="relative p-2 hover:bg-orange-600 rounded-full transition">
+                        <i data-lucide="shopping-cart"></i>
+                        <span id="cart-badge" class="hidden absolute top-0 right-0 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">0</span>
+                    </button>
+                    <!-- Tombol Hamburger Dihapus untuk diganti Bottom Nav -->
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- --- MOBILE BOTTOM NAVIGATION (Aplikasi Style) --- -->
+    <nav class="md:hidden fixed bottom-0 w-full bg-white border-t border-gray-100 shadow-[0_-10px_20px_-10px_rgba(0,0,0,0.1)] z-[45] px-6 pt-2 pb-safe flex justify-between items-center" id="mobile-bottom-nav">
+        <!-- Menu Bawah akan di-render oleh JavaScript -->
+    </nav>
+
+    <!-- --- MAIN CONTENT --- -->
+    <!-- Menambahkan padding bawah (pb-24) agar konten tidak tertutup Bottom Nav di HP -->
+    <main id="main-content" class="max-w-6xl mx-auto px-4 py-6 md:py-8 flex-grow w-full pb-24 md:pb-8">
+        <!-- Konten Halaman akan disuntikkan ke sini oleh JavaScript -->
+    </main>
+
+    <!-- --- FOOTER --- -->
+    <footer class="bg-gray-800 text-gray-300 py-6 text-center mt-auto mb-16 md:mb-0">
+        <p class="font-semibold text-white mb-2">Look The Cats &copy; 2026</p>
+        <p class="text-sm">Platform terbaik untuk pecinta kucing di Indonesia.</p>
+    </footer>
+
+    <!-- --- CART MODAL --- -->
+    <div id="cart-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-[60] flex justify-end">
+        <div class="bg-white w-full max-w-md h-full shadow-2xl flex flex-col animate-slide-in-right">
+            <div class="p-4 bg-orange-500 text-white flex justify-between items-center shadow-sm z-10">
+                <h2 class="text-xl font-bold flex items-center gap-2">
+                    <i data-lucide="shopping-cart"></i> Keranjang Belanja
+                </h2>
+                <button onclick="toggleCart()" class="hover:bg-orange-600 p-1.5 rounded-full transition">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            
+            <div id="cart-items-container" class="flex-1 overflow-y-auto p-4 bg-gray-50">
+                <!-- Item Keranjang di-render di sini -->
+            </div>
+
+            <div id="cart-footer" class="hidden p-4 border-t bg-white shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+                <div class="flex justify-between text-lg font-bold mb-4">
+                    <span>Total:</span>
+                    <span class="text-orange-600" id="cart-total-price">Rp 0</span>
+                </div>
+                <button onclick="checkout()" class="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-xl font-bold shadow-md transition flex items-center justify-center gap-2">
+                    <i data-lucide="shopping-bag" class="w-5 h-5"></i> Lanjut Pembayaran
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- --- CUSTOM MESSAGE BOX --- -->
+    <div id="message-box" class="hidden fixed top-20 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white px-6 py-3 rounded-full shadow-xl z-[70] flex items-center gap-3 animate-fade-in">
+        <i data-lucide="info" class="text-orange-400"></i>
+        <span id="message-box-text" class="font-medium"></span>
+    </div>
+
+    <!-- --- JAVASCRIPT LOGIC --- -->
+    <script>
+        // --- DATA MOCKUP ---
+        const PRODUCTS = [
+            { id: 1, name: 'Makanan Kucing Premium (Salmon) 1kg', price: 75000, category: 'Makanan', image: 'bg-orange-200' },
+            { id: 2, name: 'Pasir Kucing Wangi Lemon 5L', price: 45000, category: 'Perawatan', image: 'bg-yellow-200' },
+            { id: 3, name: 'Mainan Tongkat Bulu Interaktif', price: 25000, category: 'Mainan', image: 'bg-pink-200' },
+            { id: 4, name: 'Tempat Tidur Kucing Empuk', price: 120000, category: 'Aksesoris', image: 'bg-blue-200' },
+            { id: 5, name: 'Snack Kucing Creamy (Tuna) 4pcs', price: 15000, category: 'Makanan', image: 'bg-red-200' },
+            { id: 6, name: 'Shampo Kucing Anti Kutu 250ml', price: 35000, category: 'Perawatan', image: 'bg-green-200' },
+        ];
+
+        const ACTIVITIES = [
+            { id: 1, title: 'Adopsi Kucing Bersama', date: '25 April 2026', location: 'Taman Kota Tangerang', type: 'Adopsi', iconColor: 'text-orange-600', bgColor: 'bg-orange-100' },
+            { id: 2, title: 'Vaksinasi Rabies Gratis', date: '02 Mei 2026', location: 'Klinik Look The Cats', type: 'Kesehatan', iconColor: 'text-blue-600', bgColor: 'bg-blue-100' },
+            { id: 3, title: 'Kontes Kucing Sehat', date: '15 Mei 2026', location: 'Mall Alam Sutera', type: 'Kompetisi', iconColor: 'text-pink-600', bgColor: 'bg-pink-100' },
+            { id: 4, title: 'Seminar Perawatan Anak Kucing', date: '20 Mei 2026', location: 'Online Zoom', type: 'Edukasi', iconColor: 'text-green-600', bgColor: 'bg-green-100' },
+        ];
+
+        // --- STATE APP ---
+        let currentPage = 'home';
+        let cart = [];
+        let userCatImage = null; // Menyimpan foto kucing yang diupload
+
+        // --- NEW STATE: AUTH & ADMIN ---
+        let currentUser = null; // Menyimpan data user yang login
+        let isLoginView = false; // Toggle view login vs register
+        
+        // Simulasi database member (diisi dengan data awal agar tabel tidak kosong)
+        let mockUsers = [
+            { name: 'Andi Susanto', email: 'andi@email.com', phone: '081234567891', catName: 'Garfield', role: 'member', joinDate: 'Bulan lalu', wilayah: 'Jakarta', status: 'Aktif' },
+            { name: 'Rina Melati', email: 'rina@email.com', phone: '089876543210', catName: 'Mochi', role: 'member', joinDate: '2 Bulan lalu', wilayah: 'Bandung', status: 'Aktif' }
+        ]; 
+
+        // --- CORE FUNCTIONS ---
+        
+        // Fungsi untuk menonaktifkan/mengaktifkan anggota (Khusus Admin Pusat)
+        function toggleMemberStatus(index) {
+            const user = mockUsers[index];
+            if (user.status === 'Aktif') {
+                user.status = 'Nonaktif';
+                showMessage(`Meow! Akun ${user.name} berhasil dinonaktifkan.`);
+            } else {
+                user.status = 'Aktif';
+                showMessage(`Meow! Akun ${user.name} berhasil diaktifkan kembali.`);
+            }
+            renderPage();
+            lucide.createIcons();
+        }
+
+        // Fungsi untuk memicu klik pada input file tersembunyi
+        function triggerUpload() {
+            document.getElementById('cat-image-upload').click();
+        }
+
+        // Fungsi untuk menangani file yang dipilih dan menampilkannya
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    userCatImage = e.target.result; // Simpan data gambar
+                    if (currentPage === 'home') renderPage(); // Render ulang jika di beranda
+                    showMessage('Meow! Foto anabul berhasil diperbarui 😻');
+                    lucide.createIcons(); // Refresh icon
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Format Harga ke Rupiah
+        const formatRupiah = (angka) => {
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
+        };
+
+        // Custom Message Box (Pengganti Alert)
+        const showMessage = (text) => {
+            const msgBox = document.getElementById('message-box');
+            document.getElementById('message-box-text').innerText = text;
+            msgBox.classList.remove('hidden');
+            setTimeout(() => { msgBox.classList.add('hidden'); }, 3000);
+        };
+
+        // --- AUTH LOGIC ---
+        function toggleAuthView() {
+            isLoginView = !isLoginView;
+            renderPage();
+            lucide.createIcons();
+        }
+
+        function handleRegister(event) {
+            event.preventDefault(); // Mencegah reload halaman
+            const name = document.getElementById('reg-name').value;
+            const email = document.getElementById('reg-email').value;
+            const phone = document.getElementById('reg-wa').value;
+            const wilayah = document.getElementById('reg-wilayah').value;
+            const catName = document.getElementById('reg-cat').value;
+            
+            // Simpan sebagai user yang login (Status default: Langsung Aktif)
+            currentUser = { name, email, phone, catName, role: 'member', joinDate: 'Hari ini', wilayah, status: 'Aktif' };
+            mockUsers.push(currentUser); // Masukkan ke simulasi database
+            
+            showMessage(`Meow! Selamat bergabung, ${name}! Akun Anda sudah Aktif.`);
+            renderNavbar();
+            renderPage();
+            lucide.createIcons();
+            window.scrollTo(0, 0);
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('login-email').value;
+            
+            // Simulasi Multi-Admin: 
+            // "pusat" = Admin Pusat (Bisa Approve)
+            // "admin.kota" = Admin Wilayah (Hanya memantau)
+            if (email) {
+                let roleName = 'member';
+                let displayName = 'Cat Lover';
+                let wilayah = 'Umum';
+
+                const lowerEmail = email.toLowerCase();
+                
+                if (lowerEmail.includes('pusat')) {
+                    roleName = 'admin_pusat';
+                    displayName = 'Admin Pusat';
+                    wilayah = 'Nasional';
+                } else if (lowerEmail.includes('admin')) {
+                    roleName = 'admin_wilayah';
+                    // Ambil nama kota dari email (cth: admin.jakarta@... -> jakarta)
+                    let extracted = lowerEmail.split('@')[0].replace('admin.', '');
+                    wilayah = extracted.charAt(0).toUpperCase() + extracted.slice(1);
+                    if (wilayah === 'Admin') wilayah = 'Tangerang'; // Default
+                    displayName = `Admin Wilayah ${wilayah}`;
+                }
+
+                currentUser = { name: displayName, email: email, phone: '081234567890', catName: 'Anabul', role: roleName, joinDate: 'Hari ini', wilayah: wilayah, status: 'Aktif' };
+                showMessage(`Berhasil masuk! Selamat datang, ${displayName}.`);
+                renderNavbar();
+                renderPage();
+                lucide.createIcons();
+                window.scrollTo(0, 0);
+            }
+        }
+
+        function handleLogout() {
+            currentUser = null;
+            showMessage('Anda berhasil keluar (Logout).');
+            navigateTo('home');
+        }
+
+        // --- NAVIGATION ---
+        function navigateTo(page) {
+            currentPage = page;
+            
+            renderNavbar();
+            renderPage();
+            lucide.createIcons(); // Refresh icons after rendering new HTML
+            window.scrollTo(0, 0);
+        }
+
+        function renderNavbar() {
+            // Render Desktop Nav
+            const navHtml = `
+                <button onclick="navigateTo('home')" class="flex items-center space-x-1 hover:text-orange-200 transition ${currentPage === 'home' ? 'font-bold underline underline-offset-4' : ''}">
+                    <i data-lucide="home" class="w-4 h-4"></i> <span>Beranda</span>
+                </button>
+                <button onclick="navigateTo('shop')" class="flex items-center space-x-1 hover:text-orange-200 transition ${currentPage === 'shop' ? 'font-bold underline underline-offset-4' : ''}">
+                    <i data-lucide="shopping-bag" class="w-4 h-4"></i> <span>Toko</span>
+                </button>
+                <button onclick="navigateTo('activities')" class="flex items-center space-x-1 hover:text-orange-200 transition ${currentPage === 'activities' ? 'font-bold underline underline-offset-4' : ''}">
+                    <i data-lucide="calendar" class="w-4 h-4"></i> <span>Kegiatan</span>
+                </button>
+                <button onclick="navigateTo('account')" class="flex items-center space-x-1 hover:text-orange-200 transition ${currentPage === 'account' ? 'font-bold underline underline-offset-4' : ''}">
+                    <i data-lucide="user" class="w-4 h-4"></i> <span>Akun</span>
+                </button>
+                <button onclick="navigateTo('admin')" class="flex items-center space-x-1 hover:text-orange-200 transition ${currentPage === 'admin' ? 'font-bold underline underline-offset-4' : ''}">
+                    <i data-lucide="shield" class="w-4 h-4"></i> <span>Admin</span>
+                </button>
+            `;
+            document.getElementById('desktop-menu').innerHTML = navHtml;
+
+            // Render Mobile Bottom Nav (Ubah icon size jadi w-5 h-5 agar muat 5 menu)
+            const mobileNav = document.getElementById('mobile-bottom-nav');
+            if(mobileNav) {
+                mobileNav.innerHTML = `
+                    <button onclick="navigateTo('home')" class="flex flex-col items-center w-full py-1 ${currentPage === 'home' ? 'text-orange-600' : 'text-gray-400 hover:text-gray-600'} transition">
+                        <i data-lucide="home" class="w-5 h-5 mb-1 ${currentPage === 'home' ? 'fill-orange-100' : ''}"></i>
+                        <span class="text-[10px] font-bold">Beranda</span>
+                    </button>
+                    <button onclick="navigateTo('shop')" class="flex flex-col items-center w-full py-1 ${currentPage === 'shop' ? 'text-orange-600' : 'text-gray-400 hover:text-gray-600'} transition">
+                        <i data-lucide="shopping-bag" class="w-5 h-5 mb-1 ${currentPage === 'shop' ? 'fill-orange-100' : ''}"></i>
+                        <span class="text-[10px] font-bold">Toko</span>
+                    </button>
+                    <button onclick="navigateTo('activities')" class="flex flex-col items-center w-full py-1 ${currentPage === 'activities' ? 'text-orange-600' : 'text-gray-400 hover:text-gray-600'} transition">
+                        <i data-lucide="calendar" class="w-5 h-5 mb-1 ${currentPage === 'activities' ? 'fill-orange-100' : ''}"></i>
+                        <span class="text-[10px] font-bold">Kegiatan</span>
+                    </button>
+                    <button onclick="navigateTo('account')" class="flex flex-col items-center w-full py-1 ${currentPage === 'account' ? 'text-orange-600' : 'text-gray-400 hover:text-gray-600'} transition">
+                        <i data-lucide="user" class="w-5 h-5 mb-1 ${currentPage === 'account' ? 'fill-orange-100' : ''}"></i>
+                        <span class="text-[10px] font-bold">Akun</span>
+                    </button>
+                    <button onclick="navigateTo('admin')" class="flex flex-col items-center w-full py-1 ${currentPage === 'admin' ? 'text-orange-600' : 'text-gray-400 hover:text-gray-600'} transition">
+                        <i data-lucide="shield" class="w-5 h-5 mb-1 ${currentPage === 'admin' ? 'fill-orange-100' : ''}"></i>
+                        <span class="text-[10px] font-bold">Admin</span>
+                    </button>
+                `;
+            }
+        }
+
+        // --- CART LOGIC ---
+        function toggleCart() {
+            const modal = document.getElementById('cart-modal');
+            if (modal.classList.contains('hidden')) {
+                modal.classList.remove('hidden');
+                document.body.classList.add('modal-open');
+                renderCart();
+            } else {
+                modal.classList.add('hidden');
+                document.body.classList.remove('modal-open');
+            }
+        }
+
+        function addToCart(productId) {
+            const product = PRODUCTS.find(p => p.id === productId);
+            const existingItem = cart.find(item => item.id === productId);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({ ...product, quantity: 1 });
+            }
+            
+            updateCartBadge();
+            showMessage(`Berhasil menambahkan ${product.name} ke keranjang!`);
+            if (!document.getElementById('cart-modal').classList.contains('hidden')) {
+                renderCart();
+            }
+        }
+
+        function removeFromCart(productId) {
+            cart = cart.filter(item => item.id !== productId);
+            updateCartBadge();
+            renderCart();
+        }
+
+        function updateQuantity(productId, delta) {
+            const item = cart.find(item => item.id === productId);
+            if (item) {
+                item.quantity = Math.max(1, item.quantity + delta);
+                updateCartBadge();
+                renderCart();
+            }
+        }
+
+        function updateCartBadge() {
+            const count = cart.reduce((total, item) => total + item.quantity, 0);
+            const badge = document.getElementById('cart-badge');
+            if (count > 0) {
+                badge.innerText = count;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+
+        function checkout() {
+            toggleCart();
+            showMessage("Fitur Checkout akan segera hadir di versi selanjutnya! 🐾");
+        }
+
+        function renderCart() {
+            const container = document.getElementById('cart-items-container');
+            const footer = document.getElementById('cart-footer');
+            const totalPriceEl = document.getElementById('cart-total-price');
+
+            if (cart.length === 0) {
+                container.innerHTML = `
+                    <div class="h-full flex flex-col items-center justify-center text-gray-400 space-y-4">
+                        <i data-lucide="shopping-bag" class="w-16 h-16 opacity-50"></i>
+                        <p class="text-center font-medium">Keranjang masih kosong, meow!</p>
+                        <button onclick="toggleCart(); navigateTo('shop');" class="mt-4 bg-orange-100 text-orange-600 px-5 py-2.5 rounded-full font-bold hover:bg-orange-200 transition">
+                            Mulai Belanja
+                        </button>
+                    </div>
+                `;
+                footer.classList.add('hidden');
+            } else {
+                let html = '<div class="space-y-4">';
+                let total = 0;
+                
+                cart.forEach(item => {
+                    total += item.price * item.quantity;
+                    html += `
+                        <div class="flex gap-4 bg-white p-3 rounded-xl shadow-sm border border-gray-100">
+                            <div class="w-20 h-20 rounded-lg ${item.image} flex-shrink-0 border border-black/5"></div>
+                            <div class="flex-1 flex flex-col justify-between">
+                                <div>
+                                    <h4 class="font-semibold text-sm leading-tight text-gray-800 line-clamp-2">${item.name}</h4>
+                                    <p class="text-orange-500 font-bold text-sm mt-1">${formatRupiah(item.price)}</p>
+                                </div>
+                                <div class="flex items-center justify-between mt-2">
+                                    <div class="flex items-center space-x-1 bg-gray-100 rounded-lg p-1">
+                                        <button onclick="updateQuantity(${item.id}, -1)" class="p-1 hover:bg-gray-200 rounded text-gray-600"><i data-lucide="minus" class="w-3.5 h-3.5"></i></button>
+                                        <span class="text-sm w-6 text-center font-bold text-gray-700">${item.quantity}</span>
+                                        <button onclick="updateQuantity(${item.id}, 1)" class="p-1 hover:bg-gray-200 rounded text-gray-600"><i data-lucide="plus" class="w-3.5 h-3.5"></i></button>
+                                    </div>
+                                    <button onclick="removeFromCart(${item.id})" class="text-red-400 hover:text-red-600 hover:bg-red-50 p-1.5 rounded transition">
+                                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+                container.innerHTML = html;
+                
+                totalPriceEl.innerText = formatRupiah(total);
+                footer.classList.remove('hidden');
+            }
+            lucide.createIcons();
+        }
+
+        // --- PAGES RENDERER ---
+        function renderPage() {
+            const main = document.getElementById('main-content');
+            
+            if (currentPage === 'home') {
+                // Cek apakah user yang sedang login adalah Admin (Pusat atau Wilayah)
+                const isAdmin = currentUser !== null && (currentUser.role === 'admin_pusat' || currentUser.role === 'admin_wilayah');
+
+                main.innerHTML = `
+                    <div class="space-y-8 md:space-y-12 animate-fade-in">
+                        <!-- Hero Section -->
+                        <section class="bg-gradient-to-r from-orange-100 to-orange-50 rounded-[2rem] p-6 sm:p-8 md:p-12 flex flex-col-reverse md:flex-row items-center gap-6 md:gap-8 shadow-sm text-center md:text-left">
+                            <div class="flex-1 space-y-4 md:space-y-6">
+                                <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight">
+                                    Segala Kebutuhan Si Anabul <span class="text-orange-500 block mt-1 md:mt-2">Ada di Sini!</span>
+                                </h1>
+                                <p class="text-sm sm:text-base md:text-lg text-gray-600 leading-relaxed px-2 md:px-0">
+                                    Mulai dari makanan premium, mainan lucu, hingga informasi acara adopsi dan klinik. Look The Cats adalah sahabat terbaik untuk Anda dan kucing kesayangan.
+                                </p>
+                                <div class="flex flex-col sm:flex-row justify-center md:justify-start gap-3 pt-2">
+                                    <button onclick="navigateTo('shop')" class="w-full sm:w-auto bg-orange-500 hover:bg-orange-600 text-white px-8 py-3.5 rounded-full font-bold shadow-lg shadow-orange-500/30 transition flex items-center justify-center gap-2">
+                                        <i data-lucide="shopping-bag" class="w-5 h-5"></i> Belanja Sekarang
+                                    </button>
+                                    <button onclick="navigateTo('activities')" class="w-full sm:w-auto bg-white hover:bg-gray-50 text-orange-500 border-2 border-orange-200 px-8 py-3.5 rounded-full font-bold transition flex items-center justify-center gap-2">
+                                        <i data-lucide="calendar" class="w-5 h-5"></i> Lihat Kegiatan
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="flex-1 flex justify-center w-full pb-4 md:pb-0">
+                                <div ${isAdmin ? 'onclick="triggerUpload()"' : ''} class="w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80 bg-orange-200 rounded-full flex items-center justify-center shadow-inner relative overflow-hidden ${isAdmin ? 'cursor-pointer group hover:ring-4 hover:ring-orange-300 transition-all' : ''}" title="${isAdmin ? 'Klik untuk upload foto maskot' : 'Maskot Kucing'}">
+                                    ${isAdmin ? `<input type="file" id="cat-image-upload" class="hidden" accept="image/*" onchange="handleImageUpload(event)">` : ''}
+                                    ${userCatImage ? 
+                                        `<img src="${userCatImage}" class="w-full h-full object-cover z-10 ${isAdmin ? 'transition-transform duration-500 group-hover:scale-110' : ''}" alt="Maskot Kucing">
+                                         ${isAdmin ? `<div class="absolute inset-0 bg-black/40 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-20">
+                                            <i data-lucide="camera" class="w-8 h-8 text-white mb-1"></i>
+                                            <span class="text-white font-bold text-sm">Ganti Foto</span>
+                                         </div>` : ''}`
+                                        :
+                                        `<div class="absolute inset-0 flex items-center justify-center opacity-20 ${isAdmin ? 'group-hover:opacity-40 transition-opacity' : ''}">
+                                            <i data-lucide="heart" class="w-32 h-32 md:w-48 md:h-48 text-orange-400"></i>
+                                        </div>
+                                        ${isAdmin ? 
+                                            `<div class="z-10 flex flex-col items-center group-hover:scale-110 transition-transform">
+                                                <i data-lucide="upload-cloud" class="w-8 h-8 md:w-10 md:h-10 text-orange-600 mb-2"></i>
+                                                <span class="text-sm md:text-lg font-bold text-orange-700 text-center px-4 leading-tight">Upload Foto<br>Maskot!</span>
+                                            </div>` 
+                                            : 
+                                            `<div class="z-10 flex flex-col items-center">
+                                                <span class="text-lg md:text-2xl font-bold text-orange-700 text-center px-4 leading-tight">[Gambar Kucing]</span>
+                                            </div>`
+                                        }`
+                                    }
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Quick Features -->
+                        <section class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+                            <div class="bg-white p-6 md:p-8 rounded-[1.5rem] shadow-sm border border-gray-100 flex flex-col items-center text-center space-y-4 hover:shadow-md transition">
+                                <div class="bg-orange-100 p-4 rounded-2xl text-orange-600"><i data-lucide="shopping-bag" class="w-8 h-8"></i></div>
+                                <h3 class="text-xl font-bold text-gray-800">Produk Lengkap</h3>
+                                <p class="text-gray-500 text-sm">Makanan, vitamin, hingga pasir kucing dengan kualitas terjamin.</p>
+                            </div>
+                            <div class="bg-white p-8 rounded-[1.5rem] shadow-sm border border-gray-100 flex flex-col items-center text-center space-y-4 hover:shadow-md transition">
+                                <div class="bg-blue-100 p-4 rounded-2xl text-blue-600"><i data-lucide="calendar" class="w-8 h-8"></i></div>
+                                <h3 class="text-xl font-bold text-gray-800">Event & Komunitas</h3>
+                                <p class="text-gray-500 text-sm">Ikuti kontes, seminar, dan temukan teman baru sesama cat lovers.</p>
+                            </div>
+                            <div class="bg-white p-8 rounded-[1.5rem] shadow-sm border border-gray-100 flex flex-col items-center text-center space-y-4 hover:shadow-md transition">
+                                <div class="bg-pink-100 p-4 rounded-2xl text-pink-600"><i data-lucide="heart" class="w-8 h-8"></i></div>
+                                <h3 class="text-xl font-bold text-gray-800">Adopsi & Klinik</h3>
+                                <p class="text-gray-500 text-sm">Bantu kucing jalanan temukan rumah atau periksa kesehatan rutin.</p>
+                            </div>
+                        </section>
+                    </div>
+                `;
+            } 
+            else if (currentPage === 'shop') {
+                let productsHtml = '';
+                PRODUCTS.forEach(product => {
+                    productsHtml += `
+                        <div class="bg-white rounded-[1.5rem] shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition group flex flex-col h-full">
+                            <div class="h-52 w-full ${product.image} flex items-center justify-center relative">
+                                <span class="text-gray-600 font-medium opacity-50">[Gambar Produk]</span>
+                                <div class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-orange-600 shadow-sm">
+                                    ${product.category}
+                                </div>
+                            </div>
+                            
+                            <div class="p-6 flex flex-col flex-grow space-y-4">
+                                <div class="flex-grow">
+                                    <h3 class="font-semibold text-lg text-gray-800 leading-snug group-hover:text-orange-500 transition">${product.name}</h3>
+                                    <div class="flex items-center gap-1 mt-2 text-yellow-400">
+                                        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                                        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                                        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                                        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                                        <i data-lucide="star" class="w-4 h-4 fill-current opacity-50"></i>
+                                        <span class="text-xs text-gray-400 ml-1 font-medium">(100+ terjual)</span>
+                                    </div>
+                                </div>
+                                <div class="flex justify-between items-center mt-auto pt-4 border-t border-gray-50">
+                                    <span class="text-xl font-black text-orange-600">${formatRupiah(product.price)}</span>
+                                    <button 
+                                        onclick="addToCart(${product.id})"
+                                        class="bg-gray-900 hover:bg-orange-500 text-white p-2.5 rounded-xl transition shadow-md"
+                                        title="Tambah ke Keranjang"
+                                    >
+                                        <i data-lucide="shopping-cart" class="w-5 h-5"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                main.innerHTML = `
+                    <div class="space-y-8 animate-fade-in">
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+                            <div>
+                                <h2 class="text-3xl font-bold text-gray-900 tracking-tight">Toko Kebutuhan</h2>
+                                <p class="text-gray-500 mt-2 text-lg">Produk pilihan terbaik untuk anabul kesayangan.</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                            ${productsHtml}
+                        </div>
+                    </div>
+                `;
+            }
+            else if (currentPage === 'activities') {
+                let activitiesHtml = '';
+                ACTIVITIES.forEach(activity => {
+                    const dateParts = activity.date.split(' ');
+                    const day = dateParts[0];
+                    const monthYear = dateParts.slice(1).join(' ');
+                    
+                    activitiesHtml += `
+                        <div class="bg-white p-6 rounded-[1.5rem] shadow-sm border border-gray-100 flex gap-5 hover:shadow-md transition">
+                            <div class="${activity.bgColor} ${activity.iconColor} w-20 h-20 rounded-2xl flex flex-col items-center justify-center flex-shrink-0 shadow-inner">
+                                <span class="text-xs font-bold uppercase tracking-wider">${monthYear.substring(0,3)}</span>
+                                <span class="text-3xl font-black leading-none mt-1">${day}</span>
+                            </div>
+                            <div class="space-y-2.5 flex-1 py-1">
+                                <div class="flex flex-wrap justify-between items-start gap-2">
+                                    <h3 class="font-bold text-lg text-gray-900 leading-tight">${activity.title}</h3>
+                                    <span class="bg-gray-50 text-gray-600 text-xs px-2.5 py-1 rounded-md font-semibold border border-gray-200">
+                                        ${activity.type}
+                                    </span>
+                                </div>
+                                <p class="text-gray-500 text-sm flex items-center gap-1.5">
+                                    <i data-lucide="info" class="w-4 h-4"></i> ${activity.location}
+                                </p>
+                                <button onclick="showMessage('Pendaftaran ${activity.title} akan dibuka segera!')" class="text-orange-500 font-bold text-sm hover:text-orange-700 mt-2 inline-flex items-center gap-1 group">
+                                    Daftar Sekarang <i data-lucide="plus" class="w-3 h-3 group-hover:translate-x-1 transition-transform"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                main.innerHTML = `
+                    <div class="space-y-8 animate-fade-in">
+                        <div>
+                            <h2 class="text-3xl font-bold text-gray-900 tracking-tight">Jadwal Kegiatan</h2>
+                            <p class="text-gray-500 mt-2 text-lg">Jangan lewatkan momen seru bersama komunitas Look The Cats.</p>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            ${activitiesHtml}
+                        </div>
+                        
+                        <div class="mt-10 bg-blue-50 border border-blue-100 rounded-[1.5rem] p-8 flex flex-col md:flex-row items-center md:items-start gap-6">
+                            <div class="bg-blue-500 text-white p-4 rounded-full shadow-lg shadow-blue-500/30">
+                                <i data-lucide="heart" class="w-8 h-8"></i>
+                            </div>
+                            <div class="text-center md:text-left">
+                                <h4 class="font-bold text-xl text-blue-900">Punya info acara atau klinik hewan?</h4>
+                                <p class="text-blue-700 mt-2">Bantu kami memperbarui jadwal. Hubungi admin untuk menambahkan acara Anda ke dalam kalender Look The Cats.</p>
+                                <button onclick="showMessage('Membuka aplikasi WhatsApp/Email...')" class="mt-4 bg-white text-blue-600 px-6 py-2 rounded-full font-bold shadow-sm hover:bg-blue-50 transition border border-blue-200">
+                                    Hubungi Admin
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            else if (currentPage === 'account') {
+                if (currentUser) {
+                    // --- TAMPILAN PROFIL (JIKA SUDAH LOGIN) ---
+                    main.innerHTML = `
+                        <div class="space-y-6 animate-fade-in max-w-2xl mx-auto pt-4">
+                            <h2 class="text-3xl font-bold text-gray-900 tracking-tight text-center md:text-left">Profil Anggota</h2>
+                            
+                            <div class="bg-white p-8 rounded-[1.5rem] shadow-sm border border-gray-100 flex flex-col md:flex-row gap-8 items-center md:items-start">
+                                <div class="w-32 h-32 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0 relative overflow-hidden ring-4 ring-orange-50">
+                                    ${userCatImage ? '<img src="' + userCatImage + '" class="w-full h-full object-cover">' : '<i data-lucide="cat" class="w-16 h-16 text-orange-400"></i>'}
+                                </div>
+                                <div class="flex-1 text-center md:text-left space-y-4 w-full">
+                                    <div>
+                                        <h3 class="text-2xl font-bold text-gray-800 flex items-center justify-center md:justify-start gap-2">
+                                            ${currentUser.name} 
+                                            ${currentUser.status === 'Aktif' ? '<i data-lucide="check-circle" class="w-5 h-5 text-blue-500" title="Akun Aktif"></i>' : '<i data-lucide="x-circle" class="w-5 h-5 text-red-500" title="Akun Nonaktif"></i>'}
+                                        </h3>
+                                        <p class="text-gray-500">${currentUser.email}</p>
+                                        <p class="text-gray-500 text-sm mt-1 flex items-center justify-center md:justify-start gap-1.5"><i data-lucide="phone" class="w-4 h-4 text-green-500"></i> ${currentUser.phone || 'Belum diisi'}</p>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-4 bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                                        <div>
+                                            <span class="text-xs text-gray-500 font-bold uppercase tracking-wider block">Wilayah / Domisili</span>
+                                            <span class="text-lg font-bold text-gray-800">${currentUser.wilayah || '-'}</span>
+                                        </div>
+                                        <div>
+                                            <span class="text-xs text-gray-500 font-bold uppercase tracking-wider block">Status Keanggotaan</span>
+                                            <span class="text-sm font-bold mt-1 inline-block ${currentUser.status === 'Nonaktif' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'} px-2 py-1 rounded">${currentUser.status || 'Aktif'}</span>
+                                        </div>
+                                    </div>
+                                    <button onclick="handleLogout()" class="w-full md:w-auto bg-red-50 hover:bg-red-100 text-red-600 px-6 py-2.5 rounded-full font-bold transition flex items-center justify-center gap-2">
+                                        <i data-lucide="log-out" class="w-4 h-4"></i> Keluar (Logout)
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    // --- TAMPILAN FORM LOGIN & REGISTRASI ---
+                    main.innerHTML = `
+                        <div class="flex justify-center items-center py-4 animate-fade-in">
+                            <div class="bg-white p-8 md:p-10 rounded-[2rem] shadow-lg border border-gray-100 w-full max-w-md relative overflow-hidden">
+                                <!-- Dekorasi Latar -->
+                                <div class="absolute -top-10 -right-10 w-32 h-32 bg-orange-100 rounded-full blur-2xl opacity-50 z-0"></div>
+                                
+                                <div class="relative z-10 text-center mb-8">
+                                    <div class="bg-orange-100 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 text-orange-600">
+                                        <i data-lucide="${isLoginView ? 'log-in' : 'user-plus'}" class="w-8 h-8"></i>
+                                    </div>
+                                    <h2 class="text-3xl font-extrabold text-gray-900">${isLoginView ? 'Masuk Akun' : 'Daftar Anggota'}</h2>
+                                    <p class="text-gray-500 mt-2 text-sm">${isLoginView ? 'Selamat datang kembali, Cat Lover!' : 'Jadilah bagian dari komunitas pecinta kucing.'}</p>
+                                </div>
+
+                                ${!isLoginView ? `
+                                    <!-- FORM REGISTRASI -->
+                                    <form onsubmit="handleRegister(event)" class="relative z-10 space-y-4">
+                                        <div>
+                                            <label class="block text-sm font-bold text-gray-700 mb-1">Nama Lengkap</label>
+                                            <input type="text" id="reg-name" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-500 outline-none transition bg-gray-50 focus:bg-white" placeholder="Cth: Budi Santoso">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-bold text-gray-700 mb-1">Email</label>
+                                            <input type="email" id="reg-email" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-500 outline-none transition bg-gray-50 focus:bg-white" placeholder="email@contoh.com">
+                                        </div>
+                                        <div class="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <label class="block text-sm font-bold text-gray-700 mb-1">No. WhatsApp</label>
+                                                <input type="tel" id="reg-wa" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-500 outline-none transition bg-gray-50 focus:bg-white" placeholder="0812...">
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-bold text-gray-700 mb-1">Wilayah</label>
+                                                <select id="reg-wilayah" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-500 outline-none transition bg-gray-50 focus:bg-white">
+                                                    <option value="Jakarta">Jakarta</option>
+                                                    <option value="Tangerang">Tangerang</option>
+                                                    <option value="Bandung">Bandung</option>
+                                                    <option value="Surabaya">Surabaya</option>
+                                                    <option value="Lainnya">Lainnya</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-bold text-gray-700 mb-1">Nama Kucing (Opsional)</label>
+                                            <input type="text" id="reg-cat" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-500 outline-none transition bg-gray-50 focus:bg-white" placeholder="Cth: Mochi">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-bold text-gray-700 mb-1">Password</label>
+                                            <input type="password" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-500 outline-none transition bg-gray-50 focus:bg-white" placeholder="••••••••">
+                                        </div>
+                                        <button type="submit" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3.5 rounded-xl transition shadow-md mt-2 flex justify-center items-center gap-2">
+                                            Daftar Sekarang <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                                        </button>
+                                    </form>
+                                ` : `
+                                    <!-- FORM LOGIN -->
+                                    <form onsubmit="handleLogin(event)" class="relative z-10 space-y-4">
+                                        <div>
+                                            <label class="block text-sm font-bold text-gray-700 mb-1">Email</label>
+                                            <input type="email" id="login-email" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-500 outline-none transition bg-gray-50 focus:bg-white" placeholder="email@contoh.com">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-bold text-gray-700 mb-1">Password</label>
+                                            <input type="password" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-500 outline-none transition bg-gray-50 focus:bg-white" placeholder="••••••••">
+                                        </div>
+                                        <button type="submit" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3.5 rounded-xl transition shadow-md mt-2 flex justify-center items-center gap-2">
+                                            Masuk <i data-lucide="log-in" class="w-4 h-4"></i>
+                                        </button>
+                                    </form>
+                                `}
+
+                                <div class="relative z-10 text-center mt-6 pt-6 border-t border-gray-100">
+                                    <p class="text-sm text-gray-500">
+                                        ${isLoginView ? 'Belum punya akun?' : 'Sudah punya akun?'} 
+                                        <button onclick="toggleAuthView()" class="text-orange-500 font-bold hover:underline">
+                                            ${isLoginView ? 'Daftar di sini' : 'Masuk di sini'}
+                                        </button>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+            else if (currentPage === 'admin') {
+                // --- TAMPILAN DASHBOARD ADMIN ---
+                
+                const isPusat = currentUser.role === 'admin_pusat';
+
+                // Render baris tabel secara dinamis dari database simulasi
+                const newUsersHtml = mockUsers.map((user, index) => {
+                    const isAktif = user.status === 'Aktif';
+                    const statusBadge = isAktif 
+                        ? `<span class="bg-green-100 text-green-700 px-2.5 py-1 rounded-md font-bold text-xs border border-green-200 flex items-center gap-1 w-max"><i data-lucide="check" class="w-3 h-3"></i> Aktif</span>`
+                        : `<span class="bg-red-100 text-red-700 px-2.5 py-1 rounded-md font-bold text-xs border border-red-200 flex items-center gap-1 w-max"><i data-lucide="x" class="w-3 h-3"></i> Nonaktif</span>`;
+                    
+                    let actionButton = '';
+                    if (isPusat && user.role === 'member') {
+                        if (isAktif) {
+                            actionButton = `<button onclick="toggleMemberStatus(${index})" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm transition flex items-center gap-1"><i data-lucide="power-off" class="w-3 h-3"></i> Nonaktifkan</button>`;
+                        } else {
+                            actionButton = `<button onclick="toggleMemberStatus(${index})" class="bg-green-500 hover:bg-green-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm transition flex items-center gap-1"><i data-lucide="power" class="w-3 h-3"></i> Aktifkan</button>`;
+                        }
+                    } else if (!isPusat && user.role === 'member') {
+                        actionButton = `<span class="text-xs text-gray-400 italic">Hanya Pusat</span>`;
+                    }
+
+                    // Tambahkan indikator "Baru" hanya jika joinDate 'Hari ini'
+                    const isBaru = user.joinDate === 'Hari ini';
+
+                    return `
+                    <tr class="hover:bg-gray-50/50 transition ${!isAktif ? 'bg-red-50/20' : ''}">
+                        <td class="p-4 font-semibold text-gray-800 flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center font-bold">${user.name.charAt(0).toUpperCase()}</div>
+                            <div>
+                                ${user.name} 
+                                ${isBaru ? '<span class="text-[10px] bg-orange-500 text-white px-1.5 rounded ml-1 font-bold">Baru</span>' : ''}
+                                <div class="text-xs text-gray-400 font-normal"><i data-lucide="map-pin" class="w-3 h-3 inline"></i> ${user.wilayah}</div>
+                            </div>
+                        </td>
+                        <td class="p-4 text-gray-600">${user.email}<br><span class="text-xs text-gray-400 font-medium">${user.phone || '-'}</span></td>
+                        <td class="p-4">${statusBadge}</td>
+                        <td class="p-4">${actionButton}</td>
+                    </tr>
+                    `;
+                }).reverse().join(''); // Di-reverse agar pendaftar terbaru muncul di atas
+
+                main.innerHTML = `
+                    <div class="space-y-8 animate-fade-in pb-8">
+                        <!-- Header Admin -->
+                        <div class="bg-gray-900 text-white p-8 rounded-[2rem] shadow-lg flex flex-col md:flex-row justify-between items-center gap-6 relative overflow-hidden">
+                            <div class="absolute -right-10 -bottom-10 opacity-10">
+                                <i data-lucide="shield-check" class="w-64 h-64"></i>
+                            </div>
+                            <div class="relative z-10 text-center md:text-left">
+                                <span class="bg-white/20 text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-2 inline-block backdrop-blur-sm border border-white/20">
+                                    ${currentUser.name}
+                                </span>
+                                <h2 class="text-3xl font-extrabold tracking-tight">Dashboard ${isPusat ? 'Pusat' : 'Wilayah'}</h2>
+                                <p class="text-gray-400 mt-2 text-lg">Pusat pengelolaan data aplikasi Look The Cats ${isPusat ? '(Nasional)' : `(${currentUser.wilayah})`}.</p>
+                            </div>
+                            <div class="relative z-10 flex gap-4">
+                                <button onclick="showMessage('Laporan berhasil diunduh!')" class="bg-white/10 hover:bg-white/20 px-6 py-2.5 rounded-full font-bold transition backdrop-blur-sm flex items-center gap-2 border border-white/10">
+                                    <i data-lucide="download" class="w-4 h-4"></i> Laporan
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Statistik Cards -->
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+                            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 border-l-4 border-l-orange-500 hover:shadow-md transition">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <p class="text-xs md:text-sm font-bold text-gray-500 uppercase">Total Pesanan</p>
+                                        <h4 class="text-2xl font-black text-gray-800 mt-1">128</h4>
+                                    </div>
+                                    <div class="bg-orange-50 p-2 rounded-lg text-orange-600 hidden md:block"><i data-lucide="shopping-bag"></i></div>
+                                </div>
+                            </div>
+                            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 border-l-4 border-l-blue-500 hover:shadow-md transition">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <p class="text-xs md:text-sm font-bold text-gray-500 uppercase">Anggota Aktif</p>
+                                        <h4 class="text-2xl font-black text-gray-800 mt-1">${mockUsers.filter(u => u.status === 'Aktif').length + 1024}</h4>
+                                    </div>
+                                    <div class="bg-blue-50 p-2 rounded-lg text-blue-600 hidden md:block"><i data-lucide="users"></i></div>
+                                </div>
+                            </div>
+                            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 border-l-4 border-l-green-500 hover:shadow-md transition">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <p class="text-xs md:text-sm font-bold text-gray-500 uppercase">Produk Dijual</p>
+                                        <h4 class="text-2xl font-black text-gray-800 mt-1">${PRODUCTS.length}</h4>
+                                    </div>
+                                    <div class="bg-green-50 p-2 rounded-lg text-green-600 hidden md:block"><i data-lucide="box"></i></div>
+                                </div>
+                            </div>
+                            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 border-l-4 border-l-purple-500 hover:shadow-md transition">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <p class="text-xs md:text-sm font-bold text-gray-500 uppercase">Jadwal Acara</p>
+                                        <h4 class="text-2xl font-black text-gray-800 mt-1">${ACTIVITIES.length}</h4>
+                                    </div>
+                                    <div class="bg-purple-50 p-2 rounded-lg text-purple-600 hidden md:block"><i data-lucide="calendar"></i></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Daftar Anggota Terbaru (Tabel) -->
+                        <div class="bg-white rounded-[1.5rem] shadow-sm border border-gray-100 overflow-hidden">
+                            <div class="p-5 md:p-6 border-b border-gray-50 flex justify-between items-center">
+                                <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2"><i data-lucide="users" class="text-blue-500"></i> Pendaftar Terbaru</h3>
+                                <button class="text-sm font-bold text-orange-500 hover:text-orange-700">Lihat Semua</button>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left border-collapse min-w-[600px]">
+                                    <thead>
+                                        <tr class="bg-gray-50 text-gray-500 text-sm">
+                                            <th class="p-4 font-bold uppercase tracking-wider">Nama & Wilayah</th>
+                                            <th class="p-4 font-bold uppercase tracking-wider">Kontak (Email & WA)</th>
+                                            <th class="p-4 font-bold uppercase tracking-wider">Status</th>
+                                            <th class="p-4 font-bold uppercase tracking-wider">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="text-sm divide-y divide-gray-50">
+                                        ${newUsersHtml}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // --- INISIALISASI PERTAMA KALI ---
+        document.addEventListener('DOMContentLoaded', () => {
+            navigateTo('home');
+        });
+
+    </script>
+</body>
+</html>
