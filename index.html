@@ -134,29 +134,10 @@
         // --- NEW STATE: AUTH & ADMIN ---
         let currentUser = null; // Menyimpan data user yang login
         let isLoginView = false; // Toggle view login vs register
-        
-        // Simulasi database member (diisi dengan data awal agar tabel tidak kosong)
-        let mockUsers = [
-            { name: 'Andi Susanto', email: 'andi@email.com', phone: '081234567891', catName: 'Garfield', role: 'member', joinDate: 'Bulan lalu', wilayah: 'Jakarta', status: 'Aktif' },
-            { name: 'Rina Melati', email: 'rina@email.com', phone: '089876543210', catName: 'Mochi', role: 'member', joinDate: '2 Bulan lalu', wilayah: 'Bandung', status: 'Aktif' }
-        ]; 
+        let mockUsers = []; // Simulasi database member
 
         // --- CORE FUNCTIONS ---
         
-        // Fungsi untuk menonaktifkan/mengaktifkan anggota (Khusus Admin Pusat)
-        function toggleMemberStatus(index) {
-            const user = mockUsers[index];
-            if (user.status === 'Aktif') {
-                user.status = 'Nonaktif';
-                showMessage(`Meow! Akun ${user.name} berhasil dinonaktifkan.`);
-            } else {
-                user.status = 'Aktif';
-                showMessage(`Meow! Akun ${user.name} berhasil diaktifkan kembali.`);
-            }
-            renderPage();
-            lucide.createIcons();
-        }
-
         // Fungsi untuk memicu klik pada input file tersembunyi
         function triggerUpload() {
             document.getElementById('cat-image-upload').click();
@@ -201,15 +182,13 @@
             event.preventDefault(); // Mencegah reload halaman
             const name = document.getElementById('reg-name').value;
             const email = document.getElementById('reg-email').value;
-            const phone = document.getElementById('reg-wa').value;
-            const wilayah = document.getElementById('reg-wilayah').value;
             const catName = document.getElementById('reg-cat').value;
             
-            // Simpan sebagai user yang login (Status default: Langsung Aktif)
-            currentUser = { name, email, phone, catName, role: 'member', joinDate: 'Hari ini', wilayah, status: 'Aktif' };
+            // Simpan sebagai user yang login
+            currentUser = { name, email, catName, role: 'member', joinDate: 'Hari ini' };
             mockUsers.push(currentUser); // Masukkan ke simulasi database
             
-            showMessage(`Meow! Selamat bergabung, ${name}! Akun Anda sudah Aktif.`);
+            showMessage(`Meow! Selamat bergabung, ${name}!`);
             renderNavbar();
             renderPage();
             lucide.createIcons();
@@ -220,31 +199,10 @@
             event.preventDefault();
             const email = document.getElementById('login-email').value;
             
-            // Simulasi Multi-Admin: 
-            // "pusat" = Admin Pusat (Bisa Approve)
-            // "admin.kota" = Admin Wilayah (Hanya memantau)
+            // Simulasi login sederhana (Berhasil jika email diisi)
             if (email) {
-                let roleName = 'member';
-                let displayName = 'Cat Lover';
-                let wilayah = 'Umum';
-
-                const lowerEmail = email.toLowerCase();
-                
-                if (lowerEmail.includes('pusat')) {
-                    roleName = 'admin_pusat';
-                    displayName = 'Admin Pusat';
-                    wilayah = 'Nasional';
-                } else if (lowerEmail.includes('admin')) {
-                    roleName = 'admin_wilayah';
-                    // Ambil nama kota dari email (cth: admin.jakarta@... -> jakarta)
-                    let extracted = lowerEmail.split('@')[0].replace('admin.', '');
-                    wilayah = extracted.charAt(0).toUpperCase() + extracted.slice(1);
-                    if (wilayah === 'Admin') wilayah = 'Tangerang'; // Default
-                    displayName = `Admin Wilayah ${wilayah}`;
-                }
-
-                currentUser = { name: displayName, email: email, phone: '081234567890', catName: 'Anabul', role: roleName, joinDate: 'Hari ini', wilayah: wilayah, status: 'Aktif' };
-                showMessage(`Berhasil masuk! Selamat datang, ${displayName}.`);
+                currentUser = { name: 'Cat Lover', email: email, catName: 'Anabul', role: 'member', joinDate: 'Bulan lalu' };
+                showMessage('Berhasil masuk! Selamat datang kembali.');
                 renderNavbar();
                 renderPage();
                 lucide.createIcons();
@@ -436,9 +394,6 @@
             const main = document.getElementById('main-content');
             
             if (currentPage === 'home') {
-                // Cek apakah user yang sedang login adalah Admin (Pusat atau Wilayah)
-                const isAdmin = currentUser !== null && (currentUser.role === 'admin_pusat' || currentUser.role === 'admin_wilayah');
-
                 main.innerHTML = `
                     <div class="space-y-8 md:space-y-12 animate-fade-in">
                         <!-- Hero Section -->
@@ -460,28 +415,22 @@
                                 </div>
                             </div>
                             <div class="flex-1 flex justify-center w-full pb-4 md:pb-0">
-                                <div ${isAdmin ? 'onclick="triggerUpload()"' : ''} class="w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80 bg-orange-200 rounded-full flex items-center justify-center shadow-inner relative overflow-hidden ${isAdmin ? 'cursor-pointer group hover:ring-4 hover:ring-orange-300 transition-all' : ''}" title="${isAdmin ? 'Klik untuk upload foto maskot' : 'Maskot Kucing'}">
-                                    ${isAdmin ? `<input type="file" id="cat-image-upload" class="hidden" accept="image/*" onchange="handleImageUpload(event)">` : ''}
+                                <div onclick="triggerUpload()" class="w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80 bg-orange-200 rounded-full flex items-center justify-center shadow-inner relative overflow-hidden cursor-pointer group hover:ring-4 hover:ring-orange-300 transition-all" title="Klik untuk upload foto">
+                                    <input type="file" id="cat-image-upload" class="hidden" accept="image/*" onchange="handleImageUpload(event)">
                                     ${userCatImage ? 
-                                        `<img src="${userCatImage}" class="w-full h-full object-cover z-10 ${isAdmin ? 'transition-transform duration-500 group-hover:scale-110' : ''}" alt="Maskot Kucing">
-                                         ${isAdmin ? `<div class="absolute inset-0 bg-black/40 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-20">
+                                        `<img src="${userCatImage}" class="w-full h-full object-cover z-10 transition-transform duration-500 group-hover:scale-110" alt="Kucingku">
+                                         <div class="absolute inset-0 bg-black/40 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-20">
                                             <i data-lucide="camera" class="w-8 h-8 text-white mb-1"></i>
                                             <span class="text-white font-bold text-sm">Ganti Foto</span>
-                                         </div>` : ''}`
+                                         </div>`
                                         :
-                                        `<div class="absolute inset-0 flex items-center justify-center opacity-20 ${isAdmin ? 'group-hover:opacity-40 transition-opacity' : ''}">
+                                        `<div class="absolute inset-0 flex items-center justify-center opacity-20 group-hover:opacity-40 transition-opacity">
                                             <i data-lucide="heart" class="w-32 h-32 md:w-48 md:h-48 text-orange-400"></i>
                                         </div>
-                                        ${isAdmin ? 
-                                            `<div class="z-10 flex flex-col items-center group-hover:scale-110 transition-transform">
-                                                <i data-lucide="upload-cloud" class="w-8 h-8 md:w-10 md:h-10 text-orange-600 mb-2"></i>
-                                                <span class="text-sm md:text-lg font-bold text-orange-700 text-center px-4 leading-tight">Upload Foto<br>Maskot!</span>
-                                            </div>` 
-                                            : 
-                                            `<div class="z-10 flex flex-col items-center">
-                                                <span class="text-lg md:text-2xl font-bold text-orange-700 text-center px-4 leading-tight">[Gambar Kucing]</span>
-                                            </div>`
-                                        }`
+                                        <div class="z-10 flex flex-col items-center group-hover:scale-110 transition-transform">
+                                            <i data-lucide="upload-cloud" class="w-8 h-8 md:w-10 md:h-10 text-orange-600 mb-2"></i>
+                                            <span class="text-sm md:text-lg font-bold text-orange-700 text-center px-4 leading-tight">Upload Foto<br>Kucingmu!</span>
+                                        </div>`
                                     }
                                 </div>
                             </div>
@@ -630,21 +579,17 @@
                                 </div>
                                 <div class="flex-1 text-center md:text-left space-y-4 w-full">
                                     <div>
-                                        <h3 class="text-2xl font-bold text-gray-800 flex items-center justify-center md:justify-start gap-2">
-                                            ${currentUser.name} 
-                                            ${currentUser.status === 'Aktif' ? '<i data-lucide="check-circle" class="w-5 h-5 text-blue-500" title="Akun Aktif"></i>' : '<i data-lucide="x-circle" class="w-5 h-5 text-red-500" title="Akun Nonaktif"></i>'}
-                                        </h3>
+                                        <h3 class="text-2xl font-bold text-gray-800">${currentUser.name}</h3>
                                         <p class="text-gray-500">${currentUser.email}</p>
-                                        <p class="text-gray-500 text-sm mt-1 flex items-center justify-center md:justify-start gap-1.5"><i data-lucide="phone" class="w-4 h-4 text-green-500"></i> ${currentUser.phone || 'Belum diisi'}</p>
                                     </div>
                                     <div class="grid grid-cols-2 gap-4 bg-gray-50 p-4 rounded-2xl border border-gray-100">
                                         <div>
-                                            <span class="text-xs text-gray-500 font-bold uppercase tracking-wider block">Wilayah / Domisili</span>
-                                            <span class="text-lg font-bold text-gray-800">${currentUser.wilayah || '-'}</span>
+                                            <span class="text-xs text-gray-500 font-bold uppercase tracking-wider block">Nama Anabul</span>
+                                            <span class="text-lg font-bold text-orange-600">${currentUser.catName || 'Kesayangan'}</span>
                                         </div>
                                         <div>
-                                            <span class="text-xs text-gray-500 font-bold uppercase tracking-wider block">Status Keanggotaan</span>
-                                            <span class="text-sm font-bold mt-1 inline-block ${currentUser.status === 'Nonaktif' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'} px-2 py-1 rounded">${currentUser.status || 'Aktif'}</span>
+                                            <span class="text-xs text-gray-500 font-bold uppercase tracking-wider block">Bergabung</span>
+                                            <span class="text-lg font-bold text-gray-800">${currentUser.joinDate}</span>
                                         </div>
                                     </div>
                                     <button onclick="handleLogout()" class="w-full md:w-auto bg-red-50 hover:bg-red-100 text-red-600 px-6 py-2.5 rounded-full font-bold transition flex items-center justify-center gap-2">
@@ -680,22 +625,6 @@
                                         <div>
                                             <label class="block text-sm font-bold text-gray-700 mb-1">Email</label>
                                             <input type="email" id="reg-email" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-500 outline-none transition bg-gray-50 focus:bg-white" placeholder="email@contoh.com">
-                                        </div>
-                                        <div class="grid grid-cols-2 gap-4">
-                                            <div>
-                                                <label class="block text-sm font-bold text-gray-700 mb-1">No. WhatsApp</label>
-                                                <input type="tel" id="reg-wa" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-500 outline-none transition bg-gray-50 focus:bg-white" placeholder="0812...">
-                                            </div>
-                                            <div>
-                                                <label class="block text-sm font-bold text-gray-700 mb-1">Wilayah</label>
-                                                <select id="reg-wilayah" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-500 outline-none transition bg-gray-50 focus:bg-white">
-                                                    <option value="Jakarta">Jakarta</option>
-                                                    <option value="Tangerang">Tangerang</option>
-                                                    <option value="Bandung">Bandung</option>
-                                                    <option value="Surabaya">Surabaya</option>
-                                                    <option value="Lainnya">Lainnya</option>
-                                                </select>
-                                            </div>
                                         </div>
                                         <div>
                                             <label class="block text-sm font-bold text-gray-700 mb-1">Nama Kucing (Opsional)</label>
@@ -742,45 +671,18 @@
             else if (currentPage === 'admin') {
                 // --- TAMPILAN DASHBOARD ADMIN ---
                 
-                const isPusat = currentUser.role === 'admin_pusat';
-
-                // Render baris tabel secara dinamis dari database simulasi
-                const newUsersHtml = mockUsers.map((user, index) => {
-                    const isAktif = user.status === 'Aktif';
-                    const statusBadge = isAktif 
-                        ? `<span class="bg-green-100 text-green-700 px-2.5 py-1 rounded-md font-bold text-xs border border-green-200 flex items-center gap-1 w-max"><i data-lucide="check" class="w-3 h-3"></i> Aktif</span>`
-                        : `<span class="bg-red-100 text-red-700 px-2.5 py-1 rounded-md font-bold text-xs border border-red-200 flex items-center gap-1 w-max"><i data-lucide="x" class="w-3 h-3"></i> Nonaktif</span>`;
-                    
-                    let actionButton = '';
-                    if (isPusat && user.role === 'member') {
-                        if (isAktif) {
-                            actionButton = `<button onclick="toggleMemberStatus(${index})" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm transition flex items-center gap-1"><i data-lucide="power-off" class="w-3 h-3"></i> Nonaktifkan</button>`;
-                        } else {
-                            actionButton = `<button onclick="toggleMemberStatus(${index})" class="bg-green-500 hover:bg-green-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm transition flex items-center gap-1"><i data-lucide="power" class="w-3 h-3"></i> Aktifkan</button>`;
-                        }
-                    } else if (!isPusat && user.role === 'member') {
-                        actionButton = `<span class="text-xs text-gray-400 italic">Hanya Pusat</span>`;
-                    }
-
-                    // Tambahkan indikator "Baru" hanya jika joinDate 'Hari ini'
-                    const isBaru = user.joinDate === 'Hari ini';
-
-                    return `
-                    <tr class="hover:bg-gray-50/50 transition ${!isAktif ? 'bg-red-50/20' : ''}">
-                        <td class="p-4 font-semibold text-gray-800 flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center font-bold">${user.name.charAt(0).toUpperCase()}</div>
-                            <div>
-                                ${user.name} 
-                                ${isBaru ? '<span class="text-[10px] bg-orange-500 text-white px-1.5 rounded ml-1 font-bold">Baru</span>' : ''}
-                                <div class="text-xs text-gray-400 font-normal"><i data-lucide="map-pin" class="w-3 h-3 inline"></i> ${user.wilayah}</div>
-                            </div>
-                        </td>
-                        <td class="p-4 text-gray-600">${user.email}<br><span class="text-xs text-gray-400 font-medium">${user.phone || '-'}</span></td>
-                        <td class="p-4">${statusBadge}</td>
-                        <td class="p-4">${actionButton}</td>
-                    </tr>
-                    `;
-                }).reverse().join(''); // Di-reverse agar pendaftar terbaru muncul di atas
+                // Render baris tabel untuk user baru dari simulasi pendaftaran
+                const newUsersHtml = mockUsers.map(user => 
+                    '<tr class="hover:bg-gray-50/50 transition bg-orange-50/30">' +
+                        '<td class="p-4 font-semibold text-gray-800 flex items-center gap-3">' +
+                            '<div class="w-8 h-8 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center font-bold">' + user.name.charAt(0).toUpperCase() + '</div>' +
+                            user.name + ' <span class="text-[10px] bg-orange-500 text-white px-1.5 rounded ml-1 font-bold">Baru</span>' +
+                        '</td>' +
+                        '<td class="p-4 text-gray-600">' + user.email + '</td>' +
+                        '<td class="p-4 text-gray-600 font-medium">' + (user.catName || '-') + '</td>' +
+                        '<td class="p-4"><span class="bg-green-100 text-green-700 px-2.5 py-1 rounded-md font-bold text-xs border border-green-200">Aktif</span></td>' +
+                    '</tr>'
+                ).join('');
 
                 main.innerHTML = `
                     <div class="space-y-8 animate-fade-in pb-8">
@@ -790,11 +692,8 @@
                                 <i data-lucide="shield-check" class="w-64 h-64"></i>
                             </div>
                             <div class="relative z-10 text-center md:text-left">
-                                <span class="bg-white/20 text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-2 inline-block backdrop-blur-sm border border-white/20">
-                                    ${currentUser.name}
-                                </span>
-                                <h2 class="text-3xl font-extrabold tracking-tight">Dashboard ${isPusat ? 'Pusat' : 'Wilayah'}</h2>
-                                <p class="text-gray-400 mt-2 text-lg">Pusat pengelolaan data aplikasi Look The Cats ${isPusat ? '(Nasional)' : `(${currentUser.wilayah})`}.</p>
+                                <h2 class="text-3xl font-extrabold tracking-tight">Dashboard Admin</h2>
+                                <p class="text-gray-400 mt-2 text-lg">Pusat pengelolaan data aplikasi Look The Cats.</p>
                             </div>
                             <div class="relative z-10 flex gap-4">
                                 <button onclick="showMessage('Laporan berhasil diunduh!')" class="bg-white/10 hover:bg-white/20 px-6 py-2.5 rounded-full font-bold transition backdrop-blur-sm flex items-center gap-2 border border-white/10">
@@ -818,7 +717,7 @@
                                 <div class="flex justify-between items-start">
                                     <div>
                                         <p class="text-xs md:text-sm font-bold text-gray-500 uppercase">Anggota Aktif</p>
-                                        <h4 class="text-2xl font-black text-gray-800 mt-1">${mockUsers.filter(u => u.status === 'Aktif').length + 1024}</h4>
+                                        <h4 class="text-2xl font-black text-gray-800 mt-1">${1024 + mockUsers.length}</h4>
                                     </div>
                                     <div class="bg-blue-50 p-2 rounded-lg text-blue-600 hidden md:block"><i data-lucide="users"></i></div>
                                 </div>
@@ -853,14 +752,32 @@
                                 <table class="w-full text-left border-collapse min-w-[600px]">
                                     <thead>
                                         <tr class="bg-gray-50 text-gray-500 text-sm">
-                                            <th class="p-4 font-bold uppercase tracking-wider">Nama & Wilayah</th>
-                                            <th class="p-4 font-bold uppercase tracking-wider">Kontak (Email & WA)</th>
+                                            <th class="p-4 font-bold uppercase tracking-wider">Nama Anggota</th>
+                                            <th class="p-4 font-bold uppercase tracking-wider">Email</th>
+                                            <th class="p-4 font-bold uppercase tracking-wider">Nama Kucing</th>
                                             <th class="p-4 font-bold uppercase tracking-wider">Status</th>
-                                            <th class="p-4 font-bold uppercase tracking-wider">Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody class="text-sm divide-y divide-gray-50">
                                         ${newUsersHtml}
+                                        <tr class="hover:bg-gray-50/50 transition">
+                                            <td class="p-4 font-semibold text-gray-800 flex items-center gap-3">
+                                                <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold">A</div>
+                                                Andi Susanto
+                                            </td>
+                                            <td class="p-4 text-gray-600">andi@email.com</td>
+                                            <td class="p-4 text-gray-600 font-medium">Garfield</td>
+                                            <td class="p-4"><span class="bg-green-100 text-green-700 px-2.5 py-1 rounded-md font-bold text-xs border border-green-200">Aktif</span></td>
+                                        </tr>
+                                        <tr class="hover:bg-gray-50/50 transition">
+                                            <td class="p-4 font-semibold text-gray-800 flex items-center gap-3">
+                                                <div class="w-8 h-8 rounded-full bg-pink-100 text-pink-600 flex items-center justify-center font-bold">R</div>
+                                                Rina Melati
+                                            </td>
+                                            <td class="p-4 text-gray-600">rina@email.com</td>
+                                            <td class="p-4 text-gray-600 font-medium">Mochi</td>
+                                            <td class="p-4"><span class="bg-gray-100 text-gray-600 px-2.5 py-1 rounded-md font-bold text-xs border border-gray-200">Offline</span></td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
