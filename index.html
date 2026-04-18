@@ -171,6 +171,15 @@
 
         // 1. Firebase Initialization
         const firebaseConfig = JSON.parse(__firebase_config);
+        {
+  apiKey: "AIzaSyBARlWoWFwiRI6VUuRMURYSbDaVzSRmn_U",
+  authDomain: "look-the-cats-official.firebaseapp.com",
+  projectId: "look-the-cats-official",
+  storageBucket: "look-the-cats-official.firebasestorage.app",
+  messagingSenderId: "1286590659",
+  appId: "1:1286590659:web:1878a970fc778ae6f19276",
+  measurementId: "G-XGF86YXY3Y"
+};
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
